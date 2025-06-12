@@ -3,6 +3,7 @@ import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
+import stylistic from '@stylistic/eslint-plugin'
 
 export default tseslint.config(
   { ignores: ['dist'] },
@@ -25,4 +26,13 @@ export default tseslint.config(
       ],
     },
   },
+  stylistic.configs['disable-legacy'],
+  stylistic.configs.customize({
+    // the following options are the default values
+    indent: 2,
+    quotes: 'single',
+    semi: false,
+    jsx: true,
+    // ...
+  }),
 )

@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import { Sidebar, Header, Content, Footer } from '@/components'
+import GlobalToast from '@/components/GlobalToast.tsx'
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setSidebarOpen(true)
+      }
+      else {
+        setSidebarOpen(false)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    const drawerCheckbox = document.getElementById('sidebar-drawer') as HTMLInputElement
+    if (drawerCheckbox) {
+      drawerCheckbox.checked = sidebarOpen
+    }
+  }, [sidebarOpen])
+
+  const handleDrawerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSidebarOpen(e.target.checked)
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+
+    <div className={`drawer ${sidebarOpen ? 'lg:drawer-open' : ''} bg-base-200 transition-none`}>
+      <input
+        id="sidebar-drawer"
+        type="checkbox"
+        className="drawer-toggle transition-none"
+        checked={sidebarOpen}
+        onChange={handleDrawerChange}
+      />
+      <div className="drawer-content flex flex-col min-h-screen bg-base-200 p-0 lg:pt-4 lg:px-4 lg:pb-0 transition-none">
+        <div className="bg-white rounded-3xl overflow-hidden flex flex-col flex-grow shadow-sm">
+          <Header />
+          <Content />
+        </div>
+        <Footer />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+      <Sidebar />
+      <GlobalToast />
+    </div>
   )
 }
-
-export default App
