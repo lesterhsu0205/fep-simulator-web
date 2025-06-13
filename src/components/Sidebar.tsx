@@ -8,9 +8,9 @@ export function Sidebar() {
   return (
     <div className="drawer-side">
       <label htmlFor="sidebar-drawer" aria-label="close sidebar" className="drawer-overlay opacity-0 pointer-events-none"></label>
-      <aside className="bg-base-200 w-56 min-h-screen transition-all duration-300 ease-in-out">
+      <aside className="bg-base-200 min-h-screen transition-all duration-300 ease-in-out">
         <div className="p-4 font-extrabold text-primary text-2xl flex items-center">
-          <Landmark size={24} className="mr-2 text-primary" />
+          <Landmark size={20} className="mr-2 text-primary" />
           FEP Simulator
         </div>
         <ul className="menu p-2">

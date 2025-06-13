@@ -1,13 +1,26 @@
 @import "tailwindcss";
 
 /* default weight 400  */
-/* @import "@fontsource/noto-sans-tc/400.css";
-@import "@fontsource/noto-sans-tc/500.css";
-@import "@fontsource/noto-sans-tc/700.css";
-@import "@fontsource/noto-sans-tc/900.css"; */
+@import '@fontsource/noto-sans-tc';
+@import '@fontsource/noto-sans-tc/300.css';
+@import '@fontsource/noto-sans-tc/500.css';
+@import '@fontsource/noto-sans-tc/600.css';
+@import '@fontsource/noto-sans-tc/700.css';
+@import '@fontsource/noto-sans-tc/800.css';
+@import '@fontsource/noto-sans-tc/900.css';
+
+@font-face {
+    font-family: 'jf open 粉圓';
+    src: url('/fonts/jf-openhuninn-2.1.ttf') format('truetype');
+    font-display: swap;
+}
+
+html,
+body {
+    font-family: 'jf open 粉圓', 'Noto Sans TC', 'Noto Sans', 'sans-serif';
+}
 
 @plugin "daisyui";
-
 
 @plugin "daisyui/theme" {
     name: "light";
