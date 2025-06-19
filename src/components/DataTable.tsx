@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Search, RotateCcw, X, Edit, Trash2, FileEdit, Plus } from 'lucide-react'
+import { Search, RotateCcw, Edit, Trash2, Plus } from 'lucide-react'
 import tableData from '@/assets/data.json'
 import EditForm, { type TableData, type EditFormData } from '@/components/EditForm.tsx'
 import CreateTestAccount, { type CreateTestAccountData } from '@/components/CreateTestAccount.tsx'
@@ -46,7 +46,7 @@ export default function DataTable({
   const [itemsPerPage, setItemsPerPage] = useState(defaultItemsPerPage)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [data, setData] = useState<TableData[]>([])
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<TableData | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const [deletingItem, setDeletingItem] = useState<TableData | null>(null)
@@ -121,7 +121,7 @@ export default function DataTable({
   // 編輯功能
   const handleEdit = (item: TableData) => {
     setEditingItem(item)
-    setIsDrawerOpen(true)
+    setIsEditModalOpen(true)
   }
 
   // 開啟刪除 modal
@@ -175,7 +175,7 @@ export default function DataTable({
             : item,
         ))
 
-        setIsDrawerOpen(false)
+        setIsEditModalOpen(false)
         setEditingItem(null)
         showToast('修改成功', 'success')
       }
@@ -186,9 +186,9 @@ export default function DataTable({
     }
   }
 
-  // 關閉 Drawer
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false)
+  // 關閉編輯 Modal
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
     setEditingItem(null)
   }
 
@@ -506,48 +506,19 @@ export default function DataTable({
         </div>
       </div>
 
-      {/* 編輯 Drawer */}
-      <div className={`fixed inset-0 z-50 ${isDrawerOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
-        {/* 背景遮罩 */}
-        <div
-          className={`absolute inset-0 bg-black transition-opacity duration-300 ${isDrawerOpen ? 'opacity-50' : 'opacity-0'}`}
-          onClick={handleCloseDrawer}
-        />
-
-        {/* Drawer 內容 */}
-        <div className={`absolute right-0 top-0 h-full w-96 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-          <div className="p-6 h-full overflow-y-auto bg-gradient-to-b from-white to-gray-50">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <FileEdit size={20} />
-                <h2 className="text-subheading">編輯資料</h2>
-              </div>
-              <button
-                className="btn btn-ghost btn-sm btn-circle"
-                onClick={handleCloseDrawer}
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* 帳號資訊 */}
-            {editingItem && (
-              <div className="stats shadow mb-4 w-full bg-gray-100">
-                <div className="stat ">
-                  <div className="stat-title">帳號</div>
-                  <div className="stat-value text-lg">{editingItem.header}</div>
-                </div>
-              </div>
-            )}
-
-            <EditForm
-              data={editingItem}
-              onSubmit={handleEditSubmit}
-              onCancel={handleCloseDrawer}
-            />
-          </div>
+      {/* 編輯 Modal */}
+      <dialog className={`modal ${isEditModalOpen ? 'modal-open' : ''}`}>
+        <div className="modal-box w-11/12 max-w-6xl p-0">
+          <EditForm
+            data={editingItem}
+            onSubmit={handleEditSubmit}
+            onCancel={handleCloseEditModal}
+          />
         </div>
-      </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={handleCloseEditModal}>close</button>
+        </form>
+      </dialog>
 
       {/* 刪除確認 Modal */}
       <Modal

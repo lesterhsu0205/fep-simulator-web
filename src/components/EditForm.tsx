@@ -1,5 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
+import { Save, RotateCcw } from 'lucide-react'
 
 // 表格資料類型
 export interface TableData {
@@ -57,118 +58,149 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
   if (!data) return null
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-      <div className="form-control">
-        <label className="label">
-          <span className="text-sm text-gray-600 font-medium">情境說明</span>
-        </label>
-        <input
-          type="text"
-          className="input input-bordered"
-          {...register('type', { required: '情境說明為必填項目' })}
-        />
-        {errors.type && (
-          <label className="label">
-            <span className="label-text-alt text-error">{errors.type.message}</span>
-          </label>
-        )}
-      </div>
+    <div className="w-full">
+      {/* 表單卡片 */}
+      <div className="bg-white rounded-lg shadow border-0">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6">
 
-      <div className="form-control">
-        <label className="label">
-          <span className="text-sm text-gray-600 font-medium">匯出匯款</span>
-        </label>
-        <input
-          type="text"
-          className="input input-bordered"
-          {...register('status', { required: '匯出匯款為必填項目' })}
-        />
-        {errors.status && (
-          <label className="label">
-            <span className="label-text-alt text-error">{errors.status.message}</span>
-          </label>
-        )}
-      </div>
+          {/* 基本資料區塊 */}
+          <div className="mb-8">
+            <h2 className="text-lg font-semibold text-gray-800 mb-6">編輯資料</h2>
 
-      <div className="form-control">
-        <label className="label">
-          <span className="text-sm text-gray-600 font-medium">代理轉帳</span>
-        </label>
-        <input
-          type="text"
-          className="input input-bordered"
-          {...register('target', { required: '代理轉帳為必填項目' })}
-        />
-        {errors.target && (
-          <label className="label">
-            <span className="label-text-alt text-error">{errors.target.message}</span>
-          </label>
-        )}
-      </div>
+            {/* 帳號資訊 */}
+            {data && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <div className="text-sm text-gray-600 mb-1">帳號</div>
+                <div className="text-lg font-semibold">{data.header}</div>
+              </div>
+            )}
 
-      <div className="form-control">
-        <label className="label">
-          <span className="text-sm text-gray-600 font-medium">帳號檢核</span>
-        </label>
-        <input
-          type="text"
-          className="input input-bordered"
-          {...register('limit', { required: '帳號核核為必填項目' })}
-        />
-        {errors.limit && (
-          <label className="label">
-            <span className="label-text-alt text-error">{errors.limit.message}</span>
-          </label>
-        )}
-      </div>
+            {/* 第一行：情境說明、匯出匯款 */}
+            <div className="grid grid-cols-2 gap-8 mb-6">
+              <div className="flex items-center gap-4">
+                <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+                  情境說明
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="input input-bordered h-10 w-full"
+                    {...register('type', { required: '情境說明為必填項目' })}
+                  />
+                  {errors.type && (
+                    <div className="text-xs text-red-500 mt-1">{errors.type.message}</div>
+                  )}
+                </div>
+              </div>
 
-      <div className="form-control">
-        <label className="label">
-          <span className="text-sm text-gray-600 font-medium">帳號檢核 91-96</span>
-        </label>
-        <input
-          type="text"
-          className="input input-bordered"
-          {...register('reviewer', { required: '帳號核檢 91-96為必填項目' })}
-        />
-        {errors.reviewer && (
-          <label className="label">
-            <span className="label-text-alt text-error">{errors.reviewer.message}</span>
-          </label>
-        )}
-      </div>
+              <div className="flex items-center gap-4">
+                <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+                  匯出匯款
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="input input-bordered h-10 w-full"
+                    {...register('status', { required: '匯出匯款為必填項目' })}
+                  />
+                  {errors.status && (
+                    <div className="text-xs text-red-500 mt-1">{errors.status.message}</div>
+                  )}
+                </div>
+              </div>
+            </div>
 
-      <div className="form-control">
-        <label className="label">
-          <span className="text-sm text-gray-600 font-medium">FXML 規則</span>
-        </label>
-        <input
-          type="text"
-          className="input input-bordered"
-          {...register('fxml', { required: 'FXML 規則為必填項目' })}
-        />
-        {errors.fxml && (
-          <label className="label">
-            <span className="label-text-alt text-error">{errors.fxml.message}</span>
-          </label>
-        )}
-      </div>
+            {/* 第二行：代理轉帳、帳號檢核 */}
+            <div className="grid grid-cols-2 gap-8 mb-6">
+              <div className="flex items-center gap-4">
+                <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+                  代理轉帳
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="input input-bordered h-10 w-full"
+                    {...register('target', { required: '代理轉帳為必填項目' })}
+                  />
+                  {errors.target && (
+                    <div className="text-xs text-red-500 mt-1">{errors.target.message}</div>
+                  )}
+                </div>
+              </div>
 
-      <div className="flex justify-end gap-3 pt-4">
-        <button
-          type="button"
-          className="btn btn-ghost"
-          onClick={onCancel}
-        >
-          取消
-        </button>
-        <button
-          type="submit"
-          className="btn btn-primary"
-        >
-          儲存
-        </button>
+              <div className="flex items-center gap-4">
+                <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+                  帳號檢核
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="input input-bordered h-10 w-full"
+                    {...register('limit', { required: '帳號檢核為必填項目' })}
+                  />
+                  {errors.limit && (
+                    <div className="text-xs text-red-500 mt-1">{errors.limit.message}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* 第三行：帳號檢核 91-96、FXML 規則 */}
+            <div className="grid grid-cols-2 gap-8">
+              <div className="flex items-center gap-4">
+                <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+                  帳號檢核 91-96
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="input input-bordered h-10 w-full"
+                    {...register('reviewer', { required: '帳號檢核 91-96為必填項目' })}
+                  />
+                  {errors.reviewer && (
+                    <div className="text-xs text-red-500 mt-1">{errors.reviewer.message}</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+                  FXML 規則
+                </label>
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="input input-bordered h-10 w-full"
+                    {...register('fxml', { required: 'FXML 規則為必填項目' })}
+                  />
+                  {errors.fxml && (
+                    <div className="text-xs text-red-500 mt-1">{errors.fxml.message}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 操作按鈕 */}
+          <div className="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              className="btn btn-ghost px-6"
+              onClick={onCancel}
+            >
+              <RotateCcw size={16} />
+              取消
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary px-6"
+            >
+              <Save size={16} />
+              儲存
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   )
 }
