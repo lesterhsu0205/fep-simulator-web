@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Sidebar, Header, Content, Footer } from '@/components'
+import { Header, Content, Footer } from '@/components'
+import { DynamicSidebar } from '@/components/DynamicSidebar'
 import GlobalToast from '@/components/GlobalToast.tsx'
 
 export default function App() {
@@ -47,7 +48,7 @@ export default function App() {
         </div>
         <Footer />
       </div>
-      <Sidebar />
+      <DynamicSidebar />
       <GlobalToast />
     </div>
   )

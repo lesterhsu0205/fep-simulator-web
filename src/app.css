@@ -18,6 +18,16 @@
 html,
 body {
     font-family: 'jf open 粉圓', 'Noto Sans TC', 'Noto Sans', 'sans-serif';
+    /* 移除滾動條佔位空間 */
+    overflow-x: hidden;
+    /* 只在需要時顯示垂直滾動條 */
+    overflow-y: auto;
+}
+
+/* 確保根容器不會產生不必要的滾動條 */
+#root {
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
 @plugin "daisyui";
@@ -98,7 +108,7 @@ body {
 }
 
 .sidebar-item-active {
-    @apply text-sm font-medium text-primary bg-primary/10;
+    @apply text-sm font-extrabold text-primary bg-primary/10;
 }
 
 .sidebar-item-active:active {

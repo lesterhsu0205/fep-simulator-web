@@ -198,7 +198,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <span className="text-sm font-medium whitespace-nowrap">匯出匯款</span>
                 </label>
 
-                <div className="flex items-center min-h-[40px]">
+                <div className="flex items-center">
                   {remittanceEnabled && (
                     <div className="flex items-center gap-6">
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -249,7 +249,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <span className="text-sm font-medium whitespace-nowrap">代理轉帳</span>
                 </label>
 
-                <div className="flex items-center min-h-[40px]">
+                <div className="flex items-center">
                   {proxyTransferEnabled && (
                     <div className="flex items-center gap-6">
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -290,7 +290,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
               </div>
 
               {/* 帳號驗證 */}
-              <div className="grid grid-cols-[180px_1fr] gap-8 min-h-[140px]">
+              <div className="grid grid-cols-[180px_1fr] gap-8 min-h-[40px]">
                 <label className="flex items-start gap-3 cursor-pointer pt-2">
                   <input
                     type="checkbox"
@@ -300,7 +300,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <span className="text-sm font-medium whitespace-nowrap">帳號驗證</span>
                 </label>
 
-                <div className="flex flex-col justify-start min-h-[80px] py-1">
+                <div className="flex flex-col justify-start py-1">
                   {accountVerificationEnabled && (
                     <div className="space-y-4">
                       <div className="flex items-center gap-6">
@@ -383,7 +383,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <span className="text-sm font-medium whitespace-nowrap">FXML 出金</span>
                 </label>
 
-                <div className="flex items-center min-h-[40px]">
+                <div className="flex items-center">
                   {fxmlEnabled && (
                     <div className="flex items-center gap-6">
                       <label className="flex items-center gap-2 cursor-pointer">

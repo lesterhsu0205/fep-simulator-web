@@ -1,4 +1,3 @@
-export * from '@/components/Sidebar.tsx'
 export * from '@/components/Header.tsx'
 export * from '@/components/Content.tsx'
 export * from '@/components/Footer.tsx'
