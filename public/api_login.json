@@ -1,213 +1,88 @@
+// POST /api/auth/login
+
 {
-  "username": "angus",
-  "token": "eyJhbGciOiJIUzI1NiJ9123455",
-  "role": "BS011",
-  "menus": [
-    {
-      "id": 100,
-      "code": "SYS_FUNC_MGMT",
-      "name": "系統功能管理",
-      "url": null,
-      "children": [
-        {
-          "id": 101,
-          "code": "USER_MAINT",
-          "name": "使用者維護",
-          "url": "/api/users",
-          "children": []
-        },
-        {
-          "id": 102,
-          "code": "ROLE_MAINT",
-          "name": "角色維護",
-          "url": "/api/roles",
-          "children": []
-        }
-      ]
-    },
-    {
-      "id": 110,
-      "code": "TEST_SCENARIO_MGMT",
-      "name": "測試情境管理",
-      "url": null,
-      "children": [
-        {
-          "id": 201,
-          "code": "COMMON_FUNC",
-          "name": "共用功能",
-          "url": null,
-          "children": [
-            {
-              "id": 211,
-              "code": "RECORD_QUERY",
-              "name": "收送紀錄查詢",
-              "url": "/api/logs",
-              "children": []
-            }
-          ]
-        },
-        {
-          "id": 202,
-          "code": "CREDIT_SCENARIO_MGMT",
-          "name": "聯徵情境管理",
-          "url": null,
-          "children": [
-            {
-              "id": 221,
-              "code": "CREDIT_HTML_INQ",
-              "name": "聯徵中心 HTML 發查",
-              "url": "/api/credit/html",
-              "children": []
-            },
-            {
-              "id": 222,
-              "code": "CREDIT_RAWDATA_INQ",
-              "name": "聯徵中心 RawData 發查",
-              "url": "/api/credit/raw",
-              "children": []
-            },
-            {
-              "id": 223,
-              "code": "CREDIT_FILE_UPLOAD",
-              "name": "檔案上傳",
-              "url": "/api/credit/upload",
-              "children": []
-            }
-          ]
-        },
-        {
-          "id": 203,
-          "code": "FINANCE_SCENARIO_MGMT",
-          "name": "財金情境管理",
-          "url": null,
-          "children": [
-            {
-              "id": 231,
-              "code": "TEST_SCENARIO_MAINT",
-              "name": "測試情境維護",
-              "url": "/api/finance/scenario/maint",
-              "children": []
-            },
-            {
-              "id": 232,
-              "code": "TEST_SCENARIO_CREATE",
-              "name": "測試情境建立",
-              "url": "/api/finance/scenario/create",
-              "children": []
-            },
-            {
-              "id": 233,
-              "code": "FINANCE_FILE_UPLOAD",
-              "name": "檔案上傳",
-              "url": "/api/finance/scenario/upload",
-              "children": []
-            },
-            {
-              "id": 234,
-              "code": "INCOMPLETE_SCEN_MAINT",
-              "name": "未完成查詢情境維護",
-              "url": "/api/finance/scenario/incomplete/maint",
-              "children": []
-            },
-            {
-              "id": 235,
-              "code": "INCOMPLETE_SCEN_CREATE",
-              "name": "未完成查詢情境建立",
-              "url": "/api/finance/scenario/incomplete/create",
-              "children": []
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": 120,
-      "code": "TEST_ACCT_MGMT",
-      "name": "測試帳號管理",
-      "url": null,
-      "children": [
-        {
-          "id": 241,
-          "code": "TEST_ACCT_MAINT",
-          "name": "測試帳號維護",
-          "url": "/api/test/accounts",
-          "path": "/maintain",
-          "children": []
-        },
-        {
-          "id": 242,
-          "code": "TEST_ACCT_CREATE",
-          "name": "測試帳號建立",
-          "url": "/api/test/accounts/create",
-          "path": "/create",
-          "children": []
-        }
-      ]
-    },
-    {
-      "id": 130,
-      "code": "SIM_FINANCE_MGMT",
-      "name": "模擬財金管理",
-      "url": null,
-      "children": [
-        {
-          "id": 301,
-          "code": "TXN_DETAIL_QUERY",
-          "name": "交易明細查詢",
-          "url": "/api/transactions",
-          "children": []
-        },
-        {
-          "id": 302,
-          "code": "CROSSBANK_IN_TXN",
-          "name": "跨行匯款匯入交易",
-          "url": "/api/transactions/cross-in",
-          "children": []
-        },
-        {
-          "id": 303,
-          "code": "CROSSBANK_PROXY_TXN",
-          "name": "跨行被代理交易",
-          "url": "/api/transactions/proxy",
-          "children": []
-        },
-        {
-          "id": 304,
-          "code": "FXML_IN_TXN",
-          "name": "FXML入金交易",
-          "url": "/api/transactions/fxml",
-          "children": []
-        }
-      ]
-    },
-    {
-      "id": 140,
-      "code": "AUTO_FINANCE_MGMT",
-      "name": "自主財金管理",
-      "url": null,
-      "children": [
-        {
-          "id": 401,
-          "code": "SELF_TXN_QUERY",
-          "name": "交易明細查詢",
-          "url": "/api/self/transactions",
-          "children": []
-        },
-        {
-          "id": 402,
-          "code": "CHIP_CARD_DATA_MGMT",
-          "name": "晶片卡資料管理",
-          "url": "/api/self/cards",
-          "children": []
-        },
-        {
-          "id": 403,
-          "code": "SELF_CROSSBANK_PROXY_TXN",
-          "name": "跨行被代理交易",
-          "url": "/api/self/transactions/proxy",
-          "children": []
-        }
-      ]
+    "messageCode": "00000",
+    "messageDesc": "登入成功。",
+    "messageContent": {
+      "username": "angus",
+      "token": "eyJhbGciOiJIUzI1NiJ9123455",
+      "role" : "BS011",
+      "menus": [
+          {
+            "id": 100,
+            "code": "SYS_FUNC_MGMT",
+            "name": "系統功能管理",
+            "url": null,
+            "children": [
+              { "id":101, "code":"USER_MAINT", "name":"使用者維護", "url":"/api/users", "path":"/USER_MAINT", "children":[] },
+              { "id":102, "code":"ROLE_MAINT", "name":"角色維護",   "url":"/api/roles", "path":"/ROLE_MAINT", "children":[] }
+            ]
+          },
+          {
+            "id": 110,
+            "code": "TEST_SCENARIO_MGMT",
+            "name": "測試情境管理",
+            "url": null,
+            "children": [
+              {
+                "id":201, "code":"COMMON_FUNC", "name":"共用功能",   "url":null,
+                "children":[
+                  { "id":211, "code":"RECORD_QUERY", "name":"收送紀錄查詢", "url":"/api/logs", "path":"/RECORD_QUERY", "children":[] }
+                ]
+              },
+              {
+                "id":202, "code":"CREDIT_SCENARIO_MGMT", "name":"聯徵情境管理", "url":null,
+                "children":[
+                  { "id":221, "code":"CREDIT_HTML_INQ",      "name":"聯徵中心 HTML 發查",    "url":"/api/credit/html", "path":"/CREDIT_HTML_INQ",    "children":[] },
+                  { "id":222, "code":"CREDIT_RAWDATA_INQ",   "name":"聯徵中心 RawData 發查", "url":"/api/credit/raw", "path":"/CREDIT_RAWDATA_INQ",     "children":[] },
+                  { "id":223, "code":"CREDIT_FILE_UPLOAD",   "name":"檔案上傳",            "url":"/api/credit/upload", "path":"/CREDIT_FILE_UPLOAD",  "children":[] }
+                ]
+              },
+              {
+                "id":203, "code":"FINANCE_SCENARIO_MGMT", "name":"財金情境管理", "url":null,
+                "children":[
+                  { "id":231, "code":"TEST_SCENARIO_MAINT",   "name":"測試情境維護",       "url":"/api/finance/scenario/maint", "path":"/TEST_SCENARIO_MAINT",          "children":[] },
+                  { "id":232, "code":"TEST_SCENARIO_CREATE",  "name":"測試情境建立",       "url":"/api/finance/scenario/create", "path":"/TEST_SCENARIO_CREATE",          "children":[] },
+                  { "id":233, "code":"FINANCE_FILE_UPLOAD",   "name":"檔案上傳",           "url":"/api/finance/scenario/upload", "path":"/FINANCE_FILE_UPLOAD",          "children":[] },
+                  { "id":234, "code":"INCOMPLETE_SCEN_MAINT", "name":"未完成查詢情境維護","url":"/api/finance/scenario/incomplete/maint", "path":"/INCOMPLETE_SCEN_MAINT","children":[] },
+                  { "id":235, "code":"INCOMPLETE_SCEN_CREATE","name":"未完成查詢情境建立","url":"/api/finance/scenario/incomplete/create", "path":"/INCOMPLETE_SCEN_CREATE","children":[] }
+                ]
+              }
+            ]
+          },
+          {
+            "id": 120,
+            "code": "TEST_ACCT_MGMT",
+            "name": "測試帳號管理",
+            "url": null,
+            "children": [
+              { "id":241, "code":"TEST_ACCT_MAINT",   "name":"測試帳號維護",   "url":"/api/test/accounts", "path":"/TEST_ACCT_MAINT",            "children":[] },
+              { "id":242, "code":"TEST_ACCT_CREATE",  "name":"測試帳號建立",   "url":"/api/test/accounts/create", "path":"/TEST_ACCT_CREATE",     "children":[] }
+            ]
+          },
+          {
+            "id": 130,
+            "code": "SIM_FINANCE_MGMT",
+            "name": "模擬財金管理",
+            "url": null,
+            "children": [
+              { "id":301, "code":"TXN_DETAIL_QUERY",      "name":"交易明細查詢",  "url":"/api/transactions", "path":"/TXN_DETAIL_QUERY",               "children":[] },
+              { "id":302, "code":"CROSSBANK_IN_TXN",      "name":"跨行匯款匯入交易","url":"/api/transactions/cross-in", "path":"/CROSSBANK_IN_TXN",      "children":[] },
+              { "id":303, "code":"CROSSBANK_PROXY_TXN",   "name":"跨行被代理交易",  "url":"/api/transactions/proxy", "path":"/CROSSBANK_PROXY_TXN",         "children":[] },
+              { "id":304, "code":"FXML_IN_TXN",           "name":"FXML入金交易",   "url":"/api/transactions/fxml", "path":"/FXML_IN_TXN",          "children":[] }
+            ]
+          },
+          {
+            "id": 140,
+            "code": "AUTO_FINANCE_MGMT",
+            "name": "自主財金管理",
+            "url": null,
+            "children": [
+              { "id":401, "code":"SELF_TXN_QUERY",            "name":"交易明細查詢",   "url":"/api/self/transactions", "path":"/SELF_TXN_QUERY",        "children":[] },
+              { "id":402, "code":"CHIP_CARD_DATA_MGMT",       "name":"晶片卡資料管理", "url":"/api/self/cards", "path":"/CHIP_CARD_DATA_MGMT",               "children":[] },
+              { "id":403, "code":"SELF_CROSSBANK_PROXY_TXN",  "name":"跨行被代理交易", "url":"/api/self/transactions/proxy", "path":"/SELF_CROSSBANK_PROXY_TXN",  "children":[] }
+            ]
+          }
+        ]
     }
-  ]
-}
+}        
