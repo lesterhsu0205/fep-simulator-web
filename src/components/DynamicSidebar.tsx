@@ -15,7 +15,7 @@ export function DynamicSidebar() {
       return (
         <li key={item.id}>
           <details>
-            <summary className="text-sm font-bold">{item.name}</summary>
+            <summary className="text-sm font-medium">{item.name}</summary>
             <ul>
               {item.children.map(child => renderMenuItem(child))}
             </ul>

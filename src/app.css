@@ -9,15 +9,15 @@
 @import '@fontsource/noto-sans-tc/800.css';
 @import '@fontsource/noto-sans-tc/900.css';
 
-@font-face {
+/* @font-face {
     font-family: 'jf open 粉圓';
     src: url('/fonts/jf-openhuninn-2.1.ttf') format('truetype');
     font-display: swap;
-}
+} */
 
 html,
 body {
-    font-family: 'jf open 粉圓', 'Noto Sans TC', 'Noto Sans', 'sans-serif';
+    font-family: 'Noto Sans TC', 'Noto Sans', 'sans-serif', 'jf open 粉圓';
     /* 移除滾動條佔位空間 */
     overflow-x: hidden;
     /* 只在需要時顯示垂直滾動條 */
@@ -70,7 +70,7 @@ body {
 /* 文字樣式 */
 /* 主要標題 */
 .text-heading {
-    @apply text-2xl font-bold text-neutral;
+    @apply text-2xl font-medium text-neutral;
 }
 
 /* 次要標題 */
@@ -108,7 +108,7 @@ body {
 }
 
 .sidebar-item-active {
-    @apply text-sm font-extrabold text-primary bg-primary/10;
+    @apply text-sm font-semibold text-primary bg-primary/10;
 }
 
 .sidebar-item-active:active {

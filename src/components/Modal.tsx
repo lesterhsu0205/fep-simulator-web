@@ -12,7 +12,7 @@ export default function Modal({ isOpen, modalTitle, modalContent, modalAction, o
   return (
     <dialog className="modal" open={isOpen}>
       <div className="modal-box">
-        <h3 className="font-bold text-lg">{modalTitle}</h3>
+        <h3 className="font-semibold text-lg">{modalTitle}</h3>
         <div className="py-4">
           {modalContent}
         </div>
