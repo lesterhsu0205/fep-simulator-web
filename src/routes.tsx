@@ -1,4 +1,4 @@
-import { createBrowserRouter, type RouteObject } from 'react-router-dom'
+import { createBrowserRouter, type RouteObject, Navigate } from 'react-router-dom'
 import App from '@/App.tsx'
 import ProtectedRoute from '@/components/ProtectedRoute.tsx'
 import Login from '@/components/Login.tsx'
@@ -18,6 +18,10 @@ export const routes: RouteObject[] = [
       </ProtectedRoute>
     ),
     children: [
+      {
+        index: true,
+        element: <Navigate to="/TEST_ACCT_MAINT" replace />,
+      },
       {
         path: '*',
         element: <DynamicRoutes />,

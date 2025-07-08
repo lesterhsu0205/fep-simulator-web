@@ -15,7 +15,7 @@ export function DynamicSidebar() {
       return (
         <li key={item.id}>
           <details>
-            <summary className="text-sm font-medium">{item.name}</summary>
+            <summary className="sidebar-item font-medium">{item.name}</summary>
             <ul>
               {item.children.map(child => renderMenuItem(child))}
             </ul>
@@ -25,7 +25,7 @@ export function DynamicSidebar() {
     }
 
     // 葉子節點 - 可點擊的選單項目
-    if (item.path) {
+    if (item.path && (item.path === '/TEST_ACCT_MAINT' || item.path === '/TEST_ACCT_CREATE')) {
       return (
         <li key={item.id}>
           <Link
@@ -37,13 +37,14 @@ export function DynamicSidebar() {
         </li>
       )
     }
-
-    // 沒有路徑的項目顯示為標題
-    return (
-      <li key={item.id} className="menu-title">
-        <span className="text-xs font-medium">{item.name}</span>
-      </li>
-    )
+    else {
+      // 沒有路徑的項目顯示為標題
+      return (
+        <li key={item.id} className="menu-title">
+          <span className="sidebar-item text-xs! font-medium">{item.name}</span>
+        </li>
+      )
+    }
   }
 
   if (!user || !user.menus) {
@@ -52,7 +53,7 @@ export function DynamicSidebar() {
         <label htmlFor="sidebar-drawer" className="drawer-overlay"></label>
         <aside className="bg-base-200 min-h-full w-64 shadow-lg">
           <div className="border-b border-base-300">
-            <a className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
+            <a href="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
               <Landmark size={20} className="text-primary" />
               <span className="font-bold text-primary">FEP Simulator</span>
             </a>
@@ -72,7 +73,7 @@ export function DynamicSidebar() {
       <aside className="bg-base-200 min-h-full w-64 shadow-lg">
         {/* 品牌標題 */}
         <div className="border-b border-base-300">
-          <a className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
+          <a href="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
             <Landmark size={20} className="text-primary" />
             <span className="font-bold text-primary">FEP Simulator</span>
           </a>

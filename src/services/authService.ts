@@ -6,6 +6,13 @@ export interface LoginResponse {
   menus: MenuItem[]
 }
 
+// API 完整回應結構
+export interface ApiLoginResponse {
+  messageCode: string
+  messageDesc: string
+  messageContent: LoginResponse
+}
+
 export interface MenuItem {
   id: number
   code: string
@@ -32,7 +39,15 @@ export const loginApi = async (account: string, password: string): Promise<Login
         throw new Error(`Failed to fetch login data: ${response.status}`)
       }
 
-      const loginData: LoginResponse = await response.json()
+      const apiResponse: ApiLoginResponse = await response.json()
+      console.log('📊 API 完整回應:', apiResponse)
+
+      // 檢查訊息代碼
+      if (apiResponse.messageCode !== '00000') {
+        throw new Error(`Login failed: ${apiResponse.messageDesc}`)
+      }
+
+      const loginData: LoginResponse = apiResponse.messageContent
       console.log('📊 獲取到的選單資料:', loginData)
 
       return loginData

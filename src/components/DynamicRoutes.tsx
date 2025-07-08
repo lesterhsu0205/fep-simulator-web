@@ -6,39 +6,20 @@ import type { MenuItem } from '@/services/authService'
 import DataTable from '@/components/DataTable'
 import CreateTestAccount from '@/components/CreateTestAccount'
 
-// 創建一個簡單的佔位符組件
-function PlaceholderPage({ title, code }: { title: string, code: string }) {
-  return (
-    <div className="p-6">
-      <div className="card bg-base-100 shadow-sm">
-        <div className="card-body">
-          <h2 className="card-title">{title}</h2>
-          <p className="text-base-content/70">
-            功能代碼:
-            {code}
-          </p>
-          <p>此功能頁面尚未實作，這是一個佔位符頁面。</p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export function DynamicRoutes() {
   const { user } = useAuth()
 
+  console.log('🔍 DynamicRoutes 組件已渲染')
+  console.log('👤 用戶資訊:', user)
+
   // 收集所有有 path 的選單項目
-  const collectRoutes = (menus: MenuItem[]): Array<{ path: string, name: string, code: string }> => {
-    const routes: Array<{ path: string, name: string, code: string }> = []
+  const collectRoutes = (menus: MenuItem[]): string[] => {
+    const routes: string[] = []
 
     const traverse = (items: MenuItem[]) => {
       items.forEach((item) => {
         if (item.path) {
-          routes.push({
-            path: item.path,
-            name: item.name,
-            code: item.code,
-          })
+          routes.push(item.path)
         }
         if (item.children.length > 0) {
           traverse(item.children)
@@ -51,18 +32,19 @@ export function DynamicRoutes() {
   }
 
   // 根據路徑返回對應的組件
-  const getComponentForPath = (path: string, name: string, code: string) => {
+  const getComponentForPath = (path: string) => {
     switch (path) {
-      case '/maintain':
+      case '/TEST_ACCT_MAINT':
         return <DataTable />
-      case '/create':
+      case '/TEST_ACCT_CREATE':
         return <CreateTestAccount />
       default:
-        return <PlaceholderPage title={name} code={code} />
+        return null
     }
   }
 
   if (!user || !user.menus) {
+    console.log('❌ 用戶未登入或沒有選單資訊，重定向到登入頁')
     return (
       <Routes>
         <Route path="*" element={<Navigate to="/login" replace />} />
@@ -71,27 +53,23 @@ export function DynamicRoutes() {
   }
 
   const routes = collectRoutes(user.menus)
+  console.log('📋 收集到的路由:', routes)
 
   return (
     <Routes>
-      {/* 預設重定向到第一個可用路由 */}
-      <Route
-        index
-        element={
-          routes.length > 0
-            ? <Navigate to={routes[0].path} replace />
-            : <div className="p-6 text-center">沒有可用的功能</div>
-        }
-      />
-
       {/* 動態生成的路由 */}
-      {routes.map(route => (
-        <Route
-          key={route.path}
-          path={route.path}
-          element={getComponentForPath(route.path, route.name, route.code)}
-        />
-      ))}
+      {routes.map((path) => {
+        const component = getComponentForPath(path)
+        return component
+          ? (
+              <Route
+                key={path}
+                path={path}
+                element={component}
+              />
+            )
+          : null
+      })}
 
       {/* 404 頁面 */}
       <Route
