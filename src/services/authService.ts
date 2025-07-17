@@ -27,35 +27,44 @@ export const loginApi = async (account: string, password: string): Promise<Login
   console.log('🔐 開始登入流程...', { account, password: '***' })
 
   try {
-    // 簡單的驗證邏輯（實際應用中應該由後端驗證）
+    let apiFileName = ''
+
+    // 根據不同的帳號密碼選擇對應的 API 回應文件
     if (account === 'angus' && password === '3345678') {
-      console.log('✅ 認證成功，開始獲取 mock 資料...')
-
-      // 從 public 資料夾讀取 mock 資料
-      const response = await fetch('/api_login.json')
-      console.log('📡 API 呼叫回應狀態:', response.status)
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch login data: ${response.status}`)
-      }
-
-      const apiResponse: ApiLoginResponse = await response.json()
-      console.log('📊 API 完整回應:', apiResponse)
-
-      // 檢查訊息代碼
-      if (apiResponse.messageCode !== '00000') {
-        throw new Error(`Login failed: ${apiResponse.messageDesc}`)
-      }
-
-      const loginData: LoginResponse = apiResponse.messageContent
-      console.log('📊 獲取到的選單資料:', loginData)
-
-      return loginData
+      apiFileName = '/api_login.json'
+      console.log('✅ angus 帳號認證成功，使用 api_login.json')
+    }
+    else if (account === 'lester' && password === '3345678') {
+      apiFileName = '/api_login_2.json'
+      console.log('✅ lester 帳號認證成功，使用 api_login_2.json')
     }
     else {
       console.log('❌ 認證失敗：帳號或密碼錯誤')
       throw new Error('Invalid credentials')
     }
+
+    console.log('📡 開始獲取 mock 資料...', apiFileName)
+
+    // 從 public 資料夾讀取對應的 mock 資料
+    const response = await fetch(apiFileName)
+    console.log('📡 API 呼叫回應狀態:', response.status)
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch login data: ${response.status}`)
+    }
+
+    const apiResponse: ApiLoginResponse = await response.json()
+    console.log('📊 API 完整回應:', apiResponse)
+
+    // 檢查訊息代碼
+    if (apiResponse.messageCode !== '00000') {
+      throw new Error(`Login failed: ${apiResponse.messageDesc}`)
+    }
+
+    const loginData: LoginResponse = apiResponse.messageContent
+    console.log('📊 獲取到的選單資料:', loginData)
+
+    return loginData
   }
   catch (error) {
     console.error('🚨 Login API error:', error)
