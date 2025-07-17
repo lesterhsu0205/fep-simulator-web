@@ -22,12 +22,78 @@ body {
     overflow-x: hidden;
     /* 只在需要時顯示垂直滾動條 */
     overflow-y: auto;
+    /* 防止 Windows Chrome 預留滾動條空間 */
+    scrollbar-gutter: stable;
 }
 
 /* 確保根容器不會產生不必要的滾動條 */
 #root {
     min-height: 100vh;
     overflow-x: hidden;
+}
+
+/* Windows Chrome 滾動條樣式優化 */
+* {
+    /* 防止滾動條佔位 */
+    scrollbar-gutter: auto;
+}
+
+/* 強制移除滾動條佔位空間 - 針對 Windows Chrome */
+body {
+    overflow-x: hidden !important;
+}
+
+.drawer,
+.drawer-content {
+    scrollbar-gutter: auto !important;
+}
+
+/* 自定義滾動條樣式 - 適用於 WebKit 瀏覽器 (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* 針對 Firefox 的滾動條樣式 */
+html {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* 額外的 Windows Chrome 滾動條修復 */
+@supports (scrollbar-gutter: stable) {
+    html {
+        scrollbar-gutter: auto;
+    }
+}
+
+/* 防止內容區域出現水平滾動條 */
+.drawer-content,
+.hero,
+.card,
+.navbar,
+main {
+    overflow-x: hidden;
+}
+
+/* 確保表格容器不會產生滾動條佔位 */
+.overflow-x-auto {
+    scrollbar-gutter: auto;
 }
 
 @plugin "daisyui";
