@@ -12,14 +12,19 @@ export function DynamicRoutes() {
   console.log('🔍 DynamicRoutes 組件已渲染')
   console.log('👤 用戶資訊:', user)
 
-  // 收集所有有 path 的選單項目
-  const collectRoutes = (menus: MenuItem[]): string[] => {
-    const routes: string[] = []
+  // 收集所有有 path 的選單項目，但只生成已實現的路由
+  const collectImplementedRoutes = (menus: MenuItem[]): Array<{ path: string, name: string, code: string }> => {
+    const routes: Array<{ path: string, name: string, code: string }> = []
+    const implementedPaths = ['/TEST_ACCT_MAINT', '/TEST_ACCT_CREATE']
 
     const traverse = (items: MenuItem[]) => {
       items.forEach((item) => {
-        if (item.path) {
-          routes.push(item.path)
+        if (item.path && implementedPaths.includes(item.path)) {
+          routes.push({
+            path: item.path,
+            name: item.name,
+            code: item.code,
+          })
         }
         if (item.children.length > 0) {
           traverse(item.children)
@@ -31,7 +36,7 @@ export function DynamicRoutes() {
     return routes
   }
 
-  // 根據路徑返回對應的組件
+  // 根據路徑返回對應的組件（只包含已實現的）
   const getComponentForPath = (path: string) => {
     switch (path) {
       case '/TEST_ACCT_MAINT':
@@ -52,24 +57,19 @@ export function DynamicRoutes() {
     )
   }
 
-  const routes = collectRoutes(user.menus)
-  console.log('📋 收集到的路由:', routes)
+  const routes = collectImplementedRoutes(user.menus)
+  console.log('📋 收集到的已實現路由:', routes)
 
   return (
     <Routes>
-      {/* 動態生成的路由 */}
-      {routes.map((path) => {
-        const component = getComponentForPath(path)
-        return component
-          ? (
-              <Route
-                key={path}
-                path={path}
-                element={component}
-              />
-            )
-          : null
-      })}
+      {/* 只為已實現的路由生成路由 */}
+      {routes.map(route => (
+        <Route
+          key={route.path}
+          path={route.path}
+          element={getComponentForPath(route.path)}
+        />
+      ))}
 
       {/* 404 頁面 */}
       <Route
