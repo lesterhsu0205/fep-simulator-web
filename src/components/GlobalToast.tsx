@@ -1,70 +1,56 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { CheckCircle, X, AlertCircle, Info } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext'
 
 export default function GlobalToast() {
   const { toastState, hideToast } = useToast()
-  const [shouldRender, setShouldRender] = useState(false)
 
   useEffect(() => {
     if (toastState.isVisible) {
-      setShouldRender(true)
       const timer = setTimeout(() => {
         hideToast()
       }, 3000)
-
-      return () => clearTimeout(timer)
-    }
-    else {
-      // 延遲移除組件以完成淡出動畫
-      const timer = setTimeout(() => {
-        setShouldRender(false)
-      }, 300)
-
       return () => clearTimeout(timer)
     }
   }, [toastState.isVisible, hideToast])
 
-  if (!shouldRender) return null
+  if (!toastState.isVisible) return null
 
-  const getToastStyles = () => {
+  const getAlertColor = () => {
     switch (toastState.type) {
       case 'success':
-        return 'alert-success text-white'
+        return 'alert-success'
       case 'error':
-        return 'alert-error text-white'
+        return 'alert-error'
       case 'info':
-        return 'alert-info text-white'
+        return 'alert-info'
       default:
-        return 'alert-success text-white'
+        return 'alert-success'
     }
   }
 
   const getIcon = () => {
     switch (toastState.type) {
       case 'success':
-        return <CheckCircle size={20} />
+        return <CheckCircle size={20} className="text-white" />
       case 'error':
-        return <AlertCircle size={20} />
+        return <AlertCircle size={20} className="text-white" />
       case 'info':
-        return <Info size={20} />
+        return <Info size={20} className="text-white" />
       default:
-        return <CheckCircle size={20} />
+        return <CheckCircle size={20} className="text-white" />
     }
   }
 
   return (
-    <div className="toast toast-top toast-end z-50 fixed">
-      <div
-        className={`alert ${getToastStyles()} transition-all duration-300 ease-in-out ${
-          toastState.isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-full'
-        }`}
-      >
+    <div className="toast toast-top toast-end z-50">
+      <div role="alert" className={`alert ${getAlertColor()} text-white`}>
         {getIcon()}
-        <span>{toastState.message}</span>
+        <span className="text-white">{toastState.message}</span>
         <button
-          className="btn btn-ghost btn-xs ml-2"
+          className="btn btn-ghost btn-xs text-white hover:text-gray-200"
           onClick={hideToast}
+          aria-label="關閉通知"
         >
           <X size={16} />
         </button>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Header, Content, Footer } from '@/components'
 import { DynamicSidebar } from '@/components/DynamicSidebar'
-import GlobalToast from '@/components/GlobalToast.tsx'
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
@@ -49,7 +48,6 @@ export default function App() {
         <Footer />
       </div>
       <DynamicSidebar />
-      <GlobalToast />
     </div>
   )
 }
