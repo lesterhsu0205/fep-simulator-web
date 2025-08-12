@@ -1,54 +1,123 @@
-# React + TypeScript + Vite
+# FEP Simulator Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+一個用於模擬前置作業處理器（Front End Processor）的網頁應用程式，主要用於銀行或金融機構的測試帳號管理和交易模擬。
 
-Currently, two official plugins are available:
+## 功能特色
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **測試帳號管理**：提供完整的測試帳號維護功能
+- **動態路由系統**：支援動態路由配置和側邊欄導航
+- **用戶認證**：內建登入系統和受保護的路由
+- **響應式設計**：支援桌面和行動裝置的響應式介面
+- **資料表格**：具備搜尋、排序和編輯功能的資料表格
+- **表單驗證**：使用 React Hook Form 進行表單驗證和管理
+- **Toast 通知**：全域 Toast 通知系統
 
-## Expanding the ESLint configuration
+## 技術架構
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **前端框架**：React 19 + TypeScript
+- **建構工具**：Vite 6
+- **路由管理**：React Router v7
+- **UI 框架**：DaisyUI + TailwindCSS v4
+- **表單處理**：React Hook Form
+- **HTTP 客戶端**：Axios
+- **圖示庫**：Lucide React
+- **字型**：思源黑體（Noto Sans TC）
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 安裝說明
+
+### 系統需求
+
+- Node.js >= 18
+- pnpm（推薦）或 npm/yarn
+
+### 安裝步驟
+
+1. 複製專案
+```bash
+git clone <repository-url>
+cd feb-simulator-web
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+2. 安裝相依套件
+```bash
+pnpm install
 ```
+
+3. 啟動開發伺服器
+```bash
+pnpm run local
+```
+
+4. 開啟瀏覽器訪問 `http://localhost:5173`
+
+## 開發指令
+
+- `pnpm run local` - 啟動開發伺服器
+- `pnpm run build` - 建構生產版本
+- `pnpm run lint` - 執行 ESLint 檢查
+- `pnpm run preview` - 預覽建構後的應用程式
+
+## 專案結構
+
+```
+src/
+├── components/          # React 元件
+│   ├── Content.tsx     # 主要內容元件
+│   ├── DataTable.tsx   # 資料表格元件
+│   ├── DynamicRoutes.tsx # 動態路由元件
+│   ├── DynamicSidebar.tsx # 動態側邊欄
+│   ├── Header.tsx      # 頁面標題元件
+│   ├── Login.tsx       # 登入元件
+│   └── ...
+├── contexts/           # React Context
+│   ├── AuthContext.tsx # 認證上下文
+│   └── ToastContext.tsx # Toast 通知上下文
+├── services/           # API 服務
+│   └── authService.ts  # 認證服務
+├── assets/             # 靜態資源
+│   └── data.json       # 測試資料
+├── App.tsx             # 主應用程式元件
+├── Main.tsx            # 應用程式入口點
+└── routes.tsx          # 路由配置
+```
+
+## 登入資訊
+
+測試用登入帳號：
+- 帳號：lester
+- 密碼：password
+
+## 開發說明
+
+### 路由系統
+
+本專案使用動態路由系統，路由配置在 `routes.tsx` 中定義。主要路由包括：
+- `/login` - 登入頁面
+- `/TEST_ACCT_MAINT` - 測試帳號維護（預設首頁）
+
+### 認證系統
+
+使用 React Context 進行狀態管理，所有受保護的路由都會經過 `ProtectedRoute` 元件驗證。
+
+### 樣式系統
+
+- 使用 TailwindCSS v4 作為 CSS 框架
+- DaisyUI 提供預設的 UI 元件樣式
+- 支援深色/淺色主題切換
+- 響應式設計適配不同螢幕尺寸
+
+### 表單處理
+
+使用 React Hook Form 處理表單驗證和提交，提供良好的使用者體驗和效能。
+
+## 貢獻指南
+
+1. Fork 本專案
+2. 建立新的功能分支 (`git checkout -b feature/new-feature`)
+3. 提交變更 (`git commit -am 'Add new feature'`)
+4. 推送到分支 (`git push origin feature/new-feature`)
+5. 建立 Pull Request
+
+## 授權條款
+
+本專案採用私有授權，請勿未經授權使用或分發。
