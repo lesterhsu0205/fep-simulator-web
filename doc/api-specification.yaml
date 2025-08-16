@@ -1,0 +1,1592 @@
+openapi: 3.0.3
+info:
+  title: FEP Simulator API
+  description: |
+    FEP (Front End Processor) Simulator API 規格文件
+    
+    本系統提供使用者管理、財金和聯徵情境模擬功能，用於測試交易情境設定和查詢。
+    
+    ## 主要功能模組
+    - **使用者管理**: 使用者認證、建立與權限管理
+    - **財金情境管理**: 模擬財金交易情境（通匯、轉帳、核驗、FXML）
+    - **聯徵情境管理**: 模擬聯徵查詢情境（個人信用報告、企業信用報告等）
+    
+    ## 認證機制
+    - 使用 JWT (JSON Web Token) 進行身份認證
+    - Token 需在 HTTP Header 中的 Authorization 欄位提供，格式：`Bearer {token}`
+    
+    ## 回應格式
+    所有 API 回應皆使用統一格式：
+    ```json
+    {
+      "messageCode": "回應代碼",
+      "messageDesc": "回應描述",
+      "messageContent": "回應內容（可為 null）"
+    }
+    ```
+    
+    ## 重要變更 (v1.2.0)
+    **使用者註冊公開化**: `/users/create` 端點已調整為公開端點：
+    - **無需認證**: 建立使用者帳號不再需要 JWT Token 認證
+    - **支援註冊**: 允許任何人建立新的使用者帳戶
+    - **簡化流程**: 移除了註冊過程中的身份驗證要求
+    
+    ## 歷史變更 (v1.1.0)
+    **null 值處理優化**: 所有查詢類型的 API 回應已進行重要改善：
+    - **完整欄位回應**: 所有 response 欄位都會包含在回應中，不會省略任何欄位
+    - **明確 null 值**: null 值會明確顯示為 `null`，而不是省略該欄位
+    - **一致性保證**: 前端可以依賴所有欄位都會存在，只需要檢查值是否為 null
+    - **提升可預測性**: 這個變更大幅提升了 API 回應的一致性和可預測性
+    
+    ## 錯誤代碼說明
+    - `00000`: 交易成功
+    - `9998`: 參數驗證失敗
+    - `9999`: 交易失敗/業務邏輯錯誤
+    - `9997`: Token 已過期
+    - `9996`: Token 不存在
+    
+  version: 1.2.0
+  contact:
+    name: LINE Bank FEP Simulator Team
+    email: support@linebank.com
+  license:
+    name: Private
+    
+servers:
+  - url: https://{domain_name}/fes/api
+    description: Production server
+    variables:
+      domain_name:
+        default: example.com
+        description: Domain name of the FEP Simulator service
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: 使用者管理
+    description: 使用者認證、建立與管理相關 API
+  - name: 財金情境管理
+    description: 財金交易情境設定與查詢 API
+  - name: 聯徵情境管理  
+    description: 聯徵查詢情境設定與查詢 API
+
+paths:
+  # 使用者管理 API
+  /auth/login:
+    post:
+      tags:
+        - 使用者管理
+      summary: 使用者登入
+      description: |
+        使用者登入系統，驗證身份並取得 JWT Token
+        
+        ## 功能特色
+        - 使用 SHA-256 密碼驗證
+        - 根據帳號類型配發不同期限的 Token
+        - 回傳使用者角色和功能選單權限
+        - 支援最多3層的功能選單結構
+        
+        ## 處理流程
+        1. 驗證使用者帳號是否存在
+        2. 使用 SHA-256 驗證密碼
+        3. 依據帳號類型配發 Token 期限
+        4. 查詢使用者資訊、角色和功能權限
+        5. 回傳完整的登入資訊和功能選單
+      operationId: userLogin
+      security: []  # 登入不需要認證
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+            examples:
+              login_example:
+                summary: 使用者登入範例
+                value:
+                  username: "BK00361"
+                  password: "a222222"
+      responses:
+        '200':
+          description: 登入結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                success:
+                  summary: 登入成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "登入成功"
+                    messageContent:
+                      username: "BK00361"
+                      token: "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50VHlwZSI6ImFkbWluIiwicm9sZUNvZGUiOiJCUzAxMSIsInVzZXJQdyI6IiQyYSQxMCREVmh4OUpmcFNEOWZzM0Y4OG90dlV1RkQzaDBzdW9RQkFhQ0FSWVFRVDY2eE0uUjVLUVhreSIsInVzZXJOYW1lIjoiQkswMDM2MSIsInVzZXJJZCI6MSwic3ViIjoiMSIsImlhdCI6MTc1MTUyMTk5NSwiZXhwIjoxNzUxNTI1NTk1fQ.9zJ7Sfxv6ui8YsE-xKhRtBLKhmaykEAH5PeYtSsum1n2aFD0pbhkNPnwwix3DL3nq4MIzhlZBM6LkiBZ8GRosg"
+                      role: "BS011"
+                      menus:
+                        - path: null
+                          code: "SYS_FUNC_MGMT"
+                          children:
+                            - path: "/USER_MAINT"
+                              code: "USER_MAINT"
+                              children: []
+                              name: "使用者維護"
+                              id: 101
+                              url: "/api/users"
+                            - path: "/ROLE_MAINT"
+                              code: "ROLE_MAINT"
+                              children: []
+                              name: "角色維護"
+                              id: 102
+                              url: "/api/roles"
+                          name: "系統功能管理"
+                          id: 100
+                          url: null
+                login_failed:
+                  summary: 登入失敗
+                  value:
+                    messageCode: "9999"
+                    messageDesc: "登入失敗"
+                    messageContent: null
+                system_error:
+                  summary: 系統錯誤
+                  value:
+                    messageCode: "-1"
+                    messageDesc: "系統類錯誤"
+                    messageContent: null
+
+  /users/create:
+    post:
+      tags:
+        - 使用者管理
+      summary: 使用者註冊
+      description: |
+        公開的使用者註冊端點，允許任何人建立新的使用者帳號
+        
+        ## 功能特色
+        - 使用者名稱唯一性驗證
+        - SHA-256 密碼加密存儲
+        - 支援帳號類型和角色權限設定
+        - 完整的參數驗證和錯誤提示
+        
+        ## 處理流程
+        1. 驗證使用者名稱唯一性
+        2. 驗證必填欄位和格式
+        3. 使用 SHA-256 加密密碼
+        4. 建立使用者帳號記錄
+        5. 設定帳號類型和角色權限
+        
+        ## 安全性考量
+        - **公開端點**: 此端點不需要 JWT Token 認證
+        - **開放註冊**: 任何人都可以建立新的使用者帳戶
+        - **輸入驗證**: 所有輸入參數都會進行嚴格驗證
+      operationId: createUser
+      security: []  # 註冊不需要認證
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+            examples:
+              create_full_example:
+                summary: 完整參數建立使用者
+                value:
+                  username: "BK00361"
+                  password: "a222222"
+                  email: "angus.kao@linebank.com.tw"
+                  accountType: "user"
+                  roleCode: "BS011"
+              create_minimal_example:
+                summary: 最小必要參數建立使用者
+                value:
+                  username: "testuser001"
+                  password: "testpass123"
+                  accountType: "user"
+      responses:
+        '200':
+          description: 建立結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                success:
+                  summary: 建立成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "新增成功。"
+                    messageContent: null
+                username_exists:
+                  summary: 使用者名稱重複
+                  value:
+                    messageCode: "9999"
+                    messageDesc: "使用者名稱已存在"
+                    messageContent: null
+                validation_error:
+                  summary: 參數驗證失敗
+                  value:
+                    messageCode: "9998"
+                    messageDesc: "參數驗證失敗"
+                    messageContent:
+                      errors:
+                        - field: "username"
+                          message: "使用者名稱不能為空"
+                        - field: "password"
+                          message: "密碼不能為空"
+                        - field: "accountType"
+                          message: "帳號類型不能為空"
+                system_error:
+                  summary: 系統錯誤
+                  value:
+                    messageCode: "-1"
+                    messageDesc: "系統類錯誤"
+                    messageContent: null
+
+  # 財金情境管理 API
+  /finance/scenario/maint:
+    post:
+      tags:
+        - 財金情境管理
+      summary: 財金情境維護（統一端點）
+      description: |
+        統一的財金情境維護端點，支援新增(A)、修改(U)、刪除(D)操作
+        
+        ## 操作類型
+        - **A (新增)**: 建立新的財金情境，帳號必須唯一
+        - **U (修改)**: 更新既有財金情境，保留原始建立資訊
+        - **D (刪除)**: 刪除指定ID的財金情境（不可逆）
+        
+        ## 欄位驗證規則
+        - A操作時：action、account、situationDesc 為必填
+        - U操作時：action、id、account、situationDesc 為必填
+        - D操作時：action、id 為必填
+      operationId: maintainFiscSituation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FiscSituationMaintenanceRequest'
+            examples:
+              create_example:
+                summary: 新增財金情境
+                value:
+                  action: "A"
+                  account: "123456789012"
+                  situationDesc: "測試通匯交易成功情境"
+                  memo: "用於測試一般通匯交易成功流程"
+                  isRmt: true
+                  rmtResultCode: "00000"
+                  isAtm: false
+                  atmVerify: false
+                  isFxml: false
+              update_example:
+                summary: 修改財金情境
+                value:
+                  action: "U"
+                  id: 1
+                  account: "123456789012"
+                  situationDesc: "更新後的測試情境"
+                  memo: "修改後的補充說明"
+                  isRmt: true
+                  rmtResultCode: "00000"
+                  isAtm: true
+                  atmResultCode: "00000"
+              delete_example:
+                summary: 刪除財金情境
+                value:
+                  action: "D"
+                  id: 1
+      responses:
+        '200':
+          description: 操作結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                create_success:
+                  summary: 新增成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "交易成功"
+                    messageContent:
+                      fiscSituation:
+                        id: 1
+                        account: "123456789012"
+                        situationDesc: "測試通匯交易成功情境"
+                        memo: "用於測試一般通匯交易成功流程"
+                        isRmt: true
+                        rmtResultCode: "00000"
+                        isAtm: false
+                        atmResultCode: null
+                        atmVerify: false
+                        atmVerifyRCode: null
+                        atmVerifyRDetail: null
+                        isFxml: false
+                        fxmlResultCode: null
+                        creator: "john.doe"
+                        createdAt: "2025/01/09 10:30:45"
+                        updater: "john.doe"
+                        updatedAt: "2025/01/09 10:30:45"
+                delete_success:
+                  summary: 刪除成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "交易成功"
+                    messageContent: null
+                validation_error:
+                  summary: 參數驗證失敗
+                  value:
+                    messageCode: "9999"
+                    messageDesc: "帳號不能為空"
+                    messageContent: null
+
+  /finance/scenario/list:
+    get:
+      tags:
+        - 財金情境管理
+      summary: 查詢財金情境列表
+      description: |
+        查詢所有財金情境設定列表，支援分頁和條件篩選
+        
+        ## 查詢條件
+        - **account**: 帳號模糊查詢（支援部分比對）
+        - **creator**: 建立者精確查詢（完全比對）
+        
+        ## 分頁機制
+        - 未指定分頁參數時，回傳所有符合條件的資料
+        - 指定分頁參數時，使用分頁查詢
+        - 結果依建立時間降序排列（最新的在前）
+      operationId: getFiscSituationList
+      parameters:
+        - name: page
+          in: query
+          description: 頁碼，從1開始
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+            example: 1
+        - name: pageSize
+          in: query
+          description: 每頁筆數
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+            example: 10
+        - name: account
+          in: query
+          description: 帳號模糊查詢
+          required: false
+          schema:
+            type: string
+            maxLength: 50
+            example: "123"
+        - name: creator
+          in: query
+          description: 建立者篩選
+          required: false
+          schema:
+            type: string
+            maxLength: 50
+            example: "john"
+      responses:
+        '200':
+          description: 查詢結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                success:
+                  summary: 查詢成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "查詢成功"
+                    messageContent:
+                      query:
+                        account: "123"
+                        creator: "john"
+                      pagination:
+                        currentPage: 1
+                        itemsPerPage: 10
+                        totalItems: 25
+                        totalPages: 3
+                        hasNextPage: true
+                        hasPrevPage: false
+                      fiscSituations:
+                        - id: 1
+                          account: "123456789012345"
+                          situationDesc: "測試使用末日預言 1"
+                          isRmt: true
+                          rmtResultCode: "00000"
+                          isAtm: false
+                          atmResultCode: null
+                          atmVerify: true
+                          atmVerifyRCode: "00000"
+                          atmVerifyRDetail: "000001"
+                          isFxml: true
+                          fxmlResultCode: "310"
+                          updater: "BK00361"
+                          updatedAt: "2025/07/05 05:00:00"
+
+  /finance/scenario/{id}:
+    get:
+      tags:
+        - 財金情境管理
+      summary: 依ID查詢單筆財金情境
+      description: |
+        查詢特定ID的財金情境詳細資訊
+        
+        **重要變更 (v1.1.0)**: 所有回應欄位都會包含在結果中，null 值會明確顯示為 `null`，提升 API 回應的一致性和可預測性。
+      operationId: getFiscSituationById
+      parameters:
+        - name: id
+          in: path
+          description: 財金情境ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: 查詢結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                success:
+                  summary: 查詢成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "交易成功"
+                    messageContent:
+                      fiscSituation:
+                        id: 1
+                        account: "123456789012"
+                        situationDesc: "測試通匯交易成功情境"
+                        memo: null
+                        isRmt: true
+                        rmtResultCode: "00000"
+                        isAtm: false
+                        atmResultCode: null
+                        atmVerify: false
+                        atmVerifyRCode: null
+                        atmVerifyRDetail: null
+                        isFxml: false
+                        fxmlResultCode: null
+                        creator: "john.doe"
+                        createdAt: "2025/01/09 10:30:45"
+                        updater: "john.doe"
+                        updatedAt: "2025/01/09 10:30:45"
+                not_found:
+                  summary: 資料不存在
+                  value:
+                    messageCode: "9999"
+                    messageDesc: "財金情境不存在"
+                    messageContent: null
+
+  /finance/scenario/query:
+    get:
+      tags:
+        - 財金情境管理
+      summary: 依帳號查詢財金情境
+      description: |
+        依帳號查詢財金情境詳細資訊
+        
+        **重要變更 (v1.1.0)**: 
+        - API 路徑已改為 query 參數形式 `/finance/scenario/query?account=123456`
+        - 所有回應欄位都會包含在結果中，null 值會明確顯示為 `null`，提升 API 回應的一致性和可預測性。
+      operationId: getFiscSituationByAccount
+      parameters:
+        - name: account
+          in: query
+          description: 財金測試帳號
+          required: true
+          schema:
+            type: string
+            maxLength: 16
+            example: "123456789012"
+      responses:
+        '200':
+          description: 查詢結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                success:
+                  summary: 查詢成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "交易成功"
+                    messageContent:
+                      fiscSituation:
+                        id: 1
+                        account: "123456789012"
+                        situationDesc: "測試通匯交易成功情境"
+                        memo: null
+                        isRmt: true
+                        rmtResultCode: "00000"
+                        isAtm: false
+                        atmResultCode: null
+                        atmVerify: false
+                        atmVerifyRCode: null
+                        atmVerifyRDetail: null
+                        isFxml: false
+                        fxmlResultCode: null
+                        creator: "john.doe"
+                        createdAt: "2025/01/09 10:30:45"
+                        updater: "john.doe"
+                        updatedAt: "2025/01/09 10:30:45"
+                not_found:
+                  summary: 資料不存在
+                  value:
+                    messageCode: "9999"
+                    messageDesc: "財金情境不存在"
+                    messageContent: null
+
+  /finance/scenario/create:
+    post:
+      tags:
+        - 財金情境管理
+      summary: 建立財金情境（舊版端點）
+      description: |
+        建立新的財金情境設定，支援多種交易類型配置
+        
+        **注意**: 建議使用 `/maint` 端點的 A (新增) 操作
+      operationId: createFiscSituation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FiscSituationRequest'
+      responses:
+        '200':
+          description: 建立結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+
+  # 聯徵情境管理 API
+  /credit/maint:
+    post:
+      tags:
+        - 聯徵情境管理
+      summary: 聯徵情境維護（統一端點）
+      description: |
+        統一的聯徵情境維護端點，支援新增(A)、修改(U)、刪除(D)操作
+        
+        ## 操作類型
+        - **A (新增)**: 建立新的聯徵情境，查詢組合必須唯一
+        - **U (修改)**: 更新既有聯徵情境，保留原始建立資訊
+        - **D (刪除)**: 刪除指定ID的聯徵情境（不可逆）
+        
+        ## 組合唯一性
+        查詢組合 (txid + inqueryKey1 + inqueryKey2 + returnCode + forceToJcic) 必須唯一
+        
+        ## forceToJcic 機制
+        - **Y (強制發查)**: jcicDataDate 在查詢時自動設為當日
+        - **N (歷史資料)**: 建議設定 jcicDataDate 和 jcicData
+      operationId: maintainJcicSituation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JcicSituationMaintenanceRequest'
+            examples:
+              create_example:
+                summary: 新增聯徵情境
+                value:
+                  action: "A"
+                  txid: "QJ01"
+                  inqueryKey1: "A123456789"
+                  inqueryKey2: "19801010"
+                  returnCode: "D0000"
+                  forceToJcic: "Y"
+                  jcicData: "dGVzdERhdGE="
+                  situationDesc: "新增個人信用報告即時查詢測試"
+                  memo: "用於測試正常的聯徵查詢流程"
+              update_example:
+                summary: 修改聯徵情境
+                value:
+                  action: "U"
+                  id: 1
+                  txid: "QJ01"
+                  inqueryKey1: "A123456789"
+                  inqueryKey2: "19801010"
+                  returnCode: "D9999"
+                  forceToJcic: "Y"
+                  jcicData: "bm9EYXRhRm91bmQ="
+                  situationDesc: "修改為查無資料測試情境"
+                  memo: "測試查無資料的回應處理"
+              delete_example:
+                summary: 刪除聯徵情境
+                value:
+                  action: "D"
+                  id: 1
+      responses:
+        '200':
+          description: 操作結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+
+  /credit/list:
+    get:
+      tags:
+        - 聯徵情境管理
+      summary: 查詢聯徵情境列表
+      description: |
+        查詢所有聯徵測試情境設定列表，支援多重條件篩選和分頁
+        
+        ## 查詢條件
+        - **模糊查詢欄位**: inqueryKey1、inqueryKey2（支援部分比對）
+        - **精確查詢欄位**: txid、returnCode、forceToJcic、creator（完全比對）
+        - **組合查詢邏輯**: 所有提供的條件都會以 AND 邏輯組合
+        
+        ## 資料優化
+        - 列表查詢中的 jcicData 顯示為 "******" 摘要版本以提升效能
+        - 完整資料請使用單筆查詢 API
+      operationId: getJcicSituationList
+      parameters:
+        - name: page
+          in: query
+          description: 頁碼，從1開始
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: pageSize
+          in: query
+          description: 每頁筆數
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+        - name: txid
+          in: query
+          description: 交易代碼篩選
+          required: false
+          schema:
+            type: string
+            maxLength: 10
+            example: "QJ01"
+        - name: inqueryKey1
+          in: query
+          description: 查詢條件1模糊查詢
+          required: false
+          schema:
+            type: string
+            maxLength: 60
+            example: "A101010107"
+        - name: inqueryKey2
+          in: query
+          description: 查詢條件2模糊查詢
+          required: false
+          schema:
+            type: string
+            maxLength: 15
+            example: "19801010"
+        - name: returnCode
+          in: query
+          description: 回應代碼篩選
+          required: false
+          schema:
+            type: string
+            maxLength: 5
+            example: "D0000"
+        - name: forceToJcic
+          in: query
+          description: 強制發查flag篩選
+          required: false
+          schema:
+            type: string
+            enum: ["Y", "N"]
+            example: "Y"
+        - name: creator
+          in: query
+          description: 建立者篩選
+          required: false
+          schema:
+            type: string
+            maxLength: 100
+            example: "BK00361"
+      responses:
+        '200':
+          description: 查詢結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                success:
+                  summary: 查詢成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "查詢成功"
+                    messageContent:
+                      query:
+                        txid: "QJ01"
+                        inqueryKey1: "A101010107"
+                        inqueryKey2: ""
+                        returnCode: "D0000"
+                        forceToJcic: "Y"
+                        creator: "BK00361"
+                      pagination:
+                        currentPage: 1
+                        itemsPerPage: 10
+                        totalItems: 25
+                        totalPages: 3
+                        hasNextPage: true
+                        hasPrevPage: false
+                      jcicSituations:
+                        - id: 1
+                          txid: "QJ01"
+                          inqueryKey1: "A101010107"
+                          inqueryKey2: ""
+                          returnCode: "D0000"
+                          forceToJcic: "Y"
+                          jcicDataDate: ""
+                          jcicData: "******"
+                          situationDesc: "聯徵查詢_A101010107_QJ01_強制發查_成功"
+                          updater: "BK00361"
+                          updatedAt: "2025/07/05 05:00:00"
+
+  /credit/{id}:
+    get:
+      tags:
+        - 聯徵情境管理
+      summary: 依ID查詢單筆聯徵情境
+      description: |
+        查詢特定ID的聯徵情境詳細資訊（包含完整的jcicData）
+        
+        **重要變更 (v1.1.0)**: 所有回應欄位都會包含在結果中，null 值會明確顯示為 `null`，提升 API 回應的一致性和可預測性。
+      operationId: getJcicSituationById
+      parameters:
+        - name: id
+          in: path
+          description: 聯徵情境ID
+          required: true
+          schema:
+            type: integer
+            format: int64
+            example: 1
+      responses:
+        '200':
+          description: 查詢結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                success:
+                  summary: 查詢成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "交易成功"
+                    messageContent:
+                      jcicSituation:
+                        id: 1
+                        txid: "QJ01"
+                        inqueryKey1: "A123456789"
+                        inqueryKey2: "19801010"
+                        returnCode: "D0000"
+                        forceToJcic: "Y"
+                        jcicDataDate: "20250101"
+                        jcicData: "dGVzdERhdGE="
+                        situationDesc: "聯徵查詢_A123456789_QJ01_強制發查_成功"
+                        memo: null
+                        creater: "BK00361"
+                        createdAt: "2025/07/05 05:00:00"
+                        updater: "BK00361"
+                        updatedAt: "2025/07/05 05:00:00"
+                not_found:
+                  summary: 資料不存在
+                  value:
+                    messageCode: "9999"
+                    messageDesc: "聯徵情境不存在"
+                    messageContent: null
+
+  /credit/query:
+    get:
+      tags:
+        - 聯徵情境管理
+      summary: 依查詢組合查詢聯徵情境
+      description: |
+        依聯徵查詢組合條件精確查詢情境
+        
+        **重要變更 (v1.1.0)**: 所有回應欄位都會包含在結果中，null 值會明確顯示為 `null`，提升 API 回應的一致性和可預測性。
+      operationId: getJcicSituationByQuery
+      parameters:
+        - name: txid
+          in: query
+          description: 交易代碼
+          required: true
+          schema:
+            type: string
+            example: "QJ01"
+        - name: inqueryKey1
+          in: query
+          description: 查詢條件1
+          required: true
+          schema:
+            type: string
+            example: "A123456789"
+        - name: inqueryKey2
+          in: query
+          description: 查詢條件2
+          required: false
+          schema:
+            type: string
+            example: "19801010"
+        - name: returnCode
+          in: query
+          description: 回應代碼
+          required: true
+          schema:
+            type: string
+            example: "D0000"
+        - name: forceToJcic
+          in: query
+          description: 強制發查旗標
+          required: true
+          schema:
+            type: string
+            enum: ["Y", "N"]
+            example: "Y"
+      responses:
+        '200':
+          description: 查詢結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+              examples:
+                success:
+                  summary: 查詢成功
+                  value:
+                    messageCode: "00000"
+                    messageDesc: "交易成功"
+                    messageContent:
+                      jcicSituation:
+                        id: 1
+                        txid: "QJ01"
+                        inqueryKey1: "A123456789"
+                        inqueryKey2: "19801010"
+                        returnCode: "D0000"
+                        forceToJcic: "Y"
+                        jcicDataDate: "20250101"
+                        jcicData: "dGVzdERhdGE="
+                        situationDesc: "聯徵查詢_A123456789_QJ01_強制發查_成功"
+                        memo: null
+                        creater: "BK00361"
+                        createdAt: "2025/07/05 05:00:00"
+                        updater: "BK00361"
+                        updatedAt: "2025/07/05 05:00:00"
+                not_found:
+                  summary: 資料不存在
+                  value:
+                    messageCode: "9999"
+                    messageDesc: "聯徵情境不存在"
+                    messageContent: null
+
+  /credit/create:
+    post:
+      tags:
+        - 聯徵情境管理
+      summary: 建立聯徵情境（舊版端點）
+      description: |
+        建立新的聯徵測試情境設定，用於模擬不同聯徵查詢情境
+        
+        **注意**: 建議使用 `/maint` 端點的 A (新增) 操作
+      operationId: createJcicSituation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JcicSituationRequest'
+      responses:
+        '200':
+          description: 建立結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT Token 認證，格式：`Bearer {token}`
+
+  schemas:
+    CommResponse:
+      type: object
+      description: 統一回應格式
+      properties:
+        messageCode:
+          type: string
+          description: 回應代碼
+          example: "00000"
+        messageDesc:
+          type: string
+          description: 回應描述
+          example: "交易成功"
+        messageContent:
+          type: object
+          description: 回應內容（可為 null）
+          nullable: true
+          additionalProperties: true
+      required:
+        - messageCode
+        - messageDesc
+
+    ValidationError:
+      type: object
+      description: 參數驗證錯誤詳情
+      properties:
+        field:
+          type: string
+          description: 錯誤欄位名稱
+          example: "account"
+        message:
+          type: string
+          description: 錯誤訊息
+          example: "帳號不能為空"
+      required:
+        - field
+        - message
+
+    # 使用者管理相關 Schema
+    UserLoginRequest:
+      type: object
+      description: 使用者登入請求
+      properties:
+        username:
+          type: string
+          description: 使用者名稱
+          minLength: 1
+          maxLength: 50
+          example: "BK00361"
+        password:
+          type: string
+          description: 使用者密碼
+          minLength: 1
+          maxLength: 100
+          example: "a222222"
+      required:
+        - username
+        - password
+
+    UserCreateRequest:
+      type: object
+      description: 使用者建立請求
+      properties:
+        username:
+          type: string
+          description: 使用者名稱，系統內必須唯一
+          minLength: 1
+          maxLength: 50
+          example: "BK00361"
+        password:
+          type: string
+          description: 使用者密碼，將使用SHA-256加密存儲
+          minLength: 1
+          maxLength: 100
+          example: "a222222"
+        email:
+          type: string
+          description: 使用者電子郵件地址
+          format: email
+          maxLength: 100
+          nullable: true
+          example: "angus.kao@linebank.com.tw"
+        accountType:
+          type: string
+          description: 帳號類型，用於區分使用者權限級別
+          minLength: 1
+          maxLength: 20
+          example: "user"
+        roleCode:
+          type: string
+          description: 部門代號，用於角色權限分配
+          maxLength: 20
+          nullable: true
+          example: "BS011"
+      required:
+        - username
+        - password
+        - accountType
+
+    UserLoginResponse:
+      type: object
+      description: 使用者登入成功回應內容
+      properties:
+        username:
+          type: string
+          description: 使用者名稱
+          example: "BK00361"
+        token:
+          type: string
+          description: JWT Token，後續API請求需要此值
+          example: "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50VHlwZSI6ImFkbWluIi..."
+        role:
+          type: string
+          description: 使用者角色代碼
+          example: "BS011"
+        menus:
+          type: array
+          description: 使用者功能選單列表，最多3層結構
+          items:
+            $ref: '#/components/schemas/MenuItemResponse'
+      required:
+        - username
+        - token
+        - role
+        - menus
+
+    MenuItemResponse:
+      type: object
+      description: 功能選單項目
+      properties:
+        id:
+          type: integer
+          description: 功能序號
+          example: 100
+        code:
+          type: string
+          description: 功能代碼
+          example: "SYS_FUNC_MGMT"
+        name:
+          type: string
+          description: 功能名稱
+          example: "系統功能管理"
+        url:
+          type: string
+          description: 功能URL
+          nullable: true
+          example: null
+        path:
+          type: string
+          description: 功能路由路徑
+          nullable: true
+          example: null
+        children:
+          type: array
+          description: 子功能選單
+          items:
+            $ref: '#/components/schemas/MenuItemResponse'
+          nullable: true
+      required:
+        - id
+        - code
+        - name
+        - children
+
+    # 財金情境相關 Schema
+    FiscSituationRequest:
+      type: object
+      description: 財金情境建立請求
+      properties:
+        account:
+          type: string
+          description: 測試帳號，必須唯一
+          maxLength: 16
+          example: "123456789012"
+        situationDesc:
+          type: string
+          description: 情境描述說明
+          maxLength: 100
+          example: "測試通匯成功情境"
+        memo:
+          type: string
+          description: 補充說明備註
+          maxLength: 500
+          example: "用於測試流程"
+          nullable: true
+        isRmt:
+          type: boolean
+          description: 通匯交易是否啟用
+          nullable: true
+          example: true
+        rmtResultCode:
+          type: string
+          description: 通匯交易回應代碼
+          maxLength: 5
+          nullable: true
+          example: "00000"
+        isAtm:
+          type: boolean
+          description: 轉帳交易是否啟用
+          nullable: true
+          example: false
+        atmResultCode:
+          type: string
+          description: 轉帳交易回應代碼
+          maxLength: 5
+          nullable: true
+          example: "00000"
+        atmVerify:
+          type: boolean
+          description: 核驗交易是否啟用
+          nullable: true
+          example: true
+        atmVerifyRCode:
+          type: string
+          description: 核驗交易回應代碼
+          maxLength: 5
+          nullable: true
+          example: "00000"
+        atmVerifyRDetail:
+          type: string
+          description: 核驗結果詳情(91~96)
+          maxLength: 6
+          nullable: true
+          example: "000001"
+        isFxml:
+          type: boolean
+          description: FXML交易是否啟用
+          nullable: true
+          example: false
+        fxmlResultCode:
+          type: string
+          description: FXML交易回應代碼
+          maxLength: 5
+          nullable: true
+          example: "310"
+      required:
+        - account
+        - situationDesc
+
+    FiscSituationMaintenanceRequest:
+      type: object
+      description: 財金情境維護請求
+      properties:
+        action:
+          type: string
+          description: 操作類型
+          enum: ["A", "U", "D"]
+          example: "A"
+        id:
+          type: integer
+          format: int64
+          description: 財金情境ID（修改/刪除時必填）
+          nullable: true
+          example: 1
+        account:
+          type: string
+          description: 測試帳號
+          maxLength: 16
+          nullable: true
+          example: "123456789012"
+        situationDesc:
+          type: string
+          description: 情境描述說明
+          maxLength: 100
+          nullable: true
+          example: "測試通匯成功情境"
+        memo:
+          type: string
+          description: 補充說明備註
+          nullable: true
+          example: "用於測試流程"
+        isRmt:
+          type: boolean
+          description: 通匯交易是否啟用
+          nullable: true
+        rmtResultCode:
+          type: string
+          description: 通匯交易回應代碼
+          maxLength: 5
+          nullable: true
+        isAtm:
+          type: boolean
+          description: 轉帳交易是否啟用
+          nullable: true
+        atmResultCode:
+          type: string
+          description: 轉帳交易回應代碼
+          maxLength: 5
+          nullable: true
+        atmVerify:
+          type: boolean
+          description: 核驗交易是否啟用
+          nullable: true
+        atmVerifyRCode:
+          type: string
+          description: 核驗交易回應代碼
+          maxLength: 5
+          nullable: true
+        atmVerifyRDetail:
+          type: string
+          description: 核驗結果詳情
+          maxLength: 6
+          nullable: true
+        isFxml:
+          type: boolean
+          description: FXML交易是否啟用
+          nullable: true
+        fxmlResultCode:
+          type: string
+          description: FXML交易回應代碼
+          maxLength: 5
+          nullable: true
+      required:
+        - action
+
+    FiscSituationResponse:
+      type: object
+      description: 財金情境回應
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 系統唯一識別碼
+          example: 1
+        account:
+          type: string
+          description: 財金測試帳號
+          example: "123456789012"
+        situationDesc:
+          type: string
+          description: 情境描述
+          example: "測試通匯交易成功情境"
+        memo:
+          type: string
+          description: 補充說明
+          nullable: true
+          example: "用於測試流程"
+        isRmt:
+          type: boolean
+          description: 通匯交易啟用狀態
+          nullable: true
+          example: true
+        rmtResultCode:
+          type: string
+          description: 通匯交易結果代碼
+          nullable: true
+          example: "00000"
+        isAtm:
+          type: boolean
+          description: 轉帳交易啟用狀態
+          nullable: true
+          example: false
+        atmResultCode:
+          type: string
+          description: 轉帳交易結果代碼
+          nullable: true
+        atmVerify:
+          type: boolean
+          description: 核驗交易啟用狀態
+          nullable: true
+          example: true
+        atmVerifyRCode:
+          type: string
+          description: 核驗交易結果代碼
+          nullable: true
+          example: "00000"
+        atmVerifyRDetail:
+          type: string
+          description: 核驗交易結果詳情
+          nullable: true
+          example: "000001"
+        isFxml:
+          type: boolean
+          description: FXML交易啟用狀態
+          nullable: true
+          example: false
+        fxmlResultCode:
+          type: string
+          description: FXML交易結果代碼
+          nullable: true
+        creator:
+          type: string
+          description: 建立者帳號
+          example: "john.doe"
+        createdAt:
+          type: string
+          description: 建立時間
+          format: date-time
+          example: "2025/01/09 10:30:45"
+        updater:
+          type: string
+          description: 最後更新者帳號
+          example: "john.doe"
+        updatedAt:
+          type: string
+          description: 最後更新時間
+          format: date-time
+          example: "2025/01/09 10:30:45"
+      required:
+        - id
+        - account
+        - situationDesc
+
+    # 聯徵情境相關 Schema
+    JcicSituationRequest:
+      type: object
+      description: 聯徵情境建立請求
+      properties:
+        txid:
+          type: string
+          description: 聯徵查詢交易代碼
+          minLength: 1
+          maxLength: 4
+          example: "QJ01"
+        inqueryKey1:
+          type: string
+          description: 主要查詢條件（通常為身分證字號）
+          maxLength: 60
+          example: "A101010107"
+        inqueryKey2:
+          type: string
+          description: 次要查詢條件（通常為生日YYYYMMDD）
+          maxLength: 15
+          nullable: true
+          example: "19801010"
+        returnCode:
+          type: string
+          description: 聯徵查詢結果代碼
+          maxLength: 5
+          default: "D0000"
+          example: "D0000"
+        forceToJcic:
+          type: string
+          description: 強制發查旗標
+          enum: ["Y", "N"]
+          example: "Y"
+        jcicDataDate:
+          type: string
+          description: 發查資料日期（YYYYMMDD格式）
+          maxLength: 8
+          nullable: true
+          example: "20250101"
+        jcicData:
+          type: string
+          description: 聯徵資料（Base64編碼），建立時必填
+          maxLength: 10000
+          format: base64
+          example: "BASE64_ENCODED_DATA"
+        situationDesc:
+          type: string
+          description: 情境描述
+          minLength: 1
+          maxLength: 200
+          example: "聯徵查詢_A101010107_QJ01_強制發查"
+        memo:
+          type: string
+          description: 補充說明
+          maxLength: 500
+          nullable: true
+          example: "測試情境備註"
+      required:
+        - txid
+        - inqueryKey1
+        - returnCode
+        - forceToJcic
+        - jcicData
+        - situationDesc
+
+    JcicSituationMaintenanceRequest:
+      type: object
+      description: 聯徵情境維護請求
+      properties:
+        action:
+          type: string
+          description: 操作類型
+          enum: ["A", "U", "D"]
+          example: "A"
+        id:
+          type: integer
+          format: int64
+          description: 聯徵情境ID（修改/刪除時必填）
+          nullable: true
+          example: 1
+        txid:
+          type: string
+          description: 聯徵查詢交易代碼
+          maxLength: 4
+          nullable: true
+          example: "QJ01"
+        inqueryKey1:
+          type: string
+          description: 主要查詢條件
+          maxLength: 60
+          nullable: true
+          example: "A123456789"
+        inqueryKey2:
+          type: string
+          description: 次要查詢條件
+          maxLength: 15
+          nullable: true
+          example: "19801010"
+        returnCode:
+          type: string
+          description: 聯徵查詢結果代碼
+          maxLength: 5
+          nullable: true
+          example: "D0000"
+        forceToJcic:
+          type: string
+          description: 強制發查旗標
+          enum: ["Y", "N"]
+          nullable: true
+          example: "Y"
+        jcicDataDate:
+          type: string
+          description: 發查資料日期（YYYYMMDD格式）
+          maxLength: 8
+          nullable: true
+          example: "20250101"
+        jcicData:
+          type: string
+          description: 聯徵回傳資料（Base64編碼）
+          format: base64
+          nullable: true
+          example: "dGVzdERhdGE="
+        situationDesc:
+          type: string
+          description: 情境描述
+          maxLength: 100
+          nullable: true
+          example: "新增個人信用報告即時查詢測試"
+        memo:
+          type: string
+          description: 補充說明
+          nullable: true
+          example: "用於測試正常的聯徵查詢流程"
+      required:
+        - action
+
+    JcicSituationResponse:
+      type: object
+      description: 聯徵情境回應
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 系統唯一識別碼
+          example: 1
+        txid:
+          type: string
+          description: 聯徵查詢交易代碼
+          example: "QJ01"
+        inqueryKey1:
+          type: string
+          description: 主要查詢條件
+          example: "A101010107"
+        inqueryKey2:
+          type: string
+          description: 次要查詢條件
+          nullable: true
+          example: "19801010"
+        returnCode:
+          type: string
+          description: 聯徵查詢結果代碼
+          example: "D0000"
+        forceToJcic:
+          type: string
+          description: 強制發查旗標
+          enum: ["Y", "N"]
+          example: "Y"
+        jcicDataDate:
+          type: string
+          description: 發查資料日期
+          nullable: true
+          example: "20250101"
+        jcicData:
+          type: string
+          description: 聯徵回傳資料（Base64編碼，列表中可能顯示為"******"摘要）
+          format: base64
+          example: "******"
+        situationDesc:
+          type: string
+          description: 情境描述
+          example: "聯徵查詢_A101010107_QJ01_強制發查_成功"
+        memo:
+          type: string
+          description: 補充說明
+          nullable: true
+          example: "測試情境備註"
+        creater:
+          type: string
+          description: 建立者帳號
+          example: "BK00361"
+        createdAt:
+          type: string
+          description: 建立時間
+          format: date-time
+          example: "2025/07/05 05:00:00"
+        updater:
+          type: string
+          description: 最後更新者帳號
+          example: "BK00361"
+        updatedAt:
+          type: string
+          description: 最後更新時間
+          format: date-time
+          example: "2025/07/05 05:00:00"
+      required:
+        - id
+        - txid
+        - inqueryKey1
+        - returnCode
+        - forceToJcic
+        - situationDesc
+
+    # 分頁相關 Schema
+    PaginationInfo:
+      type: object
+      description: 分頁資訊
+      properties:
+        currentPage:
+          type: integer
+          description: 目前頁碼
+          example: 1
+        itemsPerPage:
+          type: integer
+          description: 每頁筆數
+          example: 10
+        totalItems:
+          type: integer
+          description: 總筆數
+          example: 25
+        totalPages:
+          type: integer
+          description: 總頁數
+          example: 3
+        hasNextPage:
+          type: boolean
+          description: 是否有下一頁
+          example: true
+        hasPrevPage:
+          type: boolean
+          description: 是否有上一頁
+          example: false
+      required:
+        - currentPage
+        - itemsPerPage
+        - totalItems
+        - totalPages
+        - hasNextPage
+        - hasPrevPage

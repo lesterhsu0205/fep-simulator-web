@@ -64,6 +64,11 @@ export const loginApi = async (account: string, password: string): Promise<Login
     const loginData: LoginResponse = apiResponse.messageContent
     console.log('📊 獲取到的選單資料:', loginData)
 
+    // 將固定 token 存入 sessionStorage
+    const fixedToken = "eyJhbGciOiJIUzUxMiJ9.eyJhY2NvdW50VHlwZSI6ImFkbWluIiwicm9sZUNvZGUiOiJCUzAxMSIsInVzZXJOYW1lIjoiQkswMDM2MSIsInVzZXJJZCI6MSwic3ViIjoiMSIsImlhdCI6MTc1Mzk0MTEwMCwiZXhwIjoxNzg1NDc3MTAwfQ.UIK67oFE1STeIVMyQwFloCGfLViqhjdBUSJlf-5CgHnkjr0WC3HOFP1MTD8MFZjc33Sd8UCXB7-kHfGyHremPQ"
+    sessionStorage.setItem('authToken', fixedToken)
+    console.log('🔑 已將固定 token 存入 sessionStorage')
+
     return loginData
   }
   catch (error) {

@@ -1,11 +1,11 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { Search, RotateCcw, Edit, Trash2, Plus } from 'lucide-react'
-import tableData from '@/assets/data.json'
 import EditForm, { type TableData, type EditFormData } from '@/components/EditForm.tsx'
 import CreateTestAccount, { type CreateTestAccountData } from '@/components/CreateTestAccount.tsx'
 import Modal from '@/components/Modal.tsx'
 import { useToast } from '@/contexts/ToastContext'
+import { ApiService, type FiscSituation, type FiscSituationQuery } from '@/services/apiService'
 
 // 定義查詢表單資料類型
 interface QueryFormData {
@@ -46,6 +46,15 @@ export default function DataTable({
   const [itemsPerPage, setItemsPerPage] = useState(defaultItemsPerPage)
   const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [data, setData] = useState<TableData[]>([])
+  const [loading, setLoading] = useState(false)
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    itemsPerPage: 10,
+    totalItems: 0,
+    totalPages: 0,
+    hasNextPage: false,
+    hasPrevPage: false,
+  })
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<TableData | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -62,27 +71,51 @@ export default function DataTable({
     },
   })
 
+  // 轉換 API 資料為 TableData 格式
+  const convertFiscSituationToTableData = (fiscSituation: FiscSituation): TableData => {
+    return {
+      id: fiscSituation.id,
+      header: fiscSituation.account,
+      type: fiscSituation.situationDesc,
+      status: fiscSituation.rmtResultCode,
+      target: fiscSituation.atmResultCode,
+      limit: fiscSituation.atmVerifyRCode || '00000',
+      reviewer: fiscSituation.atmVerifyRDetail || '000000',
+      fxml: fiscSituation.fxmlResultCode || '00000',
+      lastModifiedTime: fiscSituation.updatedAt,
+      lastModifiedBy: fiscSituation.updater,
+      createdTime: fiscSituation.createdAt,
+      createdBy: fiscSituation.creator,
+    }
+  }
+
+  // 載入資料
+  const loadData = useCallback(async (queryParams: FiscSituationQuery = {}) => {
+    setLoading(true)
+    try {
+      const response = await ApiService.getFiscSituationList({
+        page: currentPage,
+        pageSize: itemsPerPage,
+        ...queryParams,
+      })
+
+      const convertedData = response.fiscSituations.map(convertFiscSituationToTableData)
+      setData(convertedData)
+      setPagination(response.pagination)
+    }
+    catch (error) {
+      console.error('載入資料失敗:', error)
+      showToast('載入資料失敗，請稍後再試', 'error')
+    }
+    finally {
+      setLoading(false)
+    }
+  }, [currentPage, itemsPerPage, showToast])
+
   // 初始化資料
   useEffect(() => {
-    setData(tableData as TableData[])
-  }, [])
-
-  // 由於未來會使用後端分頁，這裡直接使用原始資料
-  const filteredData = useMemo(() => {
-    return data
-  }, [data])
-
-  // 分頁資料
-  const paginatedData = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage
-    const endIndex = startIndex + itemsPerPage
-    return filteredData.slice(startIndex, endIndex)
-  }, [filteredData, currentPage, itemsPerPage])
-
-  // 總頁數
-  const totalPages = useMemo(() => {
-    return Math.ceil(filteredData.length / itemsPerPage)
-  }, [filteredData, itemsPerPage])
+    loadData()
+  }, [loadData])
 
   // 選擇項目
   const handleSelectItem = (id: number) => {
@@ -98,23 +131,30 @@ export default function DataTable({
 
   // 選擇全部項目
   const handleSelectAll = () => {
-    if (selectedItems.length === paginatedData.length) {
+    if (selectedItems.length === data.length) {
       setSelectedItems([])
     }
     else {
-      setSelectedItems(paginatedData.map(item => item.id))
+      setSelectedItems(data.map(item => item.id))
     }
   }
 
   // 查詢表單處理
-  const onSubmit = (data: QueryFormData) => {
+  const onSubmit = (formData: QueryFormData) => {
     setCurrentPage(1) // 查詢時重置頁碼
-    onQuerySubmit?.(data) // 呼叫外部傳入的查詢函數
+    const queryParams: FiscSituationQuery = {
+      account: formData.account || undefined,
+      creator: formData.creator || undefined,
+    }
+    loadData(queryParams)
+    onQuerySubmit?.(formData) // 呼叫外部傳入的查詢函數
   }
 
   const handleReset = () => {
     reset() // 使用 React Hook Form 的 reset 方法
+    setItemsPerPage(defaultItemsPerPage)
     setCurrentPage(1)
+    loadData() // 重置查詢條件，載入所有資料
     onQuerySubmit?.({ account: '', creator: '' }) // 重置時也通知外部
   }
 
@@ -337,7 +377,7 @@ export default function DataTable({
                 <input
                   type="checkbox"
                   className="checkbox checkbox-xs"
-                  checked={selectedItems.length > 0 && selectedItems.length === paginatedData.length}
+                  checked={selectedItems.length > 0 && selectedItems.length === data.length}
                   onChange={handleSelectAll}
                 />
               </th>
@@ -356,58 +396,71 @@ export default function DataTable({
             </tr>
           </thead>
           <tbody>
-            {paginatedData.map(item => (
-              <tr
-                key={item.id}
-                onClick={() => handleSelectItem(item.id)}
-                className={`
-                  text-sm cursor-pointer
-                  transition-[background-color,transform,box-shadow] duration-150
-                  ${selectedItems.includes(item.id)
-                ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md hover:scale-[1.005]'
-                : 'hover:bg-gray-100 hover:scale-[1.005]'
-              }
-                `}
-              >
-                <td onClick={e => e.stopPropagation()}>
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-xs"
-                    checked={selectedItems.includes(item.id)}
-                    onChange={() => handleSelectItem(item.id)}
-                  />
-                </td>
-                <td>{item.header}</td>
-                <td>{item.type}</td>
-                <td>{renderCellValue(item.status)}</td>
-                <td>{renderCellValue(item.target)}</td>
-                <td>{item.limit}</td>
-                <td>{item.reviewer}</td>
-                <td>{item.fxml}</td>
-                <td>{item.lastModifiedTime}</td>
-                <td>{item.lastModifiedBy}</td>
-                <td>{item.createdTime}</td>
-                <td>{item.createdBy}</td>
-                <td onClick={e => e.stopPropagation()}>
-                  <div className="flex items-center justify-center gap-2">
-                    <button
-                      className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
-                      onClick={() => handleEdit(item)}
-                      title="編輯"
+            {loading
+              ? (
+                  <tr>
+                    <td colSpan={13} className="text-center py-8">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="loading loading-spinner loading-md"></span>
+                        <span className="text-gray-500">載入中...</span>
+                      </div>
+                    </td>
+                  </tr>
+                )
+              : (
+                  data.map(item => (
+                    <tr
+                      key={item.id}
+                      onClick={() => handleSelectItem(item.id)}
+                      className={`
+                    text-sm cursor-pointer
+                    transition-[background-color,transform,box-shadow] duration-150
+                    ${selectedItems.includes(item.id)
+                      ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md hover:scale-[1.005]'
+                      : 'hover:bg-gray-100 hover:scale-[1.005]'
+                    }
+                  `}
                     >
-                      <Edit size={14} />
-                    </button>
-                    <button
-                      className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
-                      onClick={() => handleDelete(item)}
-                      title="刪除"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      <td onClick={e => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-xs"
+                          checked={selectedItems.includes(item.id)}
+                          onChange={() => handleSelectItem(item.id)}
+                        />
+                      </td>
+                      <td>{item.header}</td>
+                      <td>{item.type}</td>
+                      <td>{renderCellValue(item.status)}</td>
+                      <td>{renderCellValue(item.target)}</td>
+                      <td>{item.limit}</td>
+                      <td>{item.reviewer}</td>
+                      <td>{item.fxml}</td>
+                      <td>{item.lastModifiedTime}</td>
+                      <td>{item.lastModifiedBy}</td>
+                      <td>{item.createdTime}</td>
+                      <td>{item.createdBy}</td>
+                      <td onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
+                            onClick={() => handleEdit(item)}
+                            title="編輯"
+                          >
+                            <Edit size={14} />
+                          </button>
+                          <button
+                            className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
+                            onClick={() => handleDelete(item)}
+                            title="刪除"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
           </tbody>
         </table>
       </div>
@@ -430,7 +483,7 @@ export default function DataTable({
             ))}
           </select>
           <span className="text-gray-600 text-sm whitespace-nowrap">
-            {`顯示 ${filteredData.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} 到 ${Math.min(currentPage * itemsPerPage, filteredData.length)} 筆資料，共 ${filteredData.length} 筆`}
+            {`顯示 ${pagination.totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} 到 ${Math.min(currentPage * itemsPerPage, pagination.totalItems)} 筆資料，共 ${pagination.totalItems} 筆`}
           </span>
           {selectedItems.length > 0 && (
             <span className="text-gray-400 text-sm font-medium whitespace-nowrap">
@@ -445,7 +498,7 @@ export default function DataTable({
           <button
             className="join-item btn btn-md"
             onClick={() => setCurrentPage(1)}
-            disabled={currentPage === 1 || totalPages === 0}
+            disabled={currentPage === 1 || pagination.totalPages === 0}
             title="第一頁"
           >
             «
@@ -453,20 +506,20 @@ export default function DataTable({
           <button
             className="join-item btn btn-md"
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1 || totalPages === 0}
+            disabled={currentPage === 1 || pagination.totalPages === 0}
             title="上一頁"
           >
             ‹
           </button>
 
           {(() => {
-            if (totalPages === 0) return null
+            if (pagination.totalPages === 0) return null
 
             const pages = []
             const maxVisiblePages = 3
 
             let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2))
-            const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
+            const endPage = Math.min(pagination.totalPages, startPage + maxVisiblePages - 1)
 
             if (endPage - startPage + 1 < maxVisiblePages) {
               startPage = Math.max(1, endPage - maxVisiblePages + 1)
@@ -489,16 +542,16 @@ export default function DataTable({
 
           <button
             className="join-item btn btn-md"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-            disabled={currentPage === totalPages || totalPages === 0}
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+            disabled={currentPage === pagination.totalPages || pagination.totalPages === 0}
             title="下一頁"
           >
             ›
           </button>
           <button
             className="join-item btn btn-md"
-            onClick={() => setCurrentPage(totalPages)}
-            disabled={currentPage === totalPages || totalPages === 0}
+            onClick={() => setCurrentPage(pagination.totalPages)}
+            disabled={currentPage === pagination.totalPages || pagination.totalPages === 0}
             title="最後一頁"
           >
             »
