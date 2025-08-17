@@ -20,7 +20,7 @@
 核心架構模式是基於權限的動態路由系統：
 
 - **路由生成**：`DynamicRoutes.tsx` 僅為 `implementedPaths` 陣列中列出的路徑生成路由 (目前為 `/TEST_ACCT_MAINT`、`/TEST_ACCT_CREATE`)
-- **選單渲染**：`DynamicSidebar.tsx` 根據使用者的選單資料渲染導航，但將未實作的路由標記為停用
+- **選單渲染**：`Sidebar.tsx` 根據使用者的選單資料渲染導航，但將未實作的路由標記為停用
 - **組件映射**：路由透過 `DynamicRoutes.tsx` 中的 `getComponentForPath()` 函數映射到組件
 
 新增路由步驟：將路徑新增至 `implementedPaths` 陣列，在 `getComponentForPath()` 中新增組件映射，確保使用者選單資料包含該路徑。
@@ -44,4 +44,4 @@
 
 ### 組件架構
 
-主要佈局使用抽屜模式，包含 `Header`、`Content`、`Footer` 和 `DynamicSidebar`。功能組件包括用於帳戶管理的 `DataTable` 和用於新建帳戶的 `CreateTestAccount`。工具組件處理模態視窗、提示訊息和路由保護。
+主要佈局使用抽屜模式，包含 `Header`、`Content`、`Footer` 和 `Sidebar`。功能組件包括用於帳戶管理的 `MaintainTestAccount` 和用於新建帳戶的 `CreateTestAccount`。工具組件處理模態視窗、提示訊息和路由保護。

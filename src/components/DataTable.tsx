@@ -1,32 +1,90 @@
-import { useState, useEffect, useCallback } from 'react'
 import { useForm } from 'react-hook-form'
 import { Search, RotateCcw, Edit, Trash2, Plus } from 'lucide-react'
-import EditForm, { type TableData, type EditFormData } from '@/components/EditForm.tsx'
-import CreateTestAccount, { type CreateTestAccountData } from '@/components/CreateTestAccount.tsx'
-import Modal from '@/components/Modal.tsx'
+import { useState, useEffect, useCallback } from 'react'
+import type { ReactNode } from 'react'
+import Modal from '@/components/Modal'
+import EditForm, { type EditFormData } from '@/components/EditForm'
+import CreateTestAccount, { type CreateTestAccountData } from '@/pages/CreateTestAccount'
 import { useToast } from '@/contexts/ToastContext'
-import { ApiService, type FiscSituation, type FiscSituationQuery } from '@/services/apiService'
+import { type PaginationInfo } from '@/model/PaginationInfo'
 
-// 定義查詢表單資料類型
-interface QueryFormData {
-  account: string
-  creator: string
+// 定義查詢表單欄位類型
+interface SearchField {
+  key: string
+  label: string
+  placeholder: string
+  type?: 'text' | 'number' | 'email' | 'tel'
+  required?: boolean
+  className?: string
+}
+
+// 通用查詢表單資料類型
+interface SearchFormData {
+  [key: string]: string | number | undefined
+}
+
+// 表格欄位配置介面
+interface TableColumn {
+  key: string
+  title: string
+  width?: string
+  className?: string
+  render?: (value: unknown, item: TableItem) => ReactNode
+}
+
+// 通用表格資料介面
+interface TableItem {
+  id: number
+  [key: string]: unknown
 }
 
 // 可自訂功能按鈕類型
 interface ActionButton {
   label: string
-  onClick: (item: TableData) => void
+  onClick: (item: TableItem) => void
 }
 
-interface DataTableProps {
-  title?: string
+// 資料載入函數類型
+type LoadDataFunction<TRawData = unknown, TQuery = Record<string, unknown>> = (
+  queryParams: TQuery,
+  page: number,
+  pageSize: number
+) => Promise<{
+  data: TRawData[]
+  pagination: PaginationInfo
+}>
+
+interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>> {
+  // 資料載入函數
+  loadDataFn: LoadDataFunction<TRawData, TQuery>
+  deleteDataFn: (selectedIds: number[]) => void
+  editDataFn: (formData: EditFormData) => void
+  addDataFn: (formData: CreateTestAccountData) => void
+
+  // 表格欄位配置
+  columns: TableColumn[]
+  showCheckbox?: boolean
+  showActions?: boolean
+
+  // 分頁控制 (初始值，內部管理)
+  initialCurrentPage?: number
+  initialItemsPerPage?: number
+  itemsPerPageOptions?: number[]
+
+  // 選擇功能 (內部管理)
+  initialSelectedItems?: number[]
+  onSelectionChange?: (selectedIds: number[]) => void
+
+  // 查詢功能
+  searchFields?: SearchField[]
   showSearch?: boolean
+
+  // 自訂配置
+  title?: string
   searchPlaceholder?: string
   actionButtons?: ActionButton[]
-  itemsPerPageOptions?: number[]
-  defaultItemsPerPage?: number
-  onQuerySubmit?: (data: QueryFormData) => void
+  emptyMessage?: string
+  loadingMessage?: string
 }
 
 // 渲染表格儲存格內容的輔助函數
@@ -37,71 +95,61 @@ const renderCellValue = (value: string | null) => {
   return value
 }
 
-export default function DataTable({
+export default function DataTable<TRawData = unknown, TQuery = Record<string, unknown>>({
+  loadDataFn,
+  deleteDataFn,
+  editDataFn,
+  addDataFn,
+  columns,
+  showCheckbox = true,
+  showActions = true,
+  initialCurrentPage = 1,
+  initialItemsPerPage = 10,
   itemsPerPageOptions = [10, 20, 50, 100],
-  defaultItemsPerPage = 10,
-  onQuerySubmit,
-}: DataTableProps) {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(defaultItemsPerPage)
-  const [selectedItems, setSelectedItems] = useState<number[]>([])
-  const [data, setData] = useState<TableData[]>([])
+  initialSelectedItems = [],
+  onSelectionChange,
+  searchFields = [],
+  showSearch = true,
+  emptyMessage = '暫無資料',
+  loadingMessage = '載入中...',
+}: DataTableProps<TRawData, TQuery>) {
+  const { showToast } = useToast()
+
+  // 內部狀態管理
+  const [data, setData] = useState<TableItem[]>([])
   const [loading, setLoading] = useState(false)
-  const [pagination, setPagination] = useState({
-    currentPage: 1,
-    itemsPerPage: 10,
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: initialCurrentPage,
+    itemsPerPage: initialItemsPerPage,
     totalItems: 0,
     totalPages: 0,
     hasNextPage: false,
     hasPrevPage: false,
   })
+  const [currentPage, setCurrentPage] = useState(initialCurrentPage)
+  const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage)
+  const [selectedItems, setSelectedItems] = useState<number[]>(initialSelectedItems)
+  const [currentQuery, setCurrentQuery] = useState<TQuery>({} as TQuery)
+
+  // Modal 狀態管理
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editingItem, setEditingItem] = useState<TableData | null>(null)
+  const [editingItem, setEditingItem] = useState<TableItem | null>(null)
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const [deletingItem, setDeletingItem] = useState<TableData | null>(null)
+  const [deletingItem, setDeletingItem] = useState<TableItem | null>(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isBatchDeleteModalOpen, setIsBatchDeleteModalOpen] = useState(false)
-  const { showToast } = useToast()
-
-  // React Hook Form 設定
-  const { register, handleSubmit, reset } = useForm<QueryFormData>({
-    defaultValues: {
-      account: '',
-      creator: '',
-    },
-  })
-
-  // 轉換 API 資料為 TableData 格式
-  const convertFiscSituationToTableData = (fiscSituation: FiscSituation): TableData => {
-    return {
-      id: fiscSituation.id,
-      header: fiscSituation.account,
-      type: fiscSituation.situationDesc,
-      status: fiscSituation.rmtResultCode,
-      target: fiscSituation.atmResultCode,
-      limit: fiscSituation.atmVerifyRCode || '00000',
-      reviewer: fiscSituation.atmVerifyRDetail || '000000',
-      fxml: fiscSituation.fxmlResultCode || '00000',
-      lastModifiedTime: fiscSituation.updatedAt,
-      lastModifiedBy: fiscSituation.updater,
-      createdTime: fiscSituation.createdAt,
-      createdBy: fiscSituation.creator,
-    }
-  }
 
   // 載入資料
-  const loadData = useCallback(async (queryParams: FiscSituationQuery = {}) => {
+  const loadData = useCallback(async (queryParams: TQuery = {} as TQuery, page = currentPage, pageSize = itemsPerPage) => {
     setLoading(true)
     try {
-      const response = await ApiService.getFiscSituationList({
-        page: currentPage,
-        pageSize: itemsPerPage,
-        ...queryParams,
-      })
+      const response = await loadDataFn(queryParams, page, pageSize)
 
-      const convertedData = response.fiscSituations.map(convertFiscSituationToTableData)
-      setData(convertedData)
+      setData(response.data as unknown as TableItem[])
       setPagination(response.pagination)
+      setCurrentPage(response.pagination.currentPage)
+      setItemsPerPage(response.pagination.itemsPerPage)
+      setCurrentQuery(queryParams)
     }
     catch (error) {
       console.error('載入資料失敗:', error)
@@ -110,357 +158,403 @@ export default function DataTable({
     finally {
       setLoading(false)
     }
-  }, [currentPage, itemsPerPage, showToast])
+  }, [loadDataFn, currentPage, itemsPerPage, showToast])
 
   // 初始化資料
   useEffect(() => {
     loadData()
-  }, [loadData])
+  }, [loadData]) // 只在組件掛載時執行一次
+
+  // 當資料變化時重置選擇項目
+  useEffect(() => {
+    setSelectedItems([])
+  }, [data])
+
+  // React Hook Form 設定
+  const defaultValues = searchFields.reduce<SearchFormData>((acc, field) => {
+    acc[field.key] = ''
+    return acc
+  }, {})
+  const { register, handleSubmit, reset } = useForm<SearchFormData>({
+    defaultValues,
+  })
 
   // 選擇項目
   const handleSelectItem = (id: number) => {
-    setSelectedItems((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter(itemId => itemId !== id)
-      }
-      else {
-        return [...prev, id]
-      }
-    })
+    const newSelection = selectedItems.includes(id)
+      ? selectedItems.filter(itemId => itemId !== id)
+      : [...selectedItems, id]
+    setSelectedItems(newSelection)
+    onSelectionChange?.(newSelection)
   }
 
   // 選擇全部項目
   const handleSelectAll = () => {
-    if (selectedItems.length === data.length) {
-      setSelectedItems([])
-    }
-    else {
-      setSelectedItems(data.map(item => item.id))
-    }
+    const newSelection = selectedItems.length === data.length ? [] : data.map(item => item.id)
+    setSelectedItems(newSelection)
+    onSelectionChange?.(newSelection)
   }
 
   // 查詢表單處理
-  const onSubmit = (formData: QueryFormData) => {
-    setCurrentPage(1) // 查詢時重置頁碼
-    const queryParams: FiscSituationQuery = {
-      account: formData.account || undefined,
-      creator: formData.creator || undefined,
-    }
-    loadData(queryParams)
-    onQuerySubmit?.(formData) // 呼叫外部傳入的查詢函數
+  const onSubmit = (formData: SearchFormData) => {
+    const queryParams = formData as unknown as TQuery
+    loadData(queryParams, 1, itemsPerPage)
   }
 
   const handleReset = () => {
-    reset() // 使用 React Hook Form 的 reset 方法
-    setItemsPerPage(defaultItemsPerPage)
+    reset()
     setCurrentPage(1)
-    loadData() // 重置查詢條件，載入所有資料
-    onQuerySubmit?.({ account: '', creator: '' }) // 重置時也通知外部
+    setItemsPerPage(initialItemsPerPage)
+    loadData({} as TQuery, 1, initialItemsPerPage)
   }
 
-  // 編輯功能
-  const handleEdit = (item: TableData) => {
+  // 分頁控制
+  const handlePageChange = (page: number) => {
+    loadData(currentQuery, page, itemsPerPage)
+  }
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    loadData(currentQuery, 1, newItemsPerPage)
+  }
+
+  // Modal 處理函數
+  const handleEditClick = (item: TableItem) => {
     setEditingItem(item)
     setIsEditModalOpen(true)
+
+    // else {
+    //   onEdit?.(item)
+    // }
   }
 
-  // 開啟刪除 modal
-  const handleDelete = (item: TableData) => {
+  const handleDeleteClick = (item: TableItem) => {
     setDeletingItem(item)
     setIsDeleteModalOpen(true)
+
+    // else {
+    //   onDelete?.(item)
+    // }
   }
 
-  // 確認刪除
+  const handleAddClick = () => {
+    setIsAddModalOpen(true)
+
+    // else {
+    //   onAdd?.()
+    // }
+  }
+
+  const handleBatchDeleteClick = (selectedIds: number[]) => {
+    if (selectedIds.length > 0) {
+      setIsBatchDeleteModalOpen(true)
+    }
+
+    // else {
+    //   onBatchDelete?.(selectedIds)
+    // }
+  }
+
+  // Modal 確認處理
+
+  // 處理刪除確認
   const handleConfirmDelete = async () => {
     if (deletingItem) {
       try {
-        // TODO: 實作 API 刪除邏輯
-        // await deleteItemAPI(deletingItem.id)
+        await deleteDataFn([deletingItem.id])
 
         // 暫時從本地資料中移除
         setData(prev => prev.filter(d => d.id !== deletingItem.id))
-        setIsDeleteModalOpen(false)
-        setDeletingItem(null)
         showToast('刪除成功', 'success')
       }
       catch (error) {
         showToast('刪除失敗，請稍後再試', 'error')
         console.error('Delete error:', error)
       }
-    }
-  }
-
-  // 取消刪除
-  const handleCancelDelete = () => {
-    setIsDeleteModalOpen(false)
-    setDeletingItem(null)
-  }
-
-  // 處理編輯表單提交
-  const handleEditSubmit = (formData: EditFormData) => {
-    if (editingItem) {
-      try {
-        // TODO: 實作 API 更新邏輯
-        // await updateItemAPI(editingItem.id, formData)
-
-        // 暫時更新本地資料
-        setData(prev => prev.map(item =>
-          item.id === editingItem.id
-            ? {
-                ...item,
-                ...formData,
-                lastModifiedTime: new Date().toLocaleString(),
-                lastModifiedBy: '目前使用者', // TODO: 從使用者資訊取得
-              }
-            : item,
-        ))
-
-        setIsEditModalOpen(false)
-        setEditingItem(null)
-        showToast('修改成功', 'success')
-      }
-      catch (error) {
-        showToast('修改失敗，請稍後再試', 'error')
-        console.error('Update error:', error)
+      finally {
+        setIsDeleteModalOpen(false)
+        setDeletingItem(null)
       }
     }
   }
 
-  // 關閉編輯 Modal
-  const handleCloseEditModal = () => {
-    setIsEditModalOpen(false)
-    setEditingItem(null)
-  }
-
-  // 開啟新增 modal
-  const handleOpenAddModal = () => {
-    setIsAddModalOpen(true)
-  }
-
-  // 關閉新增 modal
-  const handleCloseAddModal = () => {
-    setIsAddModalOpen(false)
-  }
-
-  // 處理新增帳號提交
-  const handleAddSubmit = (formData: CreateTestAccountData) => {
-    try {
-      // TODO: 實作 API 新增邏輯
-      // await createTestAccountAPI(formData)
-
-      // 暫時新增到本地資料
-      const newItem: TableData = {
-        id: Math.max(...data.map(d => d.id)) + 1,
-        header: formData.accountNumber,
-        type: formData.scenario,
-        status: formData.remittance.enabled ? (formData.remittance.result === 'custom' ? formData.remittance.customCode || null : formData.remittance.result) : null,
-        target: formData.proxyTransfer.enabled ? (formData.proxyTransfer.result === 'custom' ? formData.proxyTransfer.customCode || null : formData.proxyTransfer.result) : null,
-        limit: formData.accountVerification.enabled ? (formData.accountVerification.result === 'custom' ? formData.accountVerification.customCode || '00000' : '00000') : '00000',
-        reviewer: formData.accountVerification.enabled ? Object.values(formData.accountVerification.positions).join('') || '000000' : '000000',
-        fxml: formData.fxml.enabled ? (formData.fxml.result === 'custom' ? formData.fxml.customCode || '00000' : '00000') : '00000',
-        lastModifiedTime: new Date().toLocaleDateString(),
-        lastModifiedBy: formData.creator || '目前使用者',
-        createdTime: new Date().toLocaleDateString(),
-        createdBy: formData.creator || '目前使用者',
-      }
-
-      setData(prev => [newItem, ...prev])
-      setIsAddModalOpen(false)
-      showToast('測試帳號建立成功', 'success')
-    }
-    catch (error) {
-      showToast('建立失敗，請稍後再試', 'error')
-      console.error('Create error:', error)
-    }
-  }
-
-  // 批次刪除
-  const handleBatchDelete = () => {
-    setIsBatchDeleteModalOpen(true)
-  }
-
-  // 確認批次刪除
+  // 處理批次刪除確認
   const handleConfirmBatchDelete = async () => {
     try {
-      // TODO: 實作 API 批次刪除邏輯
-      // await batchDeleteItemsAPI(selectedItems)
+      await deleteDataFn(selectedItems)
 
       // 暫時從本地資料中移除選中的項目
       setData(prev => prev.filter(item => !selectedItems.includes(item.id)))
-      setSelectedItems([])
-      setIsBatchDeleteModalOpen(false)
       showToast(`成功刪除 ${selectedItems.length} 筆資料`, 'success')
     }
     catch (error) {
       showToast('批次刪除失敗，請稍後再試', 'error')
       console.error('Batch delete error:', error)
     }
+    finally {
+      setSelectedItems([])
+      setIsBatchDeleteModalOpen(false)
+    }
   }
 
-  // 取消批次刪除
+  // Modal 取消處理
+  const handleCancelDelete = () => {
+    setIsDeleteModalOpen(false)
+    setDeletingItem(null)
+  }
+
   const handleCancelBatchDelete = () => {
     setIsBatchDeleteModalOpen(false)
   }
 
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
+    setEditingItem(null)
+  }
+
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false)
+  }
+
+  // 表單提交處理
+  // 處理編輯提交
+  const handleEditSubmit = async (formData: EditFormData) => {
+    if (editingItem) {
+      try {
+        await editDataFn(formData)
+
+        // 暫時更新本地資料
+        setData(prev => prev.map(dataItem =>
+          dataItem.id === editingItem.id
+            ? {
+                ...dataItem,
+                situationDesc: formData.situationDesc,
+                rmtResultCode: formData.rmtResultCode,
+                atmResultCode: formData.atmResultCode,
+                atmVerifyRCode: formData.atmVerifyRCode,
+                atmVerifyRDetail: formData.atmVerifyRDetail,
+                fxmlResultCode: formData.fxmlResultCode,
+                updatedAt: new Date().toLocaleString(),
+                updater: '目前使用者', // TODO: 從使用者資訊取得
+              }
+            : dataItem,
+        ))
+
+        showToast('修改成功', 'success')
+      }
+      catch (error) {
+        showToast('修改失敗，請稍後再試', 'error')
+        console.error('Update error:', error)
+      }
+      finally {
+        setIsEditModalOpen(false)
+        setEditingItem(null)
+      }
+    }
+  }
+
+  // 處理新增提交
+  const handleAddSubmit = async (formData: CreateTestAccountData) => {
+    try {
+      await addDataFn(formData)
+
+      // 暫時新增到本地資料
+      const newItem: TableItem = {
+        id: Math.max(...data.map(d => d.id)) + 1,
+        account: formData.account,
+        situationDesc: formData.situationDesc,
+        rmtResultCode: formData.isRmt ? formData.rmtResultCode : null,
+        atmResultCode: formData.isAtm ? formData.atmResultCode : null,
+        atmVerifyRCode: formData.atmVerify ? formData.atmVerifyRCode : '00000',
+        atmVerifyRDetail: formData.atmVerify ? formData.atmVerifyRDetail : '000000',
+        fxmlResultCode: formData.isFxml ? formData.fxmlResultCode : '00000',
+        updatedAt: new Date().toLocaleDateString(),
+        updater: formData.creator || '目前使用者',
+        createdAt: new Date().toLocaleDateString(),
+        creator: formData.creator || '目前使用者',
+      }
+
+      setData(prev => [newItem, ...prev])
+      showToast('測試帳號建立成功', 'success')
+    }
+    catch (error) {
+      showToast('建立失敗，請稍後再試', 'error')
+      console.error('Create error:', error)
+    }
+    finally {
+      setIsAddModalOpen(false)
+    }
+  }
+
+  // 計算總欄位數（用於 colSpan）
+  const totalColumns = (showCheckbox ? 1 : 0) + columns.length + (showActions ? 1 : 0)
+
   return (
     <div className="w-full">
       {/* 查詢表單 */}
-      <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
-        <div className="flex items-center gap-6 flex-wrap">
-          <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-gray-700 whitespace-nowrap">帳號</label>
-            <input
-              type="text"
-              className="input input-bordered w-60"
-              placeholder="請輸入帳號"
-              {...register('account')}
-            />
-          </div>
+      {showSearch && searchFields.length > 0 && (
+        <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
+          <div className="flex items-center gap-6 flex-wrap">
+            {searchFields.map(field => (
+              <div key={field.key} className="flex items-center gap-3">
+                <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                  {field.label}
+                </label>
+                <input
+                  type={field.type || 'text'}
+                  className={`input input-bordered w-60 ${field.className || ''}`}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  {...register(field.key)}
+                />
+              </div>
+            ))}
 
-          <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-gray-700 whitespace-nowrap">建立者</label>
-            <input
-              type="text"
-              className="input input-bordered w-60"
-              placeholder="請輸入建立者"
-              {...register('creator')}
-            />
-          </div>
-
-          <div className="flex items-center gap-3 flex-1 justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                type="submit"
-                className="btn btn-primary px-6"
-              >
-                <Search size={16} />
-                查詢
-              </button>
-              <button
-                type="button"
-                className="btn btn-ghost px-6"
-                onClick={handleReset}
-              >
-                <RotateCcw size={16} />
-                重置
-              </button>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                className="btn btn-success text-white"
-                onClick={handleOpenAddModal}
-              >
-                <Plus size={16} />
-                新增
-              </button>
-              <button
-                type="button"
-                className="btn btn-error text-white"
-                onClick={handleBatchDelete}
-                disabled={selectedItems.length === 0}
-              >
-                <Trash2 size={16} />
-                刪除
-              </button>
+            <div className="flex items-center gap-3 flex-1 justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  type="submit"
+                  className="btn btn-primary px-6"
+                >
+                  <Search size={16} />
+                  查詢
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost px-6"
+                  onClick={handleReset}
+                >
+                  <RotateCcw size={16} />
+                  重置
+                </button>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  className="btn btn-success text-white"
+                  onClick={handleAddClick}
+                >
+                  <Plus size={16} />
+                  新增
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-error text-white"
+                  onClick={() => handleBatchDeleteClick(selectedItems)}
+                  disabled={selectedItems.length === 0}
+                >
+                  <Trash2 size={16} />
+                  刪除
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      )}
 
       {/* 表格 */}
       <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="table table-zebra w-full">
           <thead>
             <tr className="bg-base-200 text-sm">
-              <th className="w-10 py-3">
-                <input
-                  type="checkbox"
-                  className="checkbox checkbox-xs"
-                  checked={selectedItems.length > 0 && selectedItems.length === data.length}
-                  onChange={handleSelectAll}
-                />
-              </th>
-              <th className="py-3">帳號</th>
-              <th className="py-3">情境說明</th>
-              <th className="py-3">匯出匯款</th>
-              <th className="py-3">代理轉帳</th>
-              <th className="py-3">帳號核核</th>
-              <th className="py-3">帳號核檢 91-96</th>
-              <th className="py-3">FXML 規則</th>
-              <th className="py-3">最後修改時間</th>
-              <th className="py-3">最後修改者</th>
-              <th className="py-3">建立時間</th>
-              <th className="py-3">建立者</th>
-              <th className="w-12 py-3 text-center">功能</th>
+              {showCheckbox && (
+                <th className="w-10 py-3">
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-xs"
+                    checked={selectedItems.length > 0 && selectedItems.length === data.length}
+                    onChange={handleSelectAll}
+                  />
+                </th>
+              )}
+              {columns.map(column => (
+                <th
+                  key={column.key}
+                  className={`py-3 ${column.width || ''} ${column.className || ''}`}
+                >
+                  {column.title}
+                </th>
+              ))}
+              {showActions && (
+                <th className="w-12 py-3 text-center">功能</th>
+              )}
             </tr>
           </thead>
           <tbody>
             {loading
               ? (
                   <tr>
-                    <td colSpan={13} className="text-center py-8">
+                    <td colSpan={totalColumns} className="text-center py-8">
                       <div className="flex items-center justify-center gap-2">
                         <span className="loading loading-spinner loading-md"></span>
-                        <span className="text-gray-500">載入中...</span>
+                        <span className="text-gray-500">{loadingMessage}</span>
                       </div>
                     </td>
                   </tr>
                 )
-              : (
-                  data.map(item => (
-                    <tr
-                      key={item.id}
-                      onClick={() => handleSelectItem(item.id)}
-                      className={`
-                    text-sm cursor-pointer
-                    transition-[background-color,transform,box-shadow] duration-150
-                    ${selectedItems.includes(item.id)
-                      ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md hover:scale-[1.005]'
-                      : 'hover:bg-gray-100 hover:scale-[1.005]'
-                    }
-                  `}
-                    >
-                      <td onClick={e => e.stopPropagation()}>
-                        <input
-                          type="checkbox"
-                          className="checkbox checkbox-xs"
-                          checked={selectedItems.includes(item.id)}
-                          onChange={() => handleSelectItem(item.id)}
-                        />
-                      </td>
-                      <td>{item.header}</td>
-                      <td>{item.type}</td>
-                      <td>{renderCellValue(item.status)}</td>
-                      <td>{renderCellValue(item.target)}</td>
-                      <td>{item.limit}</td>
-                      <td>{item.reviewer}</td>
-                      <td>{item.fxml}</td>
-                      <td>{item.lastModifiedTime}</td>
-                      <td>{item.lastModifiedBy}</td>
-                      <td>{item.createdTime}</td>
-                      <td>{item.createdBy}</td>
-                      <td onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
-                            onClick={() => handleEdit(item)}
-                            title="編輯"
-                          >
-                            <Edit size={14} />
-                          </button>
-                          <button
-                            className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
-                            onClick={() => handleDelete(item)}
-                            title="刪除"
-                          >
-                            <Trash2 size={14} />
-                          </button>
+              : data.length === 0
+                ? (
+                    <tr>
+                      <td colSpan={totalColumns} className="text-center py-8">
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <span className="text-gray-500">{emptyMessage}</span>
                         </div>
                       </td>
                     </tr>
-                  ))
-                )}
+                  )
+                : (
+                    data.map(item => (
+                      <tr
+                        key={item.id}
+                        onClick={() => showCheckbox ? handleSelectItem(item.id) : undefined}
+                        className={`
+                      text-sm ${showCheckbox ? 'cursor-pointer' : ''}
+                      transition-[background-color,transform,box-shadow] duration-150
+                      ${showCheckbox && selectedItems.includes(item.id)
+                        ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md hover:scale-[1.005]'
+                        : 'hover:bg-gray-100 hover:scale-[1.005]'
+                      }
+                    `}
+                      >
+                        {showCheckbox && (
+                          <td onClick={e => e.stopPropagation()}>
+                            <input
+                              type="checkbox"
+                              className="checkbox checkbox-xs"
+                              checked={selectedItems.includes(item.id)}
+                              onChange={() => handleSelectItem(item.id)}
+                            />
+                          </td>
+                        )}
+                        {columns.map(column => (
+                          <td key={column.key} className={column.className || ''}>
+                            {column.render
+                              ? column.render(item[column.key], item)
+                              : renderCellValue(item[column.key] as string | null)}
+                          </td>
+                        ))}
+                        {showActions && (
+                          <td onClick={e => e.stopPropagation()}>
+                            <div className="flex items-center justify-center gap-2">
+                              <button
+                                className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
+                                onClick={() => handleEditClick(item)}
+                                title="編輯"
+                              >
+                                <Edit size={14} />
+                              </button>
+                              <button
+                                className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
+                                onClick={() => handleDeleteClick(item)}
+                                title="刪除"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          </td>
+                        )}
+                      </tr>
+                    ))
+                  )}
           </tbody>
         </table>
       </div>
@@ -471,10 +565,7 @@ export default function DataTable({
           <select
             className="select select-bordered select-md border-gray-200"
             value={itemsPerPage}
-            onChange={(e) => {
-              setItemsPerPage(Number(e.target.value))
-              setCurrentPage(1) // 切換每頁數量時重置頁碼
-            }}
+            onChange={e => handleItemsPerPageChange(Number(e.target.value))}
           >
             {itemsPerPageOptions.map(option => (
               <option key={option} value={option}>
@@ -489,7 +580,6 @@ export default function DataTable({
             <span className="text-gray-400 text-sm font-medium whitespace-nowrap">
               {`已選取 ${selectedItems.length} 筆`}
             </span>
-
           )}
         </div>
 
@@ -497,7 +587,7 @@ export default function DataTable({
         <div className="join">
           <button
             className="join-item btn btn-md"
-            onClick={() => setCurrentPage(1)}
+            onClick={() => handlePageChange(1)}
             disabled={currentPage === 1 || pagination.totalPages === 0}
             title="第一頁"
           >
@@ -505,7 +595,7 @@ export default function DataTable({
           </button>
           <button
             className="join-item btn btn-md"
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1 || pagination.totalPages === 0}
             title="上一頁"
           >
@@ -529,7 +619,7 @@ export default function DataTable({
               pages.push(
                 <button
                   key={i}
-                  onClick={() => setCurrentPage(i)}
+                  onClick={() => handlePageChange(i)}
                   className={`join-item btn btn-md ${currentPage === i ? 'btn-active' : ''}`}
                 >
                   {i}
@@ -542,7 +632,7 @@ export default function DataTable({
 
           <button
             className="join-item btn btn-md"
-            onClick={() => setCurrentPage(prev => Math.min(prev + 1, pagination.totalPages))}
+            onClick={() => handlePageChange(Math.min(currentPage + 1, pagination.totalPages))}
             disabled={currentPage === pagination.totalPages || pagination.totalPages === 0}
             title="下一頁"
           >
@@ -550,7 +640,7 @@ export default function DataTable({
           </button>
           <button
             className="join-item btn btn-md"
-            onClick={() => setCurrentPage(pagination.totalPages)}
+            onClick={() => handlePageChange(pagination.totalPages)}
             disabled={currentPage === pagination.totalPages || pagination.totalPages === 0}
             title="最後一頁"
           >
@@ -559,111 +649,116 @@ export default function DataTable({
         </div>
       </div>
 
-      {/* 編輯 Modal */}
-      <dialog className={`modal ${isEditModalOpen ? 'modal-open' : ''}`}>
-        <div className="modal-box w-11/12 max-w-6xl p-0">
-          <EditForm
-            data={editingItem}
-            onSubmit={handleEditSubmit}
-            onCancel={handleCloseEditModal}
-          />
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button onClick={handleCloseEditModal}>close</button>
-        </form>
-      </dialog>
+      {/* Modal 渲染 */}
+      <>
+        {/* 編輯 Modal */}
+        <dialog className={`modal ${isEditModalOpen ? 'modal-open' : ''}`}>
+          <div className="modal-box w-11/12 max-w-6xl p-0">
+            <EditForm
+              data={editingItem}
+              onSubmit={handleEditSubmit}
+              onCancel={handleCloseEditModal}
+            />
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button onClick={handleCloseEditModal}>close</button>
+          </form>
+        </dialog>
 
-      {/* 刪除確認 Modal */}
-      <Modal
-        isOpen={isDeleteModalOpen}
-        modalTitle="確認刪除"
-        modalContent={(
-          <>
-            確定要刪除帳號「
-            <span className="font-semibold text-red-600">{deletingItem?.header || ''}</span>
-            」嗎？
-            <br />
-            <span className="text-sm text-gray-500">此操作無法復原。</span>
-          </>
-        )}
-        modalAction={(
-          <>
-            <button
-              className="btn btn-ghost"
-              onClick={handleCancelDelete}
-            >
-              取消
-            </button>
-            <button
-              className="btn btn-error text-white"
-              onClick={handleConfirmDelete}
-            >
-              確認刪除
-            </button>
-          </>
-        )}
-        onCancel={handleCancelDelete}
-      />
+        {/* 刪除確認 Modal */}
+        <Modal
+          isOpen={isDeleteModalOpen}
+          modalTitle="確認刪除"
+          modalContent={(
+            <>
+              確定要刪除帳號「
+              <span className="font-semibold text-red-600">{(deletingItem?.account as string) || String(deletingItem?.id) || ''}</span>
+              」嗎？
+              <br />
+              <span className="text-sm text-gray-500">此操作無法復原。</span>
+            </>
+          )}
+          modalAction={(
+            <>
+              <button
+                className="btn btn-ghost"
+                onClick={handleCancelDelete}
+              >
+                取消
+              </button>
+              <button
+                className="btn btn-error text-white"
+                onClick={handleConfirmDelete}
+              >
+                確認刪除
+              </button>
+            </>
+          )}
+          onCancel={handleCancelDelete}
+        />
 
-      {/* 新增 Modal */}
-      <dialog className={`modal ${isAddModalOpen ? 'modal-open' : ''}`}>
-        <div className="modal-box w-11/12 max-w-6xl h-5/6 p-0">
-          <CreateTestAccount
-            onSubmit={handleAddSubmit}
-            onCancel={handleCloseAddModal}
-          />
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button onClick={handleCloseAddModal}>close</button>
-        </form>
-      </dialog>
+        {/* 新增 Modal */}
+        <dialog className={`modal ${isAddModalOpen ? 'modal-open' : ''}`}>
+          <div className="modal-box w-11/12 max-w-6xl h-5/6 p-0">
+            <CreateTestAccount
+              onSubmit={handleAddSubmit}
+              onCancel={handleCloseAddModal}
+            />
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button onClick={handleCloseAddModal}>close</button>
+          </form>
+        </dialog>
 
-      {/* 批次刪除確認 Modal */}
-      <Modal
-        isOpen={isBatchDeleteModalOpen}
-        modalTitle="確認批次刪除"
-        modalContent={(
-          <>
-            確定要刪除以下
-            {' '}
-            {selectedItems.length}
-            {' '}
-            個帳號嗎？
-            <div className="mt-2 max-h-32 overflow-y-auto bg-gray-50 p-2 rounded">
-              {selectedItems.map((id) => {
-                const item = data.find(d => d.id === id)
-                return item
-                  ? (
-                      <div key={id} className="text-sm text-red-600 font-semibold">
-                        •
-                        {' '}
-                        {item.header}
-                      </div>
-                    )
-                  : null
-              })}
-            </div>
-            <span className="text-sm text-gray-500 mt-2 block">此操作無法復原。</span>
-          </>
-        )}
-        modalAction={(
-          <>
-            <button
-              className="btn btn-ghost"
-              onClick={handleCancelBatchDelete}
-            >
-              取消
-            </button>
-            <button
-              className="btn btn-error text-white"
-              onClick={handleConfirmBatchDelete}
-            >
-              確認刪除
-            </button>
-          </>
-        )}
-        onCancel={handleCancelBatchDelete}
-      />
+        {/* 批次刪除確認 Modal */}
+        <Modal
+          isOpen={isBatchDeleteModalOpen}
+          modalTitle="確認批次刪除"
+          modalContent={(
+            <>
+              確定要刪除以下
+              {' '}
+              {selectedItems.length}
+              {' '}
+              個項目嗎？
+              <div className="mt-2 max-h-32 overflow-y-auto bg-gray-50 p-2 rounded">
+                {selectedItems.map((id) => {
+                  const item = data.find(d => d.id === id)
+                  return item
+                    ? (
+                        <div key={id} className="text-sm text-red-600 font-semibold">
+                          •
+                          {' '}
+                          {(item.account as string) || String(item.id)}
+                        </div>
+                      )
+                    : null
+                })}
+              </div>
+              <span className="text-sm text-gray-500 mt-2 block">此操作無法復原。</span>
+            </>
+          )}
+          modalAction={(
+            <>
+              <button
+                className="btn btn-ghost"
+                onClick={handleCancelBatchDelete}
+              >
+                取消
+              </button>
+              <button
+                className="btn btn-error text-white"
+                onClick={handleConfirmBatchDelete}
+              >
+                確認刪除
+              </button>
+            </>
+          )}
+          onCancel={handleCancelBatchDelete}
+        />
+      </>
     </div>
   )
 }
+
+export type { SearchFormData, SearchField, PaginationInfo, ActionButton, TableColumn, TableItem, LoadDataFunction }

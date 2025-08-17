@@ -36,14 +36,16 @@ export default defineConfig({
         './src/components/Content.tsx',
         './src/components/Footer.tsx',
 
-        // 主要頁面組件
-        './src/components/DataTable.tsx',
-        './src/components/CreateTestAccount.tsx',
-        './src/components/EditForm.tsx',
-
         // 通用 UI 組件
         './src/components/Modal.tsx',
         './src/components/GlobalToast.tsx',
+        './src/components/DataTable.tsx',
+        './src/components/EditForm.tsx',
+
+        // 主要頁面組件
+
+        './src/pages/MaintainTestAccount.tsx',
+        './src/pages/CreateTestAccount.tsx',
 
         // 樣式檔案
         './src/app.css',

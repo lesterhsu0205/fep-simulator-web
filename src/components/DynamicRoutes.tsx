@@ -3,8 +3,8 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import type { MenuItem } from '@/services/authService'
 
 // 導入現有的組件
-import DataTable from '@/components/DataTable'
-import CreateTestAccount from '@/components/CreateTestAccount'
+import MaintainTestAccount from '@/pages/MaintainTestAccount'
+import CreateTestAccount from '@/pages/CreateTestAccount'
 
 export function DynamicRoutes() {
   const { user } = useAuth()
@@ -40,7 +40,7 @@ export function DynamicRoutes() {
   const getComponentForPath = (path: string) => {
     switch (path) {
       case '/TEST_ACCT_MAINT':
-        return <DataTable />
+        return <MaintainTestAccount />
       case '/TEST_ACCT_CREATE':
         return <CreateTestAccount />
       default:

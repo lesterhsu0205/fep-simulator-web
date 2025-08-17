@@ -2,41 +2,22 @@ import { useForm, useWatch } from 'react-hook-form'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
 
-// 建立測試帳號的表單資料類型
+// 使用 API 原始格式的建立測試帳號資料類型
 export interface CreateTestAccountData {
-  // 基本資料
-  creator: string
+  account: string
+  situationDesc: string
+  memo: string | null
+  isRmt: boolean | null
+  rmtResultCode: string | null
+  isAtm: boolean | null
+  atmResultCode: string | null
+  atmVerify: boolean | null
+  atmVerifyRCode: string | null
+  atmVerifyRDetail: string | null
+  isFxml: boolean | null
+  fxmlResultCode: string | null
+  creator: string | null
   creatorUnit: string
-  accountNumber: string
-  scenario: string
-  description: string
-
-  // 交易設定
-  remittance: {
-    enabled: boolean
-    result: 'success' | 'fail' | 'custom'
-    customCode?: string
-  }
-  proxyTransfer: {
-    enabled: boolean
-    result: 'success' | 'fail' | 'custom'
-    customCode?: string
-  }
-  accountVerification: {
-    enabled: boolean
-    result: 'success' | 'fail' | 'custom'
-    customCode?: string
-    positions: {
-      '91-92': string
-      '93-94': string
-      '95-96': string
-    }
-  }
-  fxml: {
-    enabled: boolean
-    result: 'success' | 'fail' | 'custom'
-    customCode?: string
-  }
 }
 
 interface CreateTestAccountProps {
@@ -51,21 +32,26 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
     defaultValues: {
       creator: '',
       creatorUnit: '',
-      accountNumber: '',
-      scenario: '',
-      description: '',
-      remittance: { enabled: false, result: 'success' },
-      proxyTransfer: { enabled: false, result: 'success' },
-      accountVerification: { enabled: false, result: 'success', positions: { '91-92': '', '93-94': '', '95-96': '' } },
-      fxml: { enabled: false, result: 'success' },
+      account: '',
+      situationDesc: '',
+      memo: '',
+      isRmt: null,
+      rmtResultCode: null,
+      isAtm: null,
+      atmResultCode: null,
+      atmVerify: null,
+      atmVerifyRCode: null,
+      atmVerifyRDetail: null,
+      isFxml: null,
+      fxmlResultCode: null,
     },
   })
 
   // 監聽各個交易設定的啟用狀態
-  const remittanceEnabled = useWatch({ control, name: 'remittance.enabled' })
-  const proxyTransferEnabled = useWatch({ control, name: 'proxyTransfer.enabled' })
-  const accountVerificationEnabled = useWatch({ control, name: 'accountVerification.enabled' })
-  const fxmlEnabled = useWatch({ control, name: 'fxml.enabled' })
+  const remittanceEnabled = useWatch({ control, name: 'isRmt' })
+  const proxyTransferEnabled = useWatch({ control, name: 'isAtm' })
+  const accountVerificationEnabled = useWatch({ control, name: 'atmVerify' })
+  const fxmlEnabled = useWatch({ control, name: 'isFxml' })
 
   const handleFormSubmit = async (formData: CreateTestAccountData) => {
     try {
@@ -130,12 +116,12 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                     type="text"
                     className="input input-bordered h-10 w-full"
                     placeholder="(小於 16 長度)"
-                    {...register('accountNumber', {
+                    {...register('account', {
                       maxLength: { value: 16, message: '帳號長度不可超過16碼' },
                     })}
                   />
-                  {errors.accountNumber && (
-                    <div className="text-xs text-red-500 mt-1">{errors.accountNumber.message}</div>
+                  {errors.account && (
+                    <div className="text-xs text-red-500 mt-1">{errors.account.message}</div>
                   )}
                 </div>
               </div>
@@ -148,12 +134,12 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <textarea
                     className="textarea textarea-bordered h-20 resize-none w-full"
                     placeholder="(小於 100 字)"
-                    {...register('description', {
+                    {...register('memo', {
                       maxLength: { value: 100, message: '補充說明不可超過100字' },
                     })}
                   />
-                  {errors.description && (
-                    <div className="text-xs text-red-500 mt-1">{errors.description.message}</div>
+                  {errors.memo && (
+                    <div className="text-xs text-red-500 mt-1">{errors.memo.message}</div>
                   )}
                 </div>
               </div>
@@ -170,12 +156,12 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                     type="text"
                     className="input input-bordered h-10 w-full"
                     placeholder="(小於 20 字)"
-                    {...register('scenario', {
+                    {...register('situationDesc', {
                       maxLength: { value: 20, message: '情境說明不可超過20字' },
                     })}
                   />
-                  {errors.scenario && (
-                    <div className="text-xs text-red-500 mt-1">{errors.scenario.message}</div>
+                  {errors.situationDesc && (
+                    <div className="text-xs text-red-500 mt-1">{errors.situationDesc.message}</div>
                   )}
                 </div>
               </div>
@@ -193,7 +179,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <input
                     type="checkbox"
                     className="checkbox checkbox-sm"
-                    {...register('remittance.enabled')}
+                    {...register('isRmt')}
                   />
                   <span className="text-sm font-medium whitespace-nowrap">匯出匯款</span>
                 </label>
@@ -205,8 +191,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                         <input
                           type="radio"
                           className="radio radio-sm"
-                          value="success"
-                          {...register('remittance.result')}
+                          value="00000"
+                          {...register('rmtResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">交易成功</span>
                       </label>
@@ -214,8 +200,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                         <input
                           type="radio"
                           className="radio radio-sm"
-                          value="fail"
-                          {...register('remittance.result')}
+                          value="99999"
+                          {...register('rmtResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">交易失敗</span>
                       </label>
@@ -224,14 +210,14 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                           type="radio"
                           className="radio radio-sm"
                           value="custom"
-                          {...register('remittance.result')}
+                          {...register('rmtResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
                       </label>
                       <input
                         type="text"
                         className="input input-bordered input-sm w-20"
-                        {...register('remittance.customCode')}
+                        {...register('rmtResultCode')}
                       />
                     </div>
                   )}
@@ -244,7 +230,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <input
                     type="checkbox"
                     className="checkbox checkbox-sm"
-                    {...register('proxyTransfer.enabled')}
+                    {...register('isAtm')}
                   />
                   <span className="text-sm font-medium whitespace-nowrap">代理轉帳</span>
                 </label>
@@ -256,8 +242,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                         <input
                           type="radio"
                           className="radio radio-sm"
-                          value="success"
-                          {...register('proxyTransfer.result')}
+                          value="00000"
+                          {...register('atmResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">交易成功</span>
                       </label>
@@ -265,8 +251,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                         <input
                           type="radio"
                           className="radio radio-sm"
-                          value="fail"
-                          {...register('proxyTransfer.result')}
+                          value="99999"
+                          {...register('atmResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">交易失敗</span>
                       </label>
@@ -275,14 +261,14 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                           type="radio"
                           className="radio radio-sm"
                           value="custom"
-                          {...register('proxyTransfer.result')}
+                          {...register('atmResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
                       </label>
                       <input
                         type="text"
                         className="input input-bordered input-sm w-20"
-                        {...register('proxyTransfer.customCode')}
+                        {...register('atmResultCode')}
                       />
                     </div>
                   )}
@@ -295,7 +281,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <input
                     type="checkbox"
                     className="checkbox checkbox-sm"
-                    {...register('accountVerification.enabled')}
+                    {...register('atmVerify')}
                   />
                   <span className="text-sm font-medium whitespace-nowrap">帳號驗證</span>
                 </label>
@@ -308,8 +294,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                           <input
                             type="radio"
                             className="radio radio-sm"
-                            value="success"
-                            {...register('accountVerification.result')}
+                            value="00000"
+                            {...register('atmVerifyRCode')}
                           />
                           <span className="text-sm whitespace-nowrap">交易成功</span>
                         </label>
@@ -317,8 +303,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                           <input
                             type="radio"
                             className="radio radio-sm"
-                            value="fail"
-                            {...register('accountVerification.result')}
+                            value="99999"
+                            {...register('atmVerifyRCode')}
                           />
                           <span className="text-sm whitespace-nowrap">交易失敗</span>
                         </label>
@@ -327,14 +313,14 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                             type="radio"
                             className="radio radio-sm"
                             value="custom"
-                            {...register('accountVerification.result')}
+                            {...register('atmVerifyRCode')}
                           />
                           <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
                         </label>
                         <input
                           type="text"
                           className="input input-bordered input-sm w-20"
-                          {...register('accountVerification.customCode')}
+                          {...register('atmVerifyRCode')}
                         />
                       </div>
 
@@ -346,7 +332,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                             <input
                               type="text"
                               className="input input-bordered input-sm w-16"
-                              {...register('accountVerification.positions.91-92')}
+                              {...register('atmVerifyRDetail')}
                             />
                           </label>
                           <label className="flex items-center gap-2">
@@ -354,7 +340,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                             <input
                               type="text"
                               className="input input-bordered input-sm w-16"
-                              {...register('accountVerification.positions.93-94')}
+                              disabled
+                              placeholder="固定欄位"
                             />
                           </label>
                           <label className="flex items-center gap-2">
@@ -362,7 +349,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                             <input
                               type="text"
                               className="input input-bordered input-sm w-16"
-                              {...register('accountVerification.positions.95-96')}
+                              disabled
+                              placeholder="固定欄位"
                             />
                           </label>
                         </div>
@@ -378,7 +366,7 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                   <input
                     type="checkbox"
                     className="checkbox checkbox-sm"
-                    {...register('fxml.enabled')}
+                    {...register('isFxml')}
                   />
                   <span className="text-sm font-medium whitespace-nowrap">FXML 出金</span>
                 </label>
@@ -390,8 +378,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                         <input
                           type="radio"
                           className="radio radio-sm"
-                          value="success"
-                          {...register('fxml.result')}
+                          value="00000"
+                          {...register('fxmlResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">交易成功</span>
                       </label>
@@ -399,8 +387,8 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                         <input
                           type="radio"
                           className="radio radio-sm"
-                          value="fail"
-                          {...register('fxml.result')}
+                          value="99999"
+                          {...register('fxmlResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">交易失敗</span>
                       </label>
@@ -409,14 +397,14 @@ export default function CreateTestAccount({ onSubmit }: CreateTestAccountProps) 
                           type="radio"
                           className="radio radio-sm"
                           value="custom"
-                          {...register('fxml.result')}
+                          {...register('fxmlResultCode')}
                         />
                         <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
                       </label>
                       <input
                         type="text"
                         className="input input-bordered input-sm w-20"
-                        {...register('fxml.customCode')}
+                        {...register('fxmlResultCode')}
                       />
                     </div>
                   )}

@@ -65,7 +65,7 @@ src/
 │   ├── Content.tsx     # 主要內容元件
 │   ├── DataTable.tsx   # 資料表格元件
 │   ├── DynamicRoutes.tsx # 動態路由元件
-│   ├── DynamicSidebar.tsx # 動態側邊欄
+│   ├── Sidebar.tsx # 動態側邊欄
 │   ├── Header.tsx      # 頁面標題元件
 │   ├── Login.tsx       # 登入元件
 │   └── ...
