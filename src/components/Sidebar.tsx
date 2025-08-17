@@ -2,9 +2,9 @@ import { useAuth } from '@/contexts/AuthContext'
 import type { MenuItem } from '@/services/authService'
 import { Link, useLocation } from 'react-router-dom'
 import { Landmark } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 
-export function DynamicSidebar() {
+export function Sidebar() {
   const { user } = useAuth()
   const location = useLocation()
 
@@ -15,7 +15,7 @@ export function DynamicSidebar() {
   }
 
   // 檢查當前路徑是否在某個選單項目的子項目中
-  const isPathInMenu = (menu: MenuItem, currentPath: string): boolean => {
+  const isPathInMenu = useCallback((menu: MenuItem, currentPath: string): boolean => {
     // 如果當前選單項目有對應的路徑且匹配
     if (menu.path === currentPath) {
       return true
@@ -27,7 +27,21 @@ export function DynamicSidebar() {
     }
 
     return false
-  }
+  }, [])
+
+  // 根據 ID 找到選單項目
+  const findMenuById = useCallback((menus: MenuItem[], id: number): MenuItem | null => {
+    for (const menu of menus) {
+      if (menu.id === id) {
+        return menu
+      }
+      if (menu.children && menu.children.length > 0) {
+        const found = findMenuById(menu.children, id)
+        if (found) return found
+      }
+    }
+    return null
+  }, [])
 
   // 使用 useEffect 來處理 details 元素的展開狀態
   useEffect(() => {
@@ -48,21 +62,7 @@ export function DynamicSidebar() {
         }
       }
     })
-  }, [location.pathname, user?.menus])
-
-  // 根據 ID 找到選單項目
-  const findMenuById = (menus: MenuItem[], id: number): MenuItem | null => {
-    for (const menu of menus) {
-      if (menu.id === id) {
-        return menu
-      }
-      if (menu.children && menu.children.length > 0) {
-        const found = findMenuById(menu.children, id)
-        if (found) return found
-      }
-    }
-    return null
-  }
+  }, [findMenuById, isPathInMenu, location.pathname, user?.menus])
 
   const renderMenuItem = (item: MenuItem) => {
     const hasChildren = item.children && item.children.length > 0

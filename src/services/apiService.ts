@@ -1,4 +1,5 @@
 import axios, { type AxiosResponse } from 'axios'
+import { type FiscSituation, type FiscSituationListResponse, type FiscSituationQuery } from '@/model/FiscSituation'
 
 // 創建 axios 實例
 const apiClient = axios.create({
@@ -6,6 +7,15 @@ const apiClient = axios.create({
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
+  },
+  paramsSerializer: (params) => {
+    const searchParams = new URLSearchParams()
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        searchParams.append(key, String(value))
+      }
+    })
+    return searchParams.toString()
   },
 })
 
@@ -37,63 +47,16 @@ apiClient.interceptors.response.use(
 )
 
 // API 回應格式
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   messageCode: string
   messageDesc: string
   messageContent: T | null
 }
 
-// 財金情境相關接口
-export interface FiscSituation {
-  id: number
-  account: string
-  situationDesc: string
-  memo: string | null
-  isRmt: boolean | null
-  rmtResultCode: string | null
-  isAtm: boolean | null
-  atmResultCode: string | null
-  atmVerify: boolean | null
-  atmVerifyRCode: string | null
-  atmVerifyRDetail: string | null
-  isFxml: boolean | null
-  fxmlResultCode: string | null
-  creator: string
-  createdAt: string
-  updater: string
-  updatedAt: string
-}
-
-export interface PaginationInfo {
-  currentPage: number
-  itemsPerPage: number
-  totalItems: number
-  totalPages: number
-  hasNextPage: boolean
-  hasPrevPage: boolean
-}
-
-export interface FiscSituationListResponse {
-  query: {
-    account?: string
-    creator?: string
-  }
-  pagination: PaginationInfo
-  fiscSituations: FiscSituation[]
-}
-
-// 查詢參數
-export interface FiscSituationQuery {
-  page?: number
-  pageSize?: number
-  account?: string
-  creator?: string
-}
-
 // API 服務類
 export class ApiService {
   // 查詢財金情境列表
-  static async getFiscSituationList(params: FiscSituationQuery = {}): Promise<FiscSituationListResponse> {
+  static async getFiscSituationList(params: FiscSituationQuery & { page?: number, pageSize?: number } = {}): Promise<FiscSituationListResponse> {
     try {
       const response: AxiosResponse<ApiResponse<FiscSituationListResponse>> = await apiClient.get('/finance/scenario/list', {
         params,
@@ -131,7 +94,7 @@ export class ApiService {
   }
 
   // 財金情境維護（新增/修改/刪除）
-  static async maintainFiscSituation(data: any): Promise<FiscSituation | null> {
+  static async maintainFiscSituation(data: unknown): Promise<FiscSituation | null> {
     try {
       const response: AxiosResponse<ApiResponse<{ fiscSituation?: FiscSituation }>> = await apiClient.post('/finance/scenario/maint', data)
 

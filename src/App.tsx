@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Header, Content, Footer } from '@/components'
-import { DynamicSidebar } from '@/components/DynamicSidebar'
+import { Header } from '@/components/Header'
+import { Content } from '@/components/Content'
+import { Footer } from '@/components/Footer'
+import { Sidebar } from '@/components/Sidebar'
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024)
@@ -47,7 +49,7 @@ export default function App() {
         </div>
         <Footer />
       </div>
-      <DynamicSidebar />
+      <Sidebar />
     </div>
   )
 }

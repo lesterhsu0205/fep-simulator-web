@@ -7,7 +7,7 @@ import GlobalToast from '@/components/GlobalToast.tsx'
 import router from '@/routes.tsx'
 import '@/app.css'
 
-function AppWithToast() {
+function Window() {
   // 動態添加 body.scrolling 類名，控制滾動條顯示
   useEffect(() => {
     let timer: number | undefined
@@ -37,7 +37,7 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <ToastProvider>
-        <AppWithToast />
+        <Window />
       </ToastProvider>
     </AuthProvider>
   </StrictMode>,

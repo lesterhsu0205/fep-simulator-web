@@ -2,7 +2,7 @@ import { createBrowserRouter, type RouteObject, Navigate } from 'react-router-do
 import App from '@/App.tsx'
 import ProtectedRoute from '@/components/ProtectedRoute.tsx'
 import Login from '@/components/Login.tsx'
-import { DynamicRoutes } from '@/components/DynamicRoutes'
+import { DynamicRoutes } from '@/components/DynamicRoutes.tsx'
 
 // 路由配置
 export const routes: RouteObject[] = [
@@ -18,6 +18,7 @@ export const routes: RouteObject[] = [
       </ProtectedRoute>
     ),
     children: [
+      // 登入後先到此頁
       {
         index: true,
         element: <Navigate to="/TEST_ACCT_MAINT" replace />,

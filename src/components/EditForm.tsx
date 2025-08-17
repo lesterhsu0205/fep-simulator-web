@@ -2,34 +2,34 @@ import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { Save, RotateCcw } from 'lucide-react'
 
-// 表格資料類型
+// 使用 API 原始格式的表格資料類型
 export interface TableData {
   id: number
-  header: string
-  type: string
-  status: string | null
-  target: string | null
-  limit: string
-  reviewer: string
-  fxml: string
-  lastModifiedTime: string
-  lastModifiedBy: string
-  createdTime: string
-  createdBy: string
+  account: string
+  situationDesc: string
+  rmtResultCode: string | null
+  atmResultCode: string | null
+  atmVerifyRCode: string
+  atmVerifyRDetail: string
+  fxmlResultCode: string
+  updatedAt: string
+  updater: string
+  createdAt: string
+  creator: string
 }
 
-// 表單資料類型（排除不可編輯的欄位）
+// 表單資料類型（使用 API 的 key 值）
 export interface EditFormData {
-  type: string
-  status: string | null
-  target: string | null
-  limit: string
-  reviewer: string
-  fxml: string
+  situationDesc: string
+  rmtResultCode: string | null
+  atmResultCode: string | null
+  atmVerifyRCode: string
+  atmVerifyRDetail: string
+  fxmlResultCode: string
 }
 
 interface EditFormProps {
-  data: TableData | null
+  data: TableData | { [key: string]: unknown } | null
   onSubmit: (data: EditFormData) => void
   onCancel: () => void
 }
@@ -41,12 +41,12 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
   useEffect(() => {
     if (data) {
       reset({
-        type: data.type,
-        status: data.status,
-        target: data.target,
-        limit: data.limit,
-        reviewer: data.reviewer,
-        fxml: data.fxml,
+        situationDesc: data.situationDesc as string,
+        rmtResultCode: data.rmtResultCode as string | null,
+        atmResultCode: data.atmResultCode as string | null,
+        atmVerifyRCode: data.atmVerifyRCode as string,
+        atmVerifyRDetail: data.atmVerifyRDetail as string,
+        fxmlResultCode: data.fxmlResultCode as string,
       })
     }
   }, [data, reset])
@@ -71,7 +71,7 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
             {data && (
               <div className="mb-6 p-4 bg-gray-50 rounded-lg">
                 <div className="text-sm text-gray-600 mb-1">帳號</div>
-                <div className="text-lg font-semibold">{data.header}</div>
+                <div className="text-lg font-semibold">{data.account as string}</div>
               </div>
             )}
 
@@ -85,10 +85,10 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
                   <input
                     type="text"
                     className="input input-bordered h-10 w-full"
-                    {...register('type', { required: '情境說明為必填項目' })}
+                    {...register('situationDesc', { required: '情境說明為必填項目' })}
                   />
-                  {errors.type && (
-                    <div className="text-xs text-red-500 mt-1">{errors.type.message}</div>
+                  {errors.situationDesc && (
+                    <div className="text-xs text-red-500 mt-1">{errors.situationDesc.message}</div>
                   )}
                 </div>
               </div>
@@ -101,10 +101,10 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
                   <input
                     type="text"
                     className="input input-bordered h-10 w-full"
-                    {...register('status', { required: '匯出匯款為必填項目' })}
+                    {...register('rmtResultCode', { required: '匯出匯款為必填項目' })}
                   />
-                  {errors.status && (
-                    <div className="text-xs text-red-500 mt-1">{errors.status.message}</div>
+                  {errors.rmtResultCode && (
+                    <div className="text-xs text-red-500 mt-1">{errors.rmtResultCode.message}</div>
                   )}
                 </div>
               </div>
@@ -120,10 +120,10 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
                   <input
                     type="text"
                     className="input input-bordered h-10 w-full"
-                    {...register('target', { required: '代理轉帳為必填項目' })}
+                    {...register('atmResultCode', { required: '代理轉帳為必填項目' })}
                   />
-                  {errors.target && (
-                    <div className="text-xs text-red-500 mt-1">{errors.target.message}</div>
+                  {errors.atmResultCode && (
+                    <div className="text-xs text-red-500 mt-1">{errors.atmResultCode.message}</div>
                   )}
                 </div>
               </div>
@@ -136,10 +136,10 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
                   <input
                     type="text"
                     className="input input-bordered h-10 w-full"
-                    {...register('limit', { required: '帳號檢核為必填項目' })}
+                    {...register('atmVerifyRCode', { required: '帳號檢核為必填項目' })}
                   />
-                  {errors.limit && (
-                    <div className="text-xs text-red-500 mt-1">{errors.limit.message}</div>
+                  {errors.atmVerifyRCode && (
+                    <div className="text-xs text-red-500 mt-1">{errors.atmVerifyRCode.message}</div>
                   )}
                 </div>
               </div>
@@ -155,10 +155,10 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
                   <input
                     type="text"
                     className="input input-bordered h-10 w-full"
-                    {...register('reviewer', { required: '帳號檢核 91-96為必填項目' })}
+                    {...register('atmVerifyRDetail', { required: '帳號檢核 91-96為必填項目' })}
                   />
-                  {errors.reviewer && (
-                    <div className="text-xs text-red-500 mt-1">{errors.reviewer.message}</div>
+                  {errors.atmVerifyRDetail && (
+                    <div className="text-xs text-red-500 mt-1">{errors.atmVerifyRDetail.message}</div>
                   )}
                 </div>
               </div>
@@ -171,10 +171,10 @@ export default function EditForm({ data, onSubmit, onCancel }: EditFormProps) {
                   <input
                     type="text"
                     className="input input-bordered h-10 w-full"
-                    {...register('fxml', { required: 'FXML 規則為必填項目' })}
+                    {...register('fxmlResultCode', { required: 'FXML 規則為必填項目' })}
                   />
-                  {errors.fxml && (
-                    <div className="text-xs text-red-500 mt-1">{errors.fxml.message}</div>
+                  {errors.fxmlResultCode && (
+                    <div className="text-xs text-red-500 mt-1">{errors.fxmlResultCode.message}</div>
                   )}
                 </div>
               </div>
