@@ -3,13 +3,13 @@ import { Search, RotateCcw, Edit, Trash2, Plus } from 'lucide-react'
 import { useState, useEffect, useCallback } from 'react'
 import type { ReactNode } from 'react'
 import Modal from '@/components/Modal'
-import EditForm, { type EditFormData } from '@/components/EditForm'
-import CreateTestAccount, { type CreateTestAccountData } from '@/pages/CreateTestAccount'
+import EditForm from '@/components/EditForm'
+import CreateTestAccount from '@/pages/CreateTestAccount'
 import { useToast } from '@/contexts/ToastContext'
 import { type PaginationInfo } from '@/model/PaginationInfo'
 
 // 定義查詢表單欄位類型
-interface SearchField {
+export interface SearchField {
   key: string
   label: string
   placeholder: string
@@ -18,13 +18,8 @@ interface SearchField {
   className?: string
 }
 
-// 通用查詢表單資料類型
-interface SearchFormData {
-  [key: string]: string | number | undefined
-}
-
 // 表格欄位配置介面
-interface TableColumn {
+export interface TableColumn {
   key: string
   title: string
   width?: string
@@ -38,14 +33,8 @@ interface TableItem {
   [key: string]: unknown
 }
 
-// 可自訂功能按鈕類型
-interface ActionButton {
-  label: string
-  onClick: (item: TableItem) => void
-}
-
 // 資料載入函數類型
-type LoadDataFunction<TRawData = unknown, TQuery = Record<string, unknown>> = (
+export type LoadDataFunction<TRawData = unknown, TQuery = Record<string, unknown>> = (
   queryParams: TQuery,
   page: number,
   pageSize: number
@@ -54,70 +43,47 @@ type LoadDataFunction<TRawData = unknown, TQuery = Record<string, unknown>> = (
   pagination: PaginationInfo
 }>
 
-interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>> {
+interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>, TEditData = Record<string, unknown>, TAddData = Record<string, unknown>> {
   // 資料載入函數
   loadDataFn: LoadDataFunction<TRawData, TQuery>
   deleteDataFn: (selectedIds: number[]) => void
-  editDataFn: (formData: EditFormData) => void
-  addDataFn: (formData: CreateTestAccountData) => void
+  editDataFn: (formData: TEditData) => void
+  addDataFn: (formData: TAddData) => void
 
   // 表格欄位配置
   columns: TableColumn[]
-  showCheckbox?: boolean
-  showActions?: boolean
 
   // 分頁控制 (初始值，內部管理)
   initialCurrentPage?: number
   initialItemsPerPage?: number
   itemsPerPageOptions?: number[]
 
-  // 選擇功能 (內部管理)
-  initialSelectedItems?: number[]
-  onSelectionChange?: (selectedIds: number[]) => void
-
   // 查詢功能
   searchFields?: SearchField[]
-  showSearch?: boolean
 
   // 自訂配置
-  title?: string
-  searchPlaceholder?: string
-  actionButtons?: ActionButton[]
   emptyMessage?: string
   loadingMessage?: string
 }
 
-// 渲染表格儲存格內容的輔助函數
-const renderCellValue = (value: string | null) => {
-  if (value === null || value === '' || value === undefined) {
-    return <span className="badge badge-outline border-gray-300 text-xs text-gray-500">None</span>
-  }
-  return value
-}
-
-export default function DataTable<TRawData = unknown, TQuery = Record<string, unknown>>({
+export default function DataTable<TRawData = unknown, TQuery = Record<string, unknown>, TEditData = Record<string, unknown>, TAddData = Record<string, unknown>>({
   loadDataFn,
   deleteDataFn,
   editDataFn,
   addDataFn,
   columns,
-  showCheckbox = true,
-  showActions = true,
   initialCurrentPage = 1,
   initialItemsPerPage = 10,
   itemsPerPageOptions = [10, 20, 50, 100],
-  initialSelectedItems = [],
-  onSelectionChange,
   searchFields = [],
-  showSearch = true,
   emptyMessage = '暫無資料',
-  loadingMessage = '載入中...',
-}: DataTableProps<TRawData, TQuery>) {
+  // loadingMessage = '載入中...',
+}: DataTableProps<TRawData, TQuery, TEditData, TAddData>) {
   const { showToast } = useToast()
 
   // 內部狀態管理
   const [data, setData] = useState<TableItem[]>([])
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: initialCurrentPage,
     itemsPerPage: initialItemsPerPage,
@@ -128,7 +94,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   })
   const [currentPage, setCurrentPage] = useState(initialCurrentPage)
   const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage)
-  const [selectedItems, setSelectedItems] = useState<number[]>(initialSelectedItems)
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [currentQuery, setCurrentQuery] = useState<TQuery>({} as TQuery)
 
   // Modal 狀態管理
@@ -141,11 +107,11 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
   // 載入資料
   const loadData = useCallback(async (queryParams: TQuery = {} as TQuery, page = currentPage, pageSize = itemsPerPage) => {
-    setLoading(true)
+    // setLoading(true)
     try {
       const response = await loadDataFn(queryParams, page, pageSize)
 
-      setData(response.data as unknown as TableItem[])
+      setData(response.data as TableItem[])
       setPagination(response.pagination)
       setCurrentPage(response.pagination.currentPage)
       setItemsPerPage(response.pagination.itemsPerPage)
@@ -156,14 +122,14 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       showToast('載入資料失敗，請稍後再試', 'error')
     }
     finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }, [loadDataFn, currentPage, itemsPerPage, showToast])
 
   // 初始化資料
   useEffect(() => {
     loadData()
-  }, [loadData]) // 只在組件掛載時執行一次
+  }, []) // 只在組件掛載時執行一次
 
   // 當資料變化時重置選擇項目
   useEffect(() => {
@@ -171,11 +137,11 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   }, [data])
 
   // React Hook Form 設定
-  const defaultValues = searchFields.reduce<SearchFormData>((acc, field) => {
+  const defaultValues = searchFields.reduce<Record<string, string | number | undefined>>((acc, field) => {
     acc[field.key] = ''
     return acc
   }, {})
-  const { register, handleSubmit, reset } = useForm<SearchFormData>({
+  const { register, handleSubmit, reset } = useForm<Record<string, string | number | undefined>>({
     defaultValues,
   })
 
@@ -185,18 +151,16 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       ? selectedItems.filter(itemId => itemId !== id)
       : [...selectedItems, id]
     setSelectedItems(newSelection)
-    onSelectionChange?.(newSelection)
   }
 
   // 選擇全部項目
   const handleSelectAll = () => {
     const newSelection = selectedItems.length === data.length ? [] : data.map(item => item.id)
     setSelectedItems(newSelection)
-    onSelectionChange?.(newSelection)
   }
 
   // 查詢表單處理
-  const onSubmit = (formData: SearchFormData) => {
+  const onSubmit = (formData: Record<string, string | number | undefined>) => {
     const queryParams = formData as unknown as TQuery
     loadData(queryParams, 1, itemsPerPage)
   }
@@ -317,7 +281,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
   // 表單提交處理
   // 處理編輯提交
-  const handleEditSubmit = async (formData: EditFormData) => {
+  const handleEditSubmit = async (formData: TEditData) => {
     if (editingItem) {
       try {
         await editDataFn(formData)
@@ -327,12 +291,12 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
           dataItem.id === editingItem.id
             ? {
                 ...dataItem,
-                situationDesc: formData.situationDesc,
-                rmtResultCode: formData.rmtResultCode,
-                atmResultCode: formData.atmResultCode,
-                atmVerifyRCode: formData.atmVerifyRCode,
-                atmVerifyRDetail: formData.atmVerifyRDetail,
-                fxmlResultCode: formData.fxmlResultCode,
+                // situationDesc: formData.situationDesc,
+                // rmtResultCode: formData.rmtResultCode,
+                // atmResultCode: formData.atmResultCode,
+                // atmVerifyRCode: formData.atmVerifyRCode,
+                // atmVerifyRDetail: formData.atmVerifyRDetail,
+                // fxmlResultCode: formData.fxmlResultCode,
                 updatedAt: new Date().toLocaleString(),
                 updater: '目前使用者', // TODO: 從使用者資訊取得
               }
@@ -353,24 +317,16 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   }
 
   // 處理新增提交
-  const handleAddSubmit = async (formData: CreateTestAccountData) => {
+  const handleAddSubmit = async (formData: TAddData) => {
     try {
       await addDataFn(formData)
 
       // 暫時新增到本地資料
       const newItem: TableItem = {
         id: Math.max(...data.map(d => d.id)) + 1,
-        account: formData.account,
-        situationDesc: formData.situationDesc,
-        rmtResultCode: formData.isRmt ? formData.rmtResultCode : null,
-        atmResultCode: formData.isAtm ? formData.atmResultCode : null,
-        atmVerifyRCode: formData.atmVerify ? formData.atmVerifyRCode : '00000',
-        atmVerifyRDetail: formData.atmVerify ? formData.atmVerifyRDetail : '000000',
-        fxmlResultCode: formData.isFxml ? formData.fxmlResultCode : '00000',
-        updatedAt: new Date().toLocaleDateString(),
-        updater: formData.creator || '目前使用者',
-        createdAt: new Date().toLocaleDateString(),
-        creator: formData.creator || '目前使用者',
+        ...formData,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       }
 
       setData(prev => [newItem, ...prev])
@@ -385,13 +341,21 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
     }
   }
 
-  // 計算總欄位數（用於 colSpan）
-  const totalColumns = (showCheckbox ? 1 : 0) + columns.length + (showActions ? 1 : 0)
+  // 渲染表格儲存格內容的輔助函數
+  const renderCellValue = (value: string | null) => {
+    if (value === null || value === '' || value === undefined) {
+      return <span className="badge badge-outline border-gray-300 text-xs text-gray-500">None</span>
+    }
+    return value
+  }
+
+  // 計算總欄位數（用於 colSpan）2: checkbox column + action column
+  const totalColumns = 2 + columns.length
 
   return (
     <div className="w-full">
       {/* 查詢表單 */}
-      {showSearch && searchFields.length > 0 && (
+      {searchFields.length > 0 && (
         <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
           <div className="flex items-center gap-6 flex-wrap">
             {searchFields.map(field => (
@@ -456,16 +420,16 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         <table className="table table-zebra w-full">
           <thead>
             <tr className="bg-base-200 text-sm">
-              {showCheckbox && (
-                <th className="w-10 py-3">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-xs"
-                    checked={selectedItems.length > 0 && selectedItems.length === data.length}
-                    onChange={handleSelectAll}
-                  />
-                </th>
-              )}
+
+              <th className="w-10 py-3">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs"
+                  checked={selectedItems.length > 0 && selectedItems.length === data.length}
+                  onChange={handleSelectAll}
+                />
+              </th>
+
               {columns.map(column => (
                 <th
                   key={column.key}
@@ -474,87 +438,73 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                   {column.title}
                 </th>
               ))}
-              {showActions && (
-                <th className="w-12 py-3 text-center">功能</th>
-              )}
+
+              <th className="w-12 py-3 text-center">功能</th>
+
             </tr>
           </thead>
           <tbody>
-            {loading
+            {data.length === 0
               ? (
                   <tr>
                     <td colSpan={totalColumns} className="text-center py-8">
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="loading loading-spinner loading-md"></span>
-                        <span className="text-gray-500">{loadingMessage}</span>
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <span className="text-gray-500">{emptyMessage}</span>
                       </div>
                     </td>
                   </tr>
                 )
-              : data.length === 0
-                ? (
-                    <tr>
-                      <td colSpan={totalColumns} className="text-center py-8">
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <span className="text-gray-500">{emptyMessage}</span>
+              : (
+                  data.map(item => (
+                    <tr
+                      key={item.id}
+                      onClick={() => handleSelectItem(item.id)}
+                      className={`
+                      text-sm cursor-pointer
+                      transition-[background-color,transform,box-shadow] duration-150
+                      ${selectedItems.includes(item.id)
+                      ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md'
+                      : 'hover:bg-gray-100'
+                    }
+                    `}
+                    >
+
+                      <td onClick={e => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-xs"
+                          checked={selectedItems.includes(item.id)}
+                          onChange={() => handleSelectItem(item.id)}
+                        />
+                      </td>
+
+                      {columns.map(column => (
+                        <td key={column.key} className={column.className || ''}>
+                          {renderCellValue(item[column.key] as string | null)}
+                        </td>
+                      ))}
+
+                      <td onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
+                            onClick={() => handleEditClick(item)}
+                            title="編輯"
+                          >
+                            <Edit size={14} />
+                          </button>
+                          <button
+                            className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
+                            onClick={() => handleDeleteClick(item)}
+                            title="刪除"
+                          >
+                            <Trash2 size={14} />
+                          </button>
                         </div>
                       </td>
                     </tr>
-                  )
-                : (
-                    data.map(item => (
-                      <tr
-                        key={item.id}
-                        onClick={() => showCheckbox ? handleSelectItem(item.id) : undefined}
-                        className={`
-                      text-sm ${showCheckbox ? 'cursor-pointer' : ''}
-                      transition-[background-color,transform,box-shadow] duration-150
-                      ${showCheckbox && selectedItems.includes(item.id)
-                        ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md hover:scale-[1.005]'
-                        : 'hover:bg-gray-100 hover:scale-[1.005]'
-                      }
-                    `}
-                      >
-                        {showCheckbox && (
-                          <td onClick={e => e.stopPropagation()}>
-                            <input
-                              type="checkbox"
-                              className="checkbox checkbox-xs"
-                              checked={selectedItems.includes(item.id)}
-                              onChange={() => handleSelectItem(item.id)}
-                            />
-                          </td>
-                        )}
-                        {columns.map(column => (
-                          <td key={column.key} className={column.className || ''}>
-                            {column.render
-                              ? column.render(item[column.key], item)
-                              : renderCellValue(item[column.key] as string | null)}
-                          </td>
-                        ))}
-                        {showActions && (
-                          <td onClick={e => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-2">
-                              <button
-                                className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
-                                onClick={() => handleEditClick(item)}
-                                title="編輯"
-                              >
-                                <Edit size={14} />
-                              </button>
-                              <button
-                                className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
-                                onClick={() => handleDeleteClick(item)}
-                                title="刪除"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    ))
-                  )}
+                  ))
+                )}
           </tbody>
         </table>
       </div>
@@ -656,7 +606,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
           <div className="modal-box w-11/12 max-w-6xl p-0">
             <EditForm
               data={editingItem}
-              onSubmit={handleEditSubmit}
+              onSubmit={editData => handleEditSubmit(editData as TEditData)}
               onCancel={handleCloseEditModal}
             />
           </div>
@@ -701,7 +651,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         <dialog className={`modal ${isAddModalOpen ? 'modal-open' : ''}`}>
           <div className="modal-box w-11/12 max-w-6xl h-5/6 p-0">
             <CreateTestAccount
-              onSubmit={handleAddSubmit}
+              onSubmit={addData => handleAddSubmit(addData as TAddData)}
               onCancel={handleCloseAddModal}
             />
           </div>
@@ -760,5 +710,3 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
     </div>
   )
 }
-
-export type { SearchFormData, SearchField, PaginationInfo, ActionButton, TableColumn, TableItem, LoadDataFunction }

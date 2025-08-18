@@ -1,18 +1,10 @@
-import DataTable, { type SearchField, type TableColumn } from '@/components/DataTable'
+import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
 import { type EditFormData } from '@/components/EditForm'
 import { type CreateTestAccountData } from '@/pages/CreateTestAccount'
 import { ApiService } from '@/services/apiService'
 import { type FiscSituation, type FiscSituationQuery } from '@/model/FiscSituation'
 
 export default function MaintainTestAccount() {
-  // 渲染表格儲存格內容的輔助函數
-  const renderCellValue = (value: string | null) => {
-    if (value === null || value === '' || value === undefined) {
-      return <span className="badge badge-outline border-gray-300 text-xs text-gray-500">None</span>
-    }
-    return value
-  }
-
   // 定義查詢表單欄位配置
   const searchFields: SearchField[] = [
     {
@@ -42,12 +34,10 @@ export default function MaintainTestAccount() {
     {
       key: 'rmtResultCode',
       title: '匯出匯款',
-      render: value => renderCellValue(value as string | null),
     },
     {
       key: 'atmResultCode',
       title: '代理轉帳',
-      render: value => renderCellValue(value as string | null),
     },
     {
       key: 'atmVerifyRCode',
@@ -80,7 +70,7 @@ export default function MaintainTestAccount() {
   ]
 
   // 載入資料函數 (傳給 DataTable 使用)
-  const loadFiscData = async (queryParams: FiscSituationQuery, page: number, pageSize: number) => {
+  const loadFiscData: LoadDataFunction<FiscSituation, FiscSituationQuery> = async (queryParams, page, pageSize) => {
     const response = await ApiService.getFiscSituationList({
       page,
       pageSize,
@@ -116,7 +106,7 @@ export default function MaintainTestAccount() {
 
   return (
     <div className="w-full">
-      <DataTable<FiscSituation, FiscSituationQuery>
+      <DataTable<FiscSituation, FiscSituationQuery, EditFormData, CreateTestAccountData>
         loadDataFn={loadFiscData}
         deleteDataFn={deleteFiscData}
         addDataFn={addFiscData}

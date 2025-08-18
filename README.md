@@ -32,23 +32,26 @@
 
 ### 安裝步驟
 
-1. 複製專案
+1.複製專案
+
 ```bash
 git clone <repository-url>
 cd feb-simulator-web
 ```
 
-2. 安裝相依套件
+2.安裝相依套件
+
 ```bash
 pnpm install
 ```
 
-3. 啟動開發伺服器
+3.啟動開發伺服器
+
 ```bash
 pnpm run local
 ```
 
-4. 開啟瀏覽器訪問 `http://localhost:5173`
+4.開啟瀏覽器訪問 `http://localhost:5173`
 
 ## 開發指令
 
@@ -59,7 +62,7 @@ pnpm run local
 
 ## 專案結構
 
-```
+```sh
 src/
 ├── components/          # React 元件
 │   ├── Content.tsx     # 主要內容元件
@@ -75,7 +78,6 @@ src/
 ├── services/           # API 服務
 │   └── authService.ts  # 認證服務
 ├── assets/             # 靜態資源
-│   └── data.json       # 測試資料
 ├── App.tsx             # 主應用程式元件
 ├── Main.tsx            # 應用程式入口點
 └── routes.tsx          # 路由配置
@@ -84,6 +86,7 @@ src/
 ## 登入資訊
 
 測試用登入帳號：
+
 - 帳號：lester
 - 密碼：password
 
@@ -92,6 +95,7 @@ src/
 ### 路由系統
 
 本專案使用動態路由系統，路由配置在 `routes.tsx` 中定義。主要路由包括：
+
 - `/login` - 登入頁面
 - `/TEST_ACCT_MAINT` - 測試帳號維護（預設首頁）
 
