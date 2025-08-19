@@ -119,7 +119,12 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
     }
     catch (error) {
       console.error('載入資料失敗:', error)
-      showToast('載入資料失敗，請稍後再試', 'error')
+      if (error instanceof Error) {
+        showToast(`載入資料失敗，${error.message}`, 'error')
+      }
+      else {
+        showToast(`載入資料失敗，${String(error)}`, 'error')
+      }
     }
     finally {
       // setLoading(false)
