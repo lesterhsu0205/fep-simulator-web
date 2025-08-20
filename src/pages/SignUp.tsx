@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, User, Lock, Mail, UserCheck } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext'
-import { signupApi, type SignupRequest } from '@/services/authService'
+import { signupApi, type SignupRequest } from '@/services/AuthService'
 import { Footer } from '@/components/Footer'
 
 // 註冊表單資料類型
@@ -82,7 +82,7 @@ export default function SignUp() {
             </div>
             <h1 className="text-5xl font-medium">立即註冊!</h1>
             <p className="py-6 whitespace-nowrap">
-              建立您的新帳戶，開始享受 FEP Simulator 的強大功能 - 快速、安全、專業。
+              建立您的新帳戶，開始享受 FEP Simulator 的強大功能 - 快速、安全、專業的財金模擬平台。
             </p>
           </div>
           <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">

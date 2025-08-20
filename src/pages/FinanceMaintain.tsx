@@ -1,8 +1,8 @@
 import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
 import { type EditFormData } from '@/components/EditForm'
-import { type CreateTestAccountData } from '@/pages/CreateTestAccount'
-import { ApiService } from '@/services/apiService'
 import { type FiscSituation, type FiscSituationQuery } from '@/model/FiscSituation'
+import { FinanceService } from '@/services/FinanceService'
+import FinanceCreate from '@/pages/FinanceCreate'
 
 export default function MaintainTestAccount() {
   // 定義查詢表單欄位配置
@@ -30,26 +30,45 @@ export default function MaintainTestAccount() {
     {
       key: 'situationDesc',
       title: '情境說明',
+    }, {
+      key: 'memo',
+      title: '補充說明',
+    },
+    {
+      key: 'isRmt',
+      title: '通匯是否啟用',
     },
     {
       key: 'rmtResultCode',
-      title: '匯出匯款',
+      title: '通匯交易結果',
+    },
+    {
+      key: 'isAtm',
+      title: '轉帳是否啟用',
     },
     {
       key: 'atmResultCode',
-      title: '代理轉帳',
+      title: '轉帳交易結果',
+    },
+    {
+      key: 'atmVerify',
+      title: '核驗是否啟用',
     },
     {
       key: 'atmVerifyRCode',
-      title: '帳號核核',
+      title: '核驗交易結果',
     },
     {
       key: 'atmVerifyRDetail',
-      title: '帳號核檢 91-96',
+      title: '91-96',
+    },
+    {
+      key: 'isFxml',
+      title: 'FXML是否啟用',
     },
     {
       key: 'fxmlResultCode',
-      title: 'FXML 規則',
+      title: 'FXML交易結果',
     },
     {
       key: 'updatedAt',
@@ -71,30 +90,35 @@ export default function MaintainTestAccount() {
 
   // 載入資料函數 (傳給 DataTable 使用)
   const loadFiscData: LoadDataFunction<FiscSituation, FiscSituationQuery> = async (queryParams, page, pageSize) => {
-    const response = await ApiService.getFiscSituationList({
+    const response = await FinanceService.getFiscSituationList({
       page,
       pageSize,
       ...queryParams,
     })
 
     return {
-      data: response.fiscSituations,
-      pagination: response.pagination,
+      data: response?.fiscSituations || [],
+      pagination: response?.pagination || {
+        currentPage: 1,
+        itemsPerPage: 10,
+        totalItems: 0,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPrevPage: false,
+      },
     }
   }
 
   // delete item
-  const deleteFiscData = async (_selectedIds: number[]) => {
-    void _selectedIds
-    // TODO: 實作 API 批次刪除邏輯
-    // await batchDeleteItemsAPI(selectedIds)
-  }
-
-  // add item
-  const addFiscData = async (_formData: CreateTestAccountData) => {
-    void _formData
-    // TODO: 實作 API 新增邏輯
-    // await createTestAccountAPI(formData)
+  const deleteFiscData = async (selectedIds: number[]) => {
+    // FIXME: 缺批次刪除 API
+    // 方案1：使用 Promise.all (平行執行)
+    await Promise.all(selectedIds.map(async (id) => {
+      await FinanceService.maintainFiscSituation({
+        action: 'D',
+        id,
+      })
+    }))
   }
 
   // edit item
@@ -106,11 +130,11 @@ export default function MaintainTestAccount() {
 
   return (
     <div className="w-full">
-      <DataTable<FiscSituation, FiscSituationQuery, EditFormData, CreateTestAccountData>
+      <DataTable<FiscSituation, FiscSituationQuery, EditFormData>
         loadDataFn={loadFiscData}
         deleteDataFn={deleteFiscData}
-        addDataFn={addFiscData}
         editDataFn={editFiscData}
+        AddFormComponent={FinanceCreate}
         columns={columns}
         searchFields={searchFields}
       />

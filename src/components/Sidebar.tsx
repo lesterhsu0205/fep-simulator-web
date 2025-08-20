@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext'
-import type { MenuItem } from '@/services/authService'
+import type { MenuItem } from '@/services/AuthService'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useCallback } from 'react'
 
@@ -9,7 +9,7 @@ export function Sidebar() {
 
   // 檢查路徑是否有對應的實現
   const isPathImplemented = (path: string): boolean => {
-    const implementedPaths = ['/TEST_ACCT_MAINT', '/TEST_ACCT_CREATE']
+    const implementedPaths = import.meta.env.VITE_IMPLEMENTED_PATHS?.split(',') || []
     return implementedPaths.includes(path)
   }
 

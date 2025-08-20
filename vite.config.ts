@@ -44,8 +44,8 @@ export default defineConfig({
 
         // 主要頁面組件
 
-        './src/pages/MaintainTestAccount.tsx',
-        './src/pages/CreateTestAccount.tsx',
+        './src/pages/FinanceMaintain.tsx',
+        './src/pages/FinanceCreate.tsx',
 
         // 樣式檔案
         './src/app.css',

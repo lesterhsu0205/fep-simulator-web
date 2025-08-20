@@ -68,7 +68,7 @@ export default function Login() {
             </div>
             <h1 className="text-5xl font-medium">歡迎回來!</h1>
             <p className="py-6 whitespace-nowrap">
-              請登入您的帳戶開始使用 FEP Simulator - 安全、快速、便捷的模擬平台。
+              請登入您的帳戶開始使用 FEP Simulator - 快速、安全、專業的財金模擬平台。
             </p>
           </div>
           <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">

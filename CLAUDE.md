@@ -49,7 +49,7 @@
 
 ### 組件架構
 
-主要佈局使用抽屜模式，包含 `Header`、`Content`、`Footer` 和 `Sidebar`。功能組件包括用於帳戶管理的 `MaintainTestAccount` 和用於新建帳戶的 `CreateTestAccount`。工具組件處理模態視窗、提示訊息和路由保護。
+主要佈局使用抽屜模式，包含 `Header`、`Content`、`Footer` 和 `Sidebar`。功能組件包括用於帳戶管理的 `FinanceMaintain` 和用於新建帳戶的 `FinanceCreate`。工具組件處理模態視窗、提示訊息和路由保護。
 
 ## TypeScript 編碼規範
 

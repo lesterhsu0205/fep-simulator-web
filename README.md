@@ -64,23 +64,26 @@ pnpm run local
 
 ```sh
 src/
-├── components/          # React 元件
-│   ├── Content.tsx     # 主要內容元件
-│   ├── DataTable.tsx   # 資料表格元件
-│   ├── DynamicRoutes.tsx # 動態路由元件
-│   ├── Sidebar.tsx # 動態側邊欄
-│   ├── Header.tsx      # 頁面標題元件
-│   ├── Login.tsx       # 登入元件
+├── components/            # React 元件
+│   ├── Content.tsx        # 主要內容元件
+│   ├── DataTable.tsx      # 資料表格元件
+│   ├── DynamicRoutes.tsx  # 動態路由元件
+│   ├── Sidebar.tsx        # 動態側邊欄
+│   ├── Header.tsx         # 頁面標題元件
+│   ├── Login.tsx          # 登入元件
 │   └── ...
-├── contexts/           # React Context
-│   ├── AuthContext.tsx # 認證上下文
-│   └── ToastContext.tsx # Toast 通知上下文
-├── services/           # API 服務
-│   └── authService.ts  # 認證服務
-├── assets/             # 靜態資源
-├── App.tsx             # 主應用程式元件
-├── Main.tsx            # 應用程式入口點
-└── routes.tsx          # 路由配置
+├── contexts/              # React Context
+│   ├── AuthContext.tsx    # 認證上下文
+│   └── ToastContext.tsx   # Toast 通知上下文
+├── services/              # API 服務
+│   ├── ApiService.ts      # axios 實例
+│   ├── AuthService.ts     # 認證服務
+│   ├── CreditService.ts   # 聯徵服務
+│   └── FinanceService.ts  # 財金服務
+├── assets/                # 靜態資源
+├── App.tsx                # 主應用程式元件
+├── Main.tsx               # 應用程式入口點
+└── routes.tsx             # 路由配置
 ```
 
 ## 登入資訊

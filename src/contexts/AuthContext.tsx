@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
-import { loginApi, type LoginResponse, type MenuItem } from '@/services/authService'
+import { loginApi, type LoginResponse, type MenuItem } from '@/services/AuthService'
 
 interface User {
   account: string
@@ -45,6 +45,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(false)
   }, [])
 
+  // 監聽 API 服務觸發的登出事件
+  useEffect(() => {
+    const handleLogout = () => {
+      console.log('🚪 收到登出事件，清除用戶狀態')
+      setUser(null)
+    }
+
+    window.addEventListener('auth:logout', handleLogout)
+    return () => window.removeEventListener('auth:logout', handleLogout)
+  }, [])
+
   const login = async (account: string, password: string): Promise<boolean> => {
     setIsLoading(true)
     try {
@@ -62,6 +73,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(user)
       localStorage.setItem('user', JSON.stringify(user))
       localStorage.setItem('token', loginData.token)
+
+      console.log('🔑 已將 token 存入 localStorage')
       return true
     }
     catch (error) {
@@ -76,6 +89,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const logout = () => {
     setUser(null)
     localStorage.removeItem('user')
+    localStorage.removeItem('token')
   }
 
   const value = {
