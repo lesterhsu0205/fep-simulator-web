@@ -1,5 +1,4 @@
 import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type EditFormData } from '@/components/EditForm'
 import { type TestAccount, type TestAccountQuery } from '@/model/TestAccount'
 import TestAccountCreate from '@/pages/TestAccountCreate'
 import testAccountData from '@/assets/TestAccountList.json'
@@ -120,20 +119,13 @@ export default function TestAccountMaintain() {
     // await batchDeleteItemsAPI(selectedIds)
   }
 
-  // edit item
-  const editTestAccountData = async (_formData: EditFormData) => {
-    void _formData
-    // TODO: 實作 API 更新邏輯
-    // await updateItemAPI(editingItem.id, formData)
-  }
-
   return (
     <div className="w-full">
-      <DataTable<TestAccount, TestAccountQuery, EditFormData>
+      <DataTable<TestAccount, TestAccountQuery>
         loadDataFn={loadTestAccountData}
         deleteDataFn={deleteTestAccountData}
-        editDataFn={editTestAccountData}
         AddFormComponent={TestAccountCreate}
+        deleteTitleAttr=""
         columns={columns}
         searchFields={searchFields}
       />

@@ -1,32 +1,12 @@
+import { type AxiosResponse } from 'axios'
+import ApiClient, { type ApiResponse } from '@/services/ApiService'
+
 // API 登入回應的型別定義
 export interface LoginResponse {
   username: string
   token: string
   role: string
   menus: MenuItem[]
-}
-
-// API 完整回應結構
-export interface ApiLoginResponse {
-  messageCode: string
-  messageDesc: string
-  messageContent: LoginResponse
-}
-
-// 使用者註冊請求的型別定義
-export interface SignupRequest {
-  username: string
-  password: string
-  email?: string
-  accountType: string
-  roleCode?: string
-}
-
-// API 註冊回應結構
-export interface ApiSignupResponse {
-  messageCode: string
-  messageDesc: string
-  messageContent: null
 }
 
 export interface MenuItem {
@@ -38,38 +18,33 @@ export interface MenuItem {
   children: MenuItem[]
 }
 
+// 使用者註冊請求的型別定義
+export interface SignupRequest {
+  username: string
+  password: string
+  email?: string
+  accountType: string
+  roleCode?: string
+}
+
 // 使用者登入 API
 export const loginApi = async (account: string, password: string): Promise<LoginResponse> => {
   console.log('🔐 開始登入流程...', { username: account, password: '***' })
 
   try {
-    // 呼叫實際的登入 API
-    const response = await fetch('/fes/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: account,
-        password: password,
-      }),
+    const response: AxiosResponse<ApiResponse<LoginResponse>> = await ApiClient.post('/auth/login', {
+      username: account,
+      password: password,
     })
 
-    console.log('📡 登入 API 呼叫回應狀態:', response.status)
+    console.log('📊 登入 API 完整回應:', response.data)
 
-    if (!response.ok) {
-      throw new Error(`登入請求失敗: ${response.status}`)
+    // 檢查回傳內容是否存在
+    if (!response.data.messageContent) {
+      throw new Error('登入回應資料為空')
     }
 
-    const apiResponse: ApiLoginResponse = await response.json()
-    console.log('📊 登入 API 完整回應:', apiResponse)
-
-    // 檢查訊息代碼
-    if (apiResponse.messageCode !== '00000') {
-      throw new Error(apiResponse.messageDesc || '登入失敗')
-    }
-
-    const loginData: LoginResponse = apiResponse.messageContent
+    const loginData: LoginResponse = response.data.messageContent
     console.log('📊 獲取到的使用者資料:', loginData)
 
     return loginData
@@ -133,29 +108,9 @@ export const signupApi = async (signupData: SignupRequest): Promise<void> => {
   console.log('📝 開始註冊流程...', { ...signupData, password: '***' })
 
   try {
-    // 模擬 API 呼叫 - 在實際環境中這會是真實的後端 API 呼叫
-    const response = await fetch('/fes/api/users/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(signupData),
-    })
+    const response: AxiosResponse<ApiResponse<void>> = await ApiClient.post('/users/create', signupData)
 
-    console.log('📡 註冊 API 呼叫回應狀態:', response.status)
-
-    if (!response.ok) {
-      throw new Error(`註冊請求失敗: ${response.status}`)
-    }
-
-    const apiResponse: ApiSignupResponse = await response.json()
-    console.log('📊 註冊 API 完整回應:', apiResponse)
-
-    // 檢查訊息代碼
-    if (apiResponse.messageCode !== '00000') {
-      throw new Error(apiResponse.messageDesc || '註冊失敗')
-    }
-
+    console.log('📊 註冊 API 完整回應:', response.data)
     console.log('✅ 註冊成功')
   }
   catch (error) {

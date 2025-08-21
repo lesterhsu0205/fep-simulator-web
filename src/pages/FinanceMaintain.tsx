@@ -1,8 +1,8 @@
 import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type EditFormData } from '@/components/EditForm'
 import { type FiscSituation, type FiscSituationQuery } from '@/model/FiscSituation'
 import { FinanceService } from '@/services/FinanceService'
 import FinanceCreate from '@/pages/FinanceCreate'
+import FinanceEditForm from '@/components/FinanceEditForm'
 
 export default function MaintainTestAccount() {
   // 定義查詢表單欄位配置
@@ -30,45 +30,46 @@ export default function MaintainTestAccount() {
     {
       key: 'situationDesc',
       title: '情境說明',
-    }, {
-      key: 'memo',
-      title: '補充說明',
     },
-    {
-      key: 'isRmt',
-      title: '通匯是否啟用',
-    },
+    // {
+    //   key: 'memo',
+    //   title: '補充說明',
+    // },
+    // {
+    //   key: 'isRmt',
+    //   title: '通匯是否啟用',
+    // },
     {
       key: 'rmtResultCode',
-      title: '通匯交易結果',
+      title: '匯出匯款',
     },
-    {
-      key: 'isAtm',
-      title: '轉帳是否啟用',
-    },
+    // {
+    //   key: 'isAtm',
+    //   title: '轉帳是否啟用',
+    // },
     {
       key: 'atmResultCode',
-      title: '轉帳交易結果',
+      title: '代理轉帳',
     },
-    {
-      key: 'atmVerify',
-      title: '核驗是否啟用',
-    },
+    // {
+    //   key: 'atmVerify',
+    //   title: '核驗是否啟用',
+    // },
     {
       key: 'atmVerifyRCode',
-      title: '核驗交易結果',
+      title: '帳號檢核',
     },
     {
       key: 'atmVerifyRDetail',
-      title: '91-96',
+      title: '帳號檢核91-96',
     },
-    {
-      key: 'isFxml',
-      title: 'FXML是否啟用',
-    },
+    // {
+    //   key: 'isFxml',
+    //   title: 'FXML是否啟用',
+    // },
     {
       key: 'fxmlResultCode',
-      title: 'FXML交易結果',
+      title: 'FXML提領',
     },
     {
       key: 'updatedAt',
@@ -121,20 +122,14 @@ export default function MaintainTestAccount() {
     }))
   }
 
-  // edit item
-  const editFiscData = async (_formData: EditFormData) => {
-    void _formData
-    // TODO: 實作 API 更新邏輯
-    // await updateItemAPI(editingItem.id, formData)
-  }
-
   return (
     <div className="w-full">
-      <DataTable<FiscSituation, FiscSituationQuery, EditFormData>
+      <DataTable<FiscSituation, FiscSituationQuery>
         loadDataFn={loadFiscData}
         deleteDataFn={deleteFiscData}
-        editDataFn={editFiscData}
         AddFormComponent={FinanceCreate}
+        EditFormComponent={FinanceEditForm}
+        deleteTitleAttr="account"
         columns={columns}
         searchFields={searchFields}
       />

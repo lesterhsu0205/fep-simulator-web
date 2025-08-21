@@ -1,5 +1,4 @@
 import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type EditFormData } from '@/components/EditForm'
 import { type JcicSituation, type JcicSituationQuery } from '@/model/JcicSituation'
 import { CreditService } from '@/services/CreditService'
 import CreditCreate from '@/pages/CreditCreate'
@@ -8,7 +7,7 @@ export default function MaintainTestAccount() {
   // 定義查詢表單欄位配置
   const searchFields: SearchField[] = [
     {
-      key: 'txId',
+      key: 'txid',
       label: '查詢項目',
       placeholder: '請輸入查詢項目',
       type: 'text',
@@ -26,6 +25,18 @@ export default function MaintainTestAccount() {
       type: 'text',
     },
     {
+      key: 'returnCode',
+      label: '回應代碼',
+      placeholder: '請輸入錯誤代碼',
+      type: 'text',
+    },
+    {
+      key: 'forceToJcic',
+      label: '強制發查',
+      placeholder: '請輸入強制發查',
+      type: 'text',
+    },
+    {
       key: 'creator',
       label: '建立者',
       placeholder: '請輸入建立者',
@@ -36,7 +47,7 @@ export default function MaintainTestAccount() {
   // 定義表格欄位配置
   const columns: TableColumn[] = [
     {
-      key: 'txId',
+      key: 'txid',
       title: '查詢項目',
     },
     {
@@ -48,11 +59,11 @@ export default function MaintainTestAccount() {
     },
     {
       key: 'returnCode',
-      title: '錯誤代碼',
+      title: '回應代碼',
     },
     {
       key: 'forceToJcic',
-      title: '強制發查flag',
+      title: '強制發查',
     },
     {
       key: 'jcicDataDate',
@@ -67,10 +78,10 @@ export default function MaintainTestAccount() {
       key: 'situationDesc',
       title: '情境說明',
     },
-    {
-      key: 'memo',
-      title: '補充說明',
-    },
+    // {
+    //   key: 'memo',
+    //   title: '補充說明',
+    // },
     {
       key: 'updatedAt',
       title: '最後修改時間',
@@ -111,26 +122,24 @@ export default function MaintainTestAccount() {
   }
 
   // delete item
-  const deleteJcicData = async (_selectedIds: number[]) => {
-    void _selectedIds
-    // TODO: 實作 API 批次刪除邏輯
-    // await batchDeleteItemsAPI(selectedIds)
-  }
-
-  // edit item
-  const editJcicData = async (_formData: EditFormData) => {
-    void _formData
-    // TODO: 實作 API 更新邏輯
-    // await updateItemAPI(editingItem.id, formData)
+  const deleteJcicData = async (selectedIds: number[]) => {
+    // FIXME: 缺批次刪除 API
+    // 方案1：使用 Promise.all (平行執行)
+    await Promise.all(selectedIds.map(async (id) => {
+      await CreditService.maintainJcicSituation({
+        action: 'D',
+        id,
+      })
+    }))
   }
 
   return (
     <div className="w-full">
-      <DataTable<JcicSituation, JcicSituationQuery, EditFormData>
+      <DataTable<JcicSituation, JcicSituationQuery>
         loadDataFn={loadJcicData}
         deleteDataFn={deleteJcicData}
-        editDataFn={editJcicData}
         AddFormComponent={CreditCreate}
+        deleteTitleAttr="txid"
         columns={columns}
         searchFields={searchFields}
       />

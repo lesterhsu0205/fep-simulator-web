@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form'
 import { Search, RotateCcw, Edit, Trash2, Plus, Check, X } from 'lucide-react'
 import { useState, useEffect, useCallback, type ComponentType } from 'react'
 import Modal from '@/components/Modal'
-import EditForm from '@/components/EditForm'
 import { useToast } from '@/contexts/ToastContext'
 import { type PaginationInfo } from '@/model/PaginationInfo'
 
@@ -46,14 +45,22 @@ interface AddFormProps {
   afterSubmit: () => void
 }
 
-interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>, TEditData = Record<string, unknown>> {
+// 編輯表單組件的 props 介面
+export interface EditFormProps {
+  data: { [key: string]: unknown } | null
+  afterSubmit: () => void
+}
+
+interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>> {
   // 資料處理函數
   loadDataFn: LoadDataFunction<TRawData, TQuery>
   deleteDataFn: (selectedIds: number[]) => void
-  editDataFn: (formData: TEditData) => void
 
   // 新增表單組件
-  AddFormComponent: ComponentType<AddFormProps>
+  AddFormComponent?: ComponentType<AddFormProps>
+
+  // 編輯表單組件
+  EditFormComponent?: ComponentType<EditFormProps>
 
   // 表格欄位配置
   columns: TableColumn[]
@@ -67,23 +74,25 @@ interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>, T
   searchFields?: SearchField[]
 
   // 自訂配置
+  deleteTitleAttr: string
   emptyMessage?: string
   loadingMessage?: string
 }
 
-export default function DataTable<TRawData = unknown, TQuery = Record<string, unknown>, TEditData = Record<string, unknown>>({
+export default function DataTable<TRawData = unknown, TQuery = Record<string, unknown>>({
   loadDataFn,
   deleteDataFn,
-  editDataFn,
   AddFormComponent,
+  EditFormComponent,
   columns,
   initialCurrentPage = 1,
   initialItemsPerPage = 10,
   itemsPerPageOptions = [10, 20, 50, 100],
   searchFields = [],
   emptyMessage = '暫無資料',
+  deleteTitleAttr = 'account',
   // loadingMessage = '載入中...',
-}: DataTableProps<TRawData, TQuery, TEditData>) {
+}: DataTableProps<TRawData, TQuery>) {
   const { showToast } = useToast()
 
   // 內部狀態管理
@@ -142,6 +151,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   // 初始化資料
   useEffect(() => {
     loadData()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // 只在組件掛載時執行一次
 
   // 當資料變化時重置選擇項目
@@ -198,37 +208,21 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   const handleEditClick = (item: TableItem) => {
     setEditingItem(item)
     setIsEditModalOpen(true)
-
-    // else {
-    //   onEdit?.(item)
-    // }
   }
 
   const handleDeleteClick = (item: TableItem) => {
     setDeletingItem(item)
     setIsDeleteModalOpen(true)
-
-    // else {
-    //   onDelete?.(item)
-    // }
   }
 
   const handleAddClick = () => {
     setIsAddModalOpen(true)
-
-    // else {
-    //   onAdd?.()
-    // }
   }
 
   const handleBatchDeleteClick = (selectedIds: number[]) => {
     if (selectedIds.length > 0) {
       setIsBatchDeleteModalOpen(true)
     }
-
-    // else {
-    //   onBatchDelete?.(selectedIds)
-    // }
   }
 
   // Modal 確認處理
@@ -248,8 +242,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         console.error('Delete error:', error)
       }
       finally {
-        setIsDeleteModalOpen(false)
         setDeletingItem(null)
+        setIsDeleteModalOpen(false)
       }
     }
   }
@@ -275,8 +269,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
   // Modal 取消處理
   const handleCancelDelete = () => {
-    setIsDeleteModalOpen(false)
     setDeletingItem(null)
+    setIsDeleteModalOpen(false)
   }
 
   const handleCancelBatchDelete = () => {
@@ -284,8 +278,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   }
 
   const handleCloseEditModal = () => {
-    setIsEditModalOpen(false)
     setEditingItem(null)
+    setIsEditModalOpen(false)
   }
 
   const handleCloseAddModal = () => {
@@ -294,39 +288,11 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
   // 表單提交處理
   // 處理編輯提交
-  const handleEditSubmit = async (formData: TEditData) => {
-    if (editingItem) {
-      try {
-        await editDataFn(formData)
-
-        // 暫時更新本地資料
-        setData(prev => prev.map(dataItem =>
-          dataItem.id === editingItem.id
-            ? {
-                ...dataItem,
-                // situationDesc: formData.situationDesc,
-                // rmtResultCode: formData.rmtResultCode,
-                // atmResultCode: formData.atmResultCode,
-                // atmVerifyRCode: formData.atmVerifyRCode,
-                // atmVerifyRDetail: formData.atmVerifyRDetail,
-                // fxmlResultCode: formData.fxmlResultCode,
-                updatedAt: new Date().toLocaleString(),
-                updater: '目前使用者', // TODO: 從使用者資訊取得
-              }
-            : dataItem,
-        ))
-
-        showToast('修改成功', 'success')
-      }
-      catch (error) {
-        showToast('修改失敗，請稍後再試', 'error')
-        console.error('Update error:', error)
-      }
-      finally {
-        setIsEditModalOpen(false)
-        setEditingItem(null)
-      }
-    }
+  const handleEditSubmit = async () => {
+    // 重新載入資料以獲取最新的列表
+    await loadData(currentQuery, currentPage, itemsPerPage)
+    setEditingItem(null)
+    setIsEditModalOpen(false)
   }
 
   // 處理新增提交
@@ -344,9 +310,9 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   }
 
   const handleCloseBlobDetailModal = () => {
-    setIsBlobDetailModalOpen(false)
     setBlobDetailContent('')
     setBlobDetailTitle('')
+    setIsBlobDetailModalOpen(false)
   }
 
   // 渲染表格儲存格內容的輔助函數
@@ -377,7 +343,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
           }}
           title="點擊查看詳細內容"
         >
-          ****
+          ******
         </button>
       )
     }
@@ -637,18 +603,26 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       {/* Modal 渲染 */}
 
       {/* 編輯 Modal */}
-      <dialog className={`modal ${isEditModalOpen ? 'modal-open' : ''}`}>
-        <div className="modal-box w-11/12 max-w-6xl p-0">
-          <EditForm
+      <Modal
+        isOpen={isEditModalOpen}
+        modalTitle="編輯項目"
+        className="w-11/12 max-w-6xl"
+        modalContent={EditFormComponent && (
+          <EditFormComponent
             data={editingItem}
-            onSubmit={editData => handleEditSubmit(editData as TEditData)}
-            onCancel={handleCloseEditModal}
+            afterSubmit={handleEditSubmit}
           />
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button onClick={handleCloseEditModal}>close</button>
-        </form>
-      </dialog>
+        )}
+        modalAction={(
+          <button
+            className="btn btn-ghost"
+            onClick={handleCloseEditModal}
+          >
+            關閉
+          </button>
+        )}
+        onCancel={handleCloseEditModal}
+      />
 
       {/* 刪除確認 Modal */}
       <Modal
@@ -656,8 +630,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         modalTitle="確認刪除"
         modalContent={(
           <>
-            確定要刪除帳號「
-            <span className="font-semibold text-red-600">{(deletingItem?.account as string) || String(deletingItem?.id) || ''}</span>
+            確定要刪除項目「
+            <span className="font-semibold text-red-600">{(deletingItem?.[deleteTitleAttr] as string) || String(deletingItem?.id) || ''}</span>
             」嗎？
             <br />
             <span className="text-sm text-gray-500">此操作無法復原。</span>
@@ -687,10 +661,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         isOpen={isAddModalOpen}
         modalTitle="新增項目"
         className="w-11/12 max-w-6xl"
-        modalContent={(
-          <div className="h-96 overflow-y-auto">
-            <AddFormComponent afterSubmit={handleAddSubmit} />
-          </div>
+        modalContent={AddFormComponent && (
+          <AddFormComponent afterSubmit={handleAddSubmit} />
         )}
         modalAction={(
           <button
@@ -722,7 +694,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                       <div key={id} className="text-sm text-red-600 font-semibold">
                         •
                         {' '}
-                        {(item.account as string) || String(item.id)}
+                        {(item[deleteTitleAttr] as string) || String(item.id)}
                       </div>
                     )
                   : null
@@ -754,7 +726,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       <Modal
         isOpen={isBlobDetailModalOpen}
         modalTitle={`詳細內容 - ${blobDetailTitle}`}
-        className="w-11/12 max-w-5xl"
+        className="w-11/12 max-w-6xl"
         modalContent={(
           <div className="max-h-96 overflow-y-auto overflow-x-hidden">
             <pre className="whitespace-pre-wrap break-words text-sm bg-gray-50 p-4 rounded font-mono">

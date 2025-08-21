@@ -8,6 +8,7 @@ import FinanceCreate from '@/pages/FinanceCreate'
 import TestAccountCreate from '@/pages/TestAccountCreate'
 import TestAccountMaintain from '@/pages/TestAccountMaintain'
 import CreditMaintain from '@/pages/CreditMaintain'
+import CreditCreate from '@/pages/CreditCreate'
 
 export function DynamicRoutes() {
   const { user } = useAuth()
@@ -52,6 +53,8 @@ export function DynamicRoutes() {
         return <FinanceCreate />
       case '/CREDIT_MAINT':
         return <CreditMaintain />
+      case '/CREDIT_CREATE':
+        return <CreditCreate />
       default:
         return null
     }

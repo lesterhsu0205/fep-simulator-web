@@ -51,6 +51,8 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
 
   const handleFormSubmit = async (formData: FinanceCreateFormData) => {
     try {
+      // FIXME: 尚須檢查有打勾但沒 result code 情形
+
       // 處理帳號驗證回應代碼的邏輯，如果是 custom，已經由文字輸入框設定
       const processedFormData = { ...formData }
       if (formData.rmtResultCodeSelection === '00000' || formData.rmtResultCodeSelection === '0202') {
@@ -112,7 +114,7 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
             <div className="space-y-6">
               {/* 建立者 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-16 flex-shrink-0">
+                <label className="text-sm font-medium w-30 flex-shrink-0">
                   建立者
                 </label>
                 <input
@@ -124,7 +126,7 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
 
               {/* 帳號 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-16 flex-shrink-0">
+                <label className="text-sm font-medium w-30 flex-shrink-0">
                   帳號
                 </label>
                 <div className="flex-1">
@@ -144,7 +146,7 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
 
               {/* 情境說明 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-16 flex-shrink-0">
+                <label className="text-sm font-medium w-30 flex-shrink-0">
                   情境說明
                 </label>
                 <div className="flex-1">
@@ -164,21 +166,23 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
             </div>
 
             {/* 右邊欄位 - 補充說明 */}
-            <div className="flex items-start gap-4">
-              <label className="text-sm font-medium w-16 flex-shrink-0 pt-2.5">
-                補充說明
-              </label>
-              <div className="flex-1">
-                <textarea
-                  className="textarea textarea-bordered h-32 resize-none w-full"
-                  placeholder="(小於 100 字)"
-                  {...register('memo', {
-                    maxLength: { value: 100, message: '補充說明不可超過100字' },
-                  })}
-                />
-                {errors.memo && (
-                  <div className="text-xs text-red-500 mt-1">{errors.memo.message}</div>
-                )}
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <label className="text-sm font-medium w-30 flex-shrink-0 pt-2.5">
+                  補充說明
+                </label>
+                <div className="flex-1">
+                  <textarea
+                    className="textarea textarea-bordered h-32 resize-none w-full"
+                    placeholder="(小於 100 字)"
+                    {...register('memo', {
+                      maxLength: { value: 100, message: '補充說明不可超過100字' },
+                    })}
+                  />
+                  {errors.memo && (
+                    <div className="text-xs text-red-500 mt-1">{errors.memo.message}</div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
