@@ -40,7 +40,7 @@ export default defineConfig({
         './src/components/Modal.tsx',
         './src/components/GlobalToast.tsx',
         './src/components/DataTable.tsx',
-        './src/components/EditForm.tsx',
+        './src/components/FinanceEditForm.tsx',
 
         // 主要頁面組件
 

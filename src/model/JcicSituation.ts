@@ -3,7 +3,7 @@ import { type PaginationInfo } from '@/model/PaginationInfo'
 // 財金情境相關接口
 export interface JcicSituation {
   id: number
-  txId: string
+  txid: string
   inqueryKey1: string
   inqueryKey2: string | null
   returnCode: string
@@ -20,7 +20,7 @@ export interface JcicSituation {
 
 // 編輯表單需要的欄位
 export interface JcicCreateFormData {
-  txId: string
+  txid: string
   inqueryKey1: string
   inqueryKey2: string | null
   returnCode: string
@@ -40,7 +40,7 @@ export interface JcicSituationListResponse {
 
 // 查詢參數（分頁參數由 DataTable 統一管理）
 export interface JcicSituationQuery {
-  txId?: string
+  txid?: string
   inqueryKey1?: string
   inqueryKey2?: string
   creator?: string

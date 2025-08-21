@@ -47,6 +47,22 @@ export interface FinanceCreateFormData {
   fxmlResultCodeSelection: string | null
 }
 
+// 表單資料類型（使用 API 的 key 值）
+export interface FinanceEditFormData {
+  id: number
+  account: string
+  situationDesc: string
+  isRmt: boolean | null
+  rmtResultCode: string | null
+  isAtm: boolean | null
+  atmResultCode: string | null
+  atmVerify: boolean | null
+  atmVerifyRCode: string | null
+  atmVerifyRDetail: string | null
+  isFxml: boolean | null
+  fxmlResultCode: string | null
+}
+
 export interface FiscSituationListResponse {
   query: FiscSituationQuery
   pagination: PaginationInfo

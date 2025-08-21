@@ -29,9 +29,9 @@ export default function Modal({ isOpen, modalTitle, modalContent, modalAction, o
   }, [isOpen, onCancel])
 
   return (
-    <dialog className="modal" open={isOpen}>
+    <dialog className="modal modal-middle" open={isOpen}>
       <div className={`modal-box ${className || ''}`}>
-        <h3 className="font-semibold text-lg">{modalTitle}</h3>
+        <h3 className="font-bold text-lg">{modalTitle}</h3>
         <div className="py-4">
           {modalContent}
         </div>
