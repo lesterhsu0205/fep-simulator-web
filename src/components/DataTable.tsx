@@ -291,6 +291,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   const handleEditSubmit = async () => {
     // 重新載入資料以獲取最新的列表
     await loadData(currentQuery, currentPage, itemsPerPage)
+    showToast('編輯成功', 'success')
     setEditingItem(null)
     setIsEditModalOpen(false)
   }
