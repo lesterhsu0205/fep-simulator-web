@@ -1,7 +1,8 @@
 import { createBrowserRouter, type RouteObject, Navigate } from 'react-router-dom'
 import App from '@/App.tsx'
 import ProtectedRoute from '@/components/ProtectedRoute.tsx'
-import Login from '@/components/Login.tsx'
+import Login from '@/pages/Login.tsx'
+import SignUp from '@/pages/SignUp.tsx'
 import { DynamicRoutes } from '@/components/DynamicRoutes.tsx'
 
 // 路由配置
@@ -9,6 +10,10 @@ export const routes: RouteObject[] = [
   {
     path: '/login',
     element: <Login />,
+  },
+  {
+    path: '/signup',
+    element: <SignUp />,
   },
   {
     path: '/',

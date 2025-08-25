@@ -40,12 +40,12 @@ export default defineConfig({
         './src/components/Modal.tsx',
         './src/components/GlobalToast.tsx',
         './src/components/DataTable.tsx',
-        './src/components/EditForm.tsx',
+        './src/components/FinanceEditForm.tsx',
 
         // 主要頁面組件
 
-        './src/pages/MaintainTestAccount.tsx',
-        './src/pages/CreateTestAccount.tsx',
+        './src/pages/FinanceMaintain.tsx',
+        './src/pages/FinanceCreate.tsx',
 
         // 樣式檔案
         './src/app.css',

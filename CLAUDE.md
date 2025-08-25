@@ -2,9 +2,15 @@
 
 此檔案為 Claude Code (claude.ai/code) 在此專案中工作時提供指導。
 
+## 人機協作最高指導原則
+
+請務必全程用繁體中文回應
+每次都用審視的眼光，仔細看我輸入的潛在問題，你要指出我的問題，並給出明顯在我思考框架之外的建議
+你要對你自己有信心，如果你覺得我說的錯得太離譜或是概念走偏，也請厲聲指證
+
 ## 開發指令
 
-- `pnpm run local` - 啟動開發伺服器 (運行於 http://localhost:5173)
+- `pnpm run local` - 啟動開發伺服器 (運行於 <http://localhost:5173>)
 - `pnpm run build` - 正式環境建置 (TypeScript 編譯 + Vite 建置)
 - `pnpm run lint` - 執行 ESLint 檢查
 - `pnpm run preview` - 預覽正式環境建置結果
@@ -38,10 +44,30 @@
 
 - **匯入別名**：`@/` 解析至 `/src` 目錄
 - **UI 框架**：DaisyUI + TailwindCSS v4，具有基於抽屜的響應式導航
-- **資料來源**：測試帳戶資料位於 `/src/assets/data.json` (大型銀行模擬資料集)
 - **表單處理**：使用 React Hook Form 進行驗證與提交
 - **開發伺服器**：設定為在 0.0.0.0 運行，具備 Vite 預熱功能以加快開發速度
 
 ### 組件架構
 
-主要佈局使用抽屜模式，包含 `Header`、`Content`、`Footer` 和 `Sidebar`。功能組件包括用於帳戶管理的 `MaintainTestAccount` 和用於新建帳戶的 `CreateTestAccount`。工具組件處理模態視窗、提示訊息和路由保護。
+主要佈局使用抽屜模式，包含 `Header`、`Content`、`Footer` 和 `Sidebar`。功能組件包括用於帳戶管理的 `FinanceMaintain` 和用於新建帳戶的 `FinanceCreate`。工具組件處理模態視窗、提示訊息和路由保護。
+
+## TypeScript 編碼規範
+
+### 類型導出原則
+
+- **Interface 導出**：直接使用 `export interface` 語法
+
+  ```typescript
+  export interface UserData {
+    id: number
+    name: string
+  }
+  ```
+
+- **Type 導出**：直接使用 `export type` 語法  
+
+  ```typescript
+  export type LoadFunction = (id: number) => Promise<Data>
+  ```
+
+- **避免批量導出**：不要使用 `export type { Interface1, Interface2 }` 語法，直接在定義時導出更清晰

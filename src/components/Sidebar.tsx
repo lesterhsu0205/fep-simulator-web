@@ -1,7 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext'
-import type { MenuItem } from '@/services/authService'
+import type { MenuItem } from '@/services/AuthService'
 import { Link, useLocation } from 'react-router-dom'
-import { Landmark } from 'lucide-react'
 import { useEffect, useCallback } from 'react'
 
 export function Sidebar() {
@@ -10,7 +9,7 @@ export function Sidebar() {
 
   // 檢查路徑是否有對應的實現
   const isPathImplemented = (path: string): boolean => {
-    const implementedPaths = ['/TEST_ACCT_MAINT', '/TEST_ACCT_CREATE']
+    const implementedPaths = import.meta.env.VITE_IMPLEMENTED_PATHS?.split(',') || []
     return implementedPaths.includes(path)
   }
 
@@ -132,7 +131,11 @@ export function Sidebar() {
         <aside className="bg-base-200 min-h-full w-64 shadow-lg">
           <div className="border-b border-base-300">
             <a href="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
-              <Landmark size={20} className="text-primary" />
+              <img
+                src="/transactional-data.png"
+                alt="Transaction icons created by nangicon - Flaticon"
+                className="w-8 h-8"
+              />
               <span className="font-bold text-primary">FEP Simulator</span>
             </a>
           </div>
@@ -152,7 +155,11 @@ export function Sidebar() {
         {/* 品牌標題 */}
         <div className="border-b border-base-300">
           <a href="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
-            <Landmark size={20} className="text-primary" />
+            <img
+              src="/transactional-data.png"
+              alt="Transaction icons created by nangicon - Flaticon"
+              className="w-8 h-8"
+            />
             <span className="font-bold text-primary">FEP Simulator</span>
           </a>
         </div>

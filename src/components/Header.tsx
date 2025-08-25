@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { Menu, LogOut, User } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import type { MenuItem } from '@/services/authService'
+import type { MenuItem } from '@/services/AuthService'
 
 export function Header() {
   const { user, logout } = useAuth()

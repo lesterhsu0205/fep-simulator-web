@@ -32,23 +32,26 @@
 
 ### 安裝步驟
 
-1. 複製專案
+1.複製專案
+
 ```bash
 git clone <repository-url>
 cd feb-simulator-web
 ```
 
-2. 安裝相依套件
+2.安裝相依套件
+
 ```bash
 pnpm install
 ```
 
-3. 啟動開發伺服器
+3.啟動開發伺服器
+
 ```bash
 pnpm run local
 ```
 
-4. 開啟瀏覽器訪問 `http://localhost:5173`
+4.開啟瀏覽器訪問 `http://localhost:5173`
 
 ## 開發指令
 
@@ -59,31 +62,34 @@ pnpm run local
 
 ## 專案結構
 
-```
+```sh
 src/
-├── components/          # React 元件
-│   ├── Content.tsx     # 主要內容元件
-│   ├── DataTable.tsx   # 資料表格元件
-│   ├── DynamicRoutes.tsx # 動態路由元件
-│   ├── Sidebar.tsx # 動態側邊欄
-│   ├── Header.tsx      # 頁面標題元件
-│   ├── Login.tsx       # 登入元件
+├── components/            # React 元件
+│   ├── Content.tsx        # 主要內容元件
+│   ├── DataTable.tsx      # 資料表格元件
+│   ├── DynamicRoutes.tsx  # 動態路由元件
+│   ├── Sidebar.tsx        # 動態側邊欄
+│   ├── Header.tsx         # 頁面標題元件
+│   ├── Login.tsx          # 登入元件
 │   └── ...
-├── contexts/           # React Context
-│   ├── AuthContext.tsx # 認證上下文
-│   └── ToastContext.tsx # Toast 通知上下文
-├── services/           # API 服務
-│   └── authService.ts  # 認證服務
-├── assets/             # 靜態資源
-│   └── data.json       # 測試資料
-├── App.tsx             # 主應用程式元件
-├── Main.tsx            # 應用程式入口點
-└── routes.tsx          # 路由配置
+├── contexts/              # React Context
+│   ├── AuthContext.tsx    # 認證上下文
+│   └── ToastContext.tsx   # Toast 通知上下文
+├── services/              # API 服務
+│   ├── ApiService.ts      # axios 實例
+│   ├── AuthService.ts     # 認證服務
+│   ├── CreditService.ts   # 聯徵服務
+│   └── FinanceService.ts  # 財金服務
+├── assets/                # 靜態資源
+├── App.tsx                # 主應用程式元件
+├── Main.tsx               # 應用程式入口點
+└── routes.tsx             # 路由配置
 ```
 
 ## 登入資訊
 
 測試用登入帳號：
+
 - 帳號：lester
 - 密碼：password
 
@@ -92,6 +98,7 @@ src/
 ### 路由系統
 
 本專案使用動態路由系統，路由配置在 `routes.tsx` 中定義。主要路由包括：
+
 - `/login` - 登入頁面
 - `/TEST_ACCT_MAINT` - 測試帳號維護（預設首頁）
 

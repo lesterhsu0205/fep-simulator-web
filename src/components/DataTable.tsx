@@ -1,15 +1,12 @@
 import { useForm } from 'react-hook-form'
-import { Search, RotateCcw, Edit, Trash2, Plus } from 'lucide-react'
-import { useState, useEffect, useCallback } from 'react'
-import type { ReactNode } from 'react'
+import { Search, RotateCcw, Edit, Trash2, Plus, Check, X } from 'lucide-react'
+import { useState, useEffect, useCallback, type ComponentType } from 'react'
 import Modal from '@/components/Modal'
-import EditForm, { type EditFormData } from '@/components/EditForm'
-import CreateTestAccount, { type CreateTestAccountData } from '@/pages/CreateTestAccount'
 import { useToast } from '@/contexts/ToastContext'
 import { type PaginationInfo } from '@/model/PaginationInfo'
 
 // 定義查詢表單欄位類型
-interface SearchField {
+export interface SearchField {
   key: string
   label: string
   placeholder: string
@@ -18,18 +15,13 @@ interface SearchField {
   className?: string
 }
 
-// 通用查詢表單資料類型
-interface SearchFormData {
-  [key: string]: string | number | undefined
-}
-
 // 表格欄位配置介面
-interface TableColumn {
+export interface TableColumn {
   key: string
   title: string
   width?: string
   className?: string
-  render?: (value: unknown, item: TableItem) => ReactNode
+  render?: string
 }
 
 // 通用表格資料介面
@@ -38,14 +30,8 @@ interface TableItem {
   [key: string]: unknown
 }
 
-// 可自訂功能按鈕類型
-interface ActionButton {
-  label: string
-  onClick: (item: TableItem) => void
-}
-
 // 資料載入函數類型
-type LoadDataFunction<TRawData = unknown, TQuery = Record<string, unknown>> = (
+export type LoadDataFunction<TRawData = unknown, TQuery = Record<string, unknown>> = (
   queryParams: TQuery,
   page: number,
   pageSize: number
@@ -54,70 +40,64 @@ type LoadDataFunction<TRawData = unknown, TQuery = Record<string, unknown>> = (
   pagination: PaginationInfo
 }>
 
+// 新增表單組件的 props 介面
+interface AddFormProps {
+  afterSubmit: () => void
+}
+
+// 編輯表單組件的 props 介面
+export interface EditFormProps {
+  data: { [key: string]: unknown } | null
+  afterSubmit: () => void
+}
+
 interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>> {
-  // 資料載入函數
+  // 資料處理函數
   loadDataFn: LoadDataFunction<TRawData, TQuery>
   deleteDataFn: (selectedIds: number[]) => void
-  editDataFn: (formData: EditFormData) => void
-  addDataFn: (formData: CreateTestAccountData) => void
+
+  // 新增表單組件
+  AddFormComponent?: ComponentType<AddFormProps>
+
+  // 編輯表單組件
+  EditFormComponent?: ComponentType<EditFormProps>
 
   // 表格欄位配置
   columns: TableColumn[]
-  showCheckbox?: boolean
-  showActions?: boolean
 
   // 分頁控制 (初始值，內部管理)
   initialCurrentPage?: number
   initialItemsPerPage?: number
   itemsPerPageOptions?: number[]
 
-  // 選擇功能 (內部管理)
-  initialSelectedItems?: number[]
-  onSelectionChange?: (selectedIds: number[]) => void
-
-  // 查詢功能
+  // 查詢欄位
   searchFields?: SearchField[]
-  showSearch?: boolean
 
   // 自訂配置
-  title?: string
-  searchPlaceholder?: string
-  actionButtons?: ActionButton[]
+  deleteTitleAttr: string
   emptyMessage?: string
   loadingMessage?: string
-}
-
-// 渲染表格儲存格內容的輔助函數
-const renderCellValue = (value: string | null) => {
-  if (value === null || value === '' || value === undefined) {
-    return <span className="badge badge-outline border-gray-300 text-xs text-gray-500">None</span>
-  }
-  return value
 }
 
 export default function DataTable<TRawData = unknown, TQuery = Record<string, unknown>>({
   loadDataFn,
   deleteDataFn,
-  editDataFn,
-  addDataFn,
+  AddFormComponent,
+  EditFormComponent,
   columns,
-  showCheckbox = true,
-  showActions = true,
   initialCurrentPage = 1,
   initialItemsPerPage = 10,
   itemsPerPageOptions = [10, 20, 50, 100],
-  initialSelectedItems = [],
-  onSelectionChange,
   searchFields = [],
-  showSearch = true,
   emptyMessage = '暫無資料',
-  loadingMessage = '載入中...',
+  deleteTitleAttr = 'account',
+  // loadingMessage = '載入中...',
 }: DataTableProps<TRawData, TQuery>) {
   const { showToast } = useToast()
 
   // 內部狀態管理
   const [data, setData] = useState<TableItem[]>([])
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: initialCurrentPage,
     itemsPerPage: initialItemsPerPage,
@@ -128,7 +108,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   })
   const [currentPage, setCurrentPage] = useState(initialCurrentPage)
   const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage)
-  const [selectedItems, setSelectedItems] = useState<number[]>(initialSelectedItems)
+  const [selectedItems, setSelectedItems] = useState<number[]>([])
   const [currentQuery, setCurrentQuery] = useState<TQuery>({} as TQuery)
 
   // Modal 狀態管理
@@ -138,14 +118,17 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   const [deletingItem, setDeletingItem] = useState<TableItem | null>(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isBatchDeleteModalOpen, setIsBatchDeleteModalOpen] = useState(false)
+  const [isBlobDetailModalOpen, setIsBlobDetailModalOpen] = useState(false)
+  const [blobDetailContent, setBlobDetailContent] = useState<string>('')
+  const [blobDetailTitle, setBlobDetailTitle] = useState<string>('')
 
   // 載入資料
   const loadData = useCallback(async (queryParams: TQuery = {} as TQuery, page = currentPage, pageSize = itemsPerPage) => {
-    setLoading(true)
+    // setLoading(true)
     try {
       const response = await loadDataFn(queryParams, page, pageSize)
 
-      setData(response.data as unknown as TableItem[])
+      setData(response.data as TableItem[])
       setPagination(response.pagination)
       setCurrentPage(response.pagination.currentPage)
       setItemsPerPage(response.pagination.itemsPerPage)
@@ -153,17 +136,23 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
     }
     catch (error) {
       console.error('載入資料失敗:', error)
-      showToast('載入資料失敗，請稍後再試', 'error')
+      if (error instanceof Error) {
+        showToast(`載入資料失敗，${error.message}`, 'error')
+      }
+      else {
+        showToast(`載入資料失敗，${String(error)}`, 'error')
+      }
     }
     finally {
-      setLoading(false)
+      // setLoading(false)
     }
   }, [loadDataFn, currentPage, itemsPerPage, showToast])
 
   // 初始化資料
   useEffect(() => {
     loadData()
-  }, [loadData]) // 只在組件掛載時執行一次
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // 只在組件掛載時執行一次
 
   // 當資料變化時重置選擇項目
   useEffect(() => {
@@ -171,11 +160,11 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   }, [data])
 
   // React Hook Form 設定
-  const defaultValues = searchFields.reduce<SearchFormData>((acc, field) => {
+  const defaultValues = searchFields.reduce<Record<string, string | number | undefined>>((acc, field) => {
     acc[field.key] = ''
     return acc
   }, {})
-  const { register, handleSubmit, reset } = useForm<SearchFormData>({
+  const { register, handleSubmit, reset } = useForm<Record<string, string | number | undefined>>({
     defaultValues,
   })
 
@@ -185,18 +174,16 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       ? selectedItems.filter(itemId => itemId !== id)
       : [...selectedItems, id]
     setSelectedItems(newSelection)
-    onSelectionChange?.(newSelection)
   }
 
   // 選擇全部項目
   const handleSelectAll = () => {
     const newSelection = selectedItems.length === data.length ? [] : data.map(item => item.id)
     setSelectedItems(newSelection)
-    onSelectionChange?.(newSelection)
   }
 
   // 查詢表單處理
-  const onSubmit = (formData: SearchFormData) => {
+  const onSubmit = (formData: Record<string, string | number | undefined>) => {
     const queryParams = formData as unknown as TQuery
     loadData(queryParams, 1, itemsPerPage)
   }
@@ -221,37 +208,21 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   const handleEditClick = (item: TableItem) => {
     setEditingItem(item)
     setIsEditModalOpen(true)
-
-    // else {
-    //   onEdit?.(item)
-    // }
   }
 
   const handleDeleteClick = (item: TableItem) => {
     setDeletingItem(item)
     setIsDeleteModalOpen(true)
-
-    // else {
-    //   onDelete?.(item)
-    // }
   }
 
   const handleAddClick = () => {
     setIsAddModalOpen(true)
-
-    // else {
-    //   onAdd?.()
-    // }
   }
 
   const handleBatchDeleteClick = (selectedIds: number[]) => {
     if (selectedIds.length > 0) {
       setIsBatchDeleteModalOpen(true)
     }
-
-    // else {
-    //   onBatchDelete?.(selectedIds)
-    // }
   }
 
   // Modal 確認處理
@@ -271,8 +242,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         console.error('Delete error:', error)
       }
       finally {
-        setIsDeleteModalOpen(false)
         setDeletingItem(null)
+        setIsDeleteModalOpen(false)
       }
     }
   }
@@ -298,8 +269,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
   // Modal 取消處理
   const handleCancelDelete = () => {
-    setIsDeleteModalOpen(false)
     setDeletingItem(null)
+    setIsDeleteModalOpen(false)
   }
 
   const handleCancelBatchDelete = () => {
@@ -307,8 +278,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   }
 
   const handleCloseEditModal = () => {
-    setIsEditModalOpen(false)
     setEditingItem(null)
+    setIsEditModalOpen(false)
   }
 
   const handleCloseAddModal = () => {
@@ -317,81 +288,76 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
   // 表單提交處理
   // 處理編輯提交
-  const handleEditSubmit = async (formData: EditFormData) => {
-    if (editingItem) {
-      try {
-        await editDataFn(formData)
-
-        // 暫時更新本地資料
-        setData(prev => prev.map(dataItem =>
-          dataItem.id === editingItem.id
-            ? {
-                ...dataItem,
-                situationDesc: formData.situationDesc,
-                rmtResultCode: formData.rmtResultCode,
-                atmResultCode: formData.atmResultCode,
-                atmVerifyRCode: formData.atmVerifyRCode,
-                atmVerifyRDetail: formData.atmVerifyRDetail,
-                fxmlResultCode: formData.fxmlResultCode,
-                updatedAt: new Date().toLocaleString(),
-                updater: '目前使用者', // TODO: 從使用者資訊取得
-              }
-            : dataItem,
-        ))
-
-        showToast('修改成功', 'success')
-      }
-      catch (error) {
-        showToast('修改失敗，請稍後再試', 'error')
-        console.error('Update error:', error)
-      }
-      finally {
-        setIsEditModalOpen(false)
-        setEditingItem(null)
-      }
-    }
+  const handleEditSubmit = async () => {
+    // 重新載入資料以獲取最新的列表
+    await loadData(currentQuery, currentPage, itemsPerPage)
+    showToast('編輯成功', 'success')
+    setEditingItem(null)
+    setIsEditModalOpen(false)
   }
 
   // 處理新增提交
-  const handleAddSubmit = async (formData: CreateTestAccountData) => {
-    try {
-      await addDataFn(formData)
-
-      // 暫時新增到本地資料
-      const newItem: TableItem = {
-        id: Math.max(...data.map(d => d.id)) + 1,
-        account: formData.account,
-        situationDesc: formData.situationDesc,
-        rmtResultCode: formData.isRmt ? formData.rmtResultCode : null,
-        atmResultCode: formData.isAtm ? formData.atmResultCode : null,
-        atmVerifyRCode: formData.atmVerify ? formData.atmVerifyRCode : '00000',
-        atmVerifyRDetail: formData.atmVerify ? formData.atmVerifyRDetail : '000000',
-        fxmlResultCode: formData.isFxml ? formData.fxmlResultCode : '00000',
-        updatedAt: new Date().toLocaleDateString(),
-        updater: formData.creator || '目前使用者',
-        createdAt: new Date().toLocaleDateString(),
-        creator: formData.creator || '目前使用者',
-      }
-
-      setData(prev => [newItem, ...prev])
-      showToast('測試帳號建立成功', 'success')
-    }
-    catch (error) {
-      showToast('建立失敗，請稍後再試', 'error')
-      console.error('Create error:', error)
-    }
-    finally {
-      setIsAddModalOpen(false)
-    }
+  const handleAddSubmit = async () => {
+    // 重新載入資料以獲取最新的列表
+    await loadData(currentQuery, currentPage, itemsPerPage)
+    setIsAddModalOpen(false)
   }
 
-  // 計算總欄位數（用於 colSpan）
-  const totalColumns = (showCheckbox ? 1 : 0) + columns.length + (showActions ? 1 : 0)
+  // 處理 blob 詳細資料彈窗
+  const handleBlobDetailClick = (content: string, title: string) => {
+    setBlobDetailContent(content)
+    setBlobDetailTitle(title)
+    setIsBlobDetailModalOpen(true)
+  }
+
+  const handleCloseBlobDetailModal = () => {
+    setBlobDetailContent('')
+    setBlobDetailTitle('')
+    setIsBlobDetailModalOpen(false)
+  }
+
+  // 渲染表格儲存格內容的輔助函數
+  const renderCellValue = (value: string | boolean | null, column: TableColumn) => {
+    if (value === null || value === '' || value === undefined) {
+      return <span className="badge badge-outline border-gray-300 text-xs text-gray-500">None</span>
+    }
+    else if (typeof value === 'boolean') {
+      return (
+        <div className="flex justify-center">
+          {value
+            ? (
+                <Check size={18} className="text-green-600 stroke-[5]" />
+              )
+            : (
+                <X size={18} className="text-red-600 stroke-[5]" />
+              )}
+        </div>
+      )
+    }
+    else if (column.render === 'blob') {
+      return (
+        <button
+          className="btn btn-xs"
+          onClick={(e) => {
+            e.stopPropagation()
+            handleBlobDetailClick(String(value), column.title)
+          }}
+          title="點擊查看詳細內容"
+        >
+          ******
+        </button>
+      )
+    }
+    return value
+  }
+
+  // 計算總欄位數（用於 colSpan）2: checkbox column + action column
+  const totalColumns = 2 + columns.length
 
   return (
     <div className="w-full">
       {/* 查詢表單 */}
-      {showSearch && searchFields.length > 0 && (
+      {searchFields.length > 0 && (
         <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
           <div className="flex items-center gap-6 flex-wrap">
             {searchFields.map(field => (
@@ -401,7 +367,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                 </label>
                 <input
                   type={field.type || 'text'}
-                  className={`input input-bordered w-60 ${field.className || ''}`}
+                  className={`input input-bordered w-40 ${field.className || ''}`}
                   placeholder={field.placeholder}
                   required={field.required}
                   {...register(field.key)}
@@ -456,16 +422,16 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         <table className="table table-zebra w-full">
           <thead>
             <tr className="bg-base-200 text-sm">
-              {showCheckbox && (
-                <th className="w-10 py-3">
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-xs"
-                    checked={selectedItems.length > 0 && selectedItems.length === data.length}
-                    onChange={handleSelectAll}
-                  />
-                </th>
-              )}
+
+              <th className="w-10 py-3">
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs"
+                  checked={selectedItems.length > 0 && selectedItems.length === data.length}
+                  onChange={handleSelectAll}
+                />
+              </th>
+
               {columns.map(column => (
                 <th
                   key={column.key}
@@ -474,87 +440,73 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                   {column.title}
                 </th>
               ))}
-              {showActions && (
-                <th className="w-12 py-3 text-center">功能</th>
-              )}
+
+              <th className="w-12 py-3 text-center">功能</th>
+
             </tr>
           </thead>
           <tbody>
-            {loading
+            {data.length === 0
               ? (
                   <tr>
                     <td colSpan={totalColumns} className="text-center py-8">
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="loading loading-spinner loading-md"></span>
-                        <span className="text-gray-500">{loadingMessage}</span>
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <span className="text-gray-500">{emptyMessage}</span>
                       </div>
                     </td>
                   </tr>
                 )
-              : data.length === 0
-                ? (
-                    <tr>
-                      <td colSpan={totalColumns} className="text-center py-8">
-                        <div className="flex flex-col items-center justify-center gap-2">
-                          <span className="text-gray-500">{emptyMessage}</span>
+              : (
+                  data.map(item => (
+                    <tr
+                      key={item.id}
+                      onClick={() => handleSelectItem(item.id)}
+                      className={`
+                      text-sm cursor-pointer
+                      transition-[background-color,transform,box-shadow] duration-150
+                      ${selectedItems.includes(item.id)
+                      ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md'
+                      : 'hover:bg-gray-50'
+                    }
+                    `}
+                    >
+
+                      <td onClick={e => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          className="checkbox checkbox-xs"
+                          checked={selectedItems.includes(item.id)}
+                          onChange={() => handleSelectItem(item.id)}
+                        />
+                      </td>
+
+                      {columns.map(column => (
+                        <td key={column.key} className={column.className || ''}>
+                          {renderCellValue(item[column.key] as string | boolean | null, column)}
+                        </td>
+                      ))}
+
+                      <td onClick={e => e.stopPropagation()}>
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
+                            onClick={() => handleEditClick(item)}
+                            title="編輯"
+                          >
+                            <Edit className="stroke-[2]" size={18} />
+                          </button>
+                          <button
+                            className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
+                            onClick={() => handleDeleteClick(item)}
+                            title="刪除"
+                          >
+                            <Trash2 className="stroke-[2]" size={18} />
+                          </button>
                         </div>
                       </td>
                     </tr>
-                  )
-                : (
-                    data.map(item => (
-                      <tr
-                        key={item.id}
-                        onClick={() => showCheckbox ? handleSelectItem(item.id) : undefined}
-                        className={`
-                      text-sm ${showCheckbox ? 'cursor-pointer' : ''}
-                      transition-[background-color,transform,box-shadow] duration-150
-                      ${showCheckbox && selectedItems.includes(item.id)
-                        ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md hover:scale-[1.005]'
-                        : 'hover:bg-gray-100 hover:scale-[1.005]'
-                      }
-                    `}
-                      >
-                        {showCheckbox && (
-                          <td onClick={e => e.stopPropagation()}>
-                            <input
-                              type="checkbox"
-                              className="checkbox checkbox-xs"
-                              checked={selectedItems.includes(item.id)}
-                              onChange={() => handleSelectItem(item.id)}
-                            />
-                          </td>
-                        )}
-                        {columns.map(column => (
-                          <td key={column.key} className={column.className || ''}>
-                            {column.render
-                              ? column.render(item[column.key], item)
-                              : renderCellValue(item[column.key] as string | null)}
-                          </td>
-                        ))}
-                        {showActions && (
-                          <td onClick={e => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-2">
-                              <button
-                                className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
-                                onClick={() => handleEditClick(item)}
-                                title="編輯"
-                              >
-                                <Edit size={14} />
-                              </button>
-                              <button
-                                className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
-                                onClick={() => handleDeleteClick(item)}
-                                title="刪除"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        )}
-                      </tr>
-                    ))
-                  )}
+                  ))
+                )}
           </tbody>
         </table>
       </div>
@@ -650,115 +602,150 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       </div>
 
       {/* Modal 渲染 */}
-      <>
-        {/* 編輯 Modal */}
-        <dialog className={`modal ${isEditModalOpen ? 'modal-open' : ''}`}>
-          <div className="modal-box w-11/12 max-w-6xl p-0">
-            <EditForm
-              data={editingItem}
-              onSubmit={handleEditSubmit}
-              onCancel={handleCloseEditModal}
-            />
+
+      {/* 編輯 Modal */}
+      <Modal
+        isOpen={isEditModalOpen}
+        modalTitle="編輯項目"
+        className="w-11/12 max-w-6xl"
+        modalContent={EditFormComponent && (
+          <EditFormComponent
+            data={editingItem}
+            afterSubmit={handleEditSubmit}
+          />
+        )}
+        modalAction={(
+          <button
+            className="btn btn-ghost"
+            onClick={handleCloseEditModal}
+          >
+            關閉
+          </button>
+        )}
+        onCancel={handleCloseEditModal}
+      />
+
+      {/* 刪除確認 Modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        modalTitle="確認刪除"
+        modalContent={(
+          <>
+            確定要刪除項目「
+            <span className="font-semibold text-red-600">{(deletingItem?.[deleteTitleAttr] as string) || String(deletingItem?.id) || ''}</span>
+            」嗎？
+            <br />
+            <span className="text-sm text-gray-500">此操作無法復原。</span>
+          </>
+        )}
+        modalAction={(
+          <>
+            <button
+              className="btn btn-ghost"
+              onClick={handleCancelDelete}
+            >
+              取消
+            </button>
+            <button
+              className="btn btn-error text-white"
+              onClick={handleConfirmDelete}
+            >
+              確認刪除
+            </button>
+          </>
+        )}
+        onCancel={handleCancelDelete}
+      />
+
+      {/* 新增 Modal */}
+      <Modal
+        isOpen={isAddModalOpen}
+        modalTitle="新增項目"
+        className="w-11/12 max-w-6xl"
+        modalContent={AddFormComponent && (
+          <AddFormComponent afterSubmit={handleAddSubmit} />
+        )}
+        modalAction={(
+          <button
+            className="btn btn-ghost"
+            onClick={handleCloseAddModal}
+          >
+            關閉
+          </button>
+        )}
+        onCancel={handleCloseAddModal}
+      />
+
+      {/* 批次刪除確認 Modal */}
+      <Modal
+        isOpen={isBatchDeleteModalOpen}
+        modalTitle="確認批次刪除"
+        modalContent={(
+          <>
+            確定要刪除以下
+            {' '}
+            {selectedItems.length}
+            {' '}
+            個項目嗎？
+            <div className="mt-2 max-h-32 overflow-y-auto bg-gray-50 p-2 rounded">
+              {selectedItems.map((id) => {
+                const item = data.find(d => d.id === id)
+                return item
+                  ? (
+                      <div key={id} className="text-sm text-red-600 font-semibold">
+                        •
+                        {' '}
+                        {(item[deleteTitleAttr] as string) || String(item.id)}
+                      </div>
+                    )
+                  : null
+              })}
+            </div>
+            <span className="text-sm text-gray-500 mt-2 block">此操作無法復原。</span>
+          </>
+        )}
+        modalAction={(
+          <>
+            <button
+              className="btn btn-ghost"
+              onClick={handleCancelBatchDelete}
+            >
+              取消
+            </button>
+            <button
+              className="btn btn-error text-white"
+              onClick={handleConfirmBatchDelete}
+            >
+              確認刪除
+            </button>
+          </>
+        )}
+        onCancel={handleCancelBatchDelete}
+      />
+
+      {/* Blob 詳細資料 Modal */}
+      <Modal
+        isOpen={isBlobDetailModalOpen}
+        modalTitle={`詳細內容 - ${blobDetailTitle}`}
+        className="w-11/12 max-w-6xl"
+        modalContent={(
+          <div className="max-h-96 overflow-y-auto overflow-x-hidden">
+            <pre className="whitespace-pre-wrap break-words text-sm bg-gray-50 p-4 rounded font-mono">
+              {blobDetailContent}
+            </pre>
           </div>
-          <form method="dialog" className="modal-backdrop">
-            <button onClick={handleCloseEditModal}>close</button>
-          </form>
-        </dialog>
+        )}
+        modalAction={(
+          <button
+            className="btn btn-ghost"
+            onClick={handleCloseBlobDetailModal}
+          >
+            關閉
+          </button>
+        )}
+        onCancel={handleCloseBlobDetailModal}
+      />
 
-        {/* 刪除確認 Modal */}
-        <Modal
-          isOpen={isDeleteModalOpen}
-          modalTitle="確認刪除"
-          modalContent={(
-            <>
-              確定要刪除帳號「
-              <span className="font-semibold text-red-600">{(deletingItem?.account as string) || String(deletingItem?.id) || ''}</span>
-              」嗎？
-              <br />
-              <span className="text-sm text-gray-500">此操作無法復原。</span>
-            </>
-          )}
-          modalAction={(
-            <>
-              <button
-                className="btn btn-ghost"
-                onClick={handleCancelDelete}
-              >
-                取消
-              </button>
-              <button
-                className="btn btn-error text-white"
-                onClick={handleConfirmDelete}
-              >
-                確認刪除
-              </button>
-            </>
-          )}
-          onCancel={handleCancelDelete}
-        />
-
-        {/* 新增 Modal */}
-        <dialog className={`modal ${isAddModalOpen ? 'modal-open' : ''}`}>
-          <div className="modal-box w-11/12 max-w-6xl h-5/6 p-0">
-            <CreateTestAccount
-              onSubmit={handleAddSubmit}
-              onCancel={handleCloseAddModal}
-            />
-          </div>
-          <form method="dialog" className="modal-backdrop">
-            <button onClick={handleCloseAddModal}>close</button>
-          </form>
-        </dialog>
-
-        {/* 批次刪除確認 Modal */}
-        <Modal
-          isOpen={isBatchDeleteModalOpen}
-          modalTitle="確認批次刪除"
-          modalContent={(
-            <>
-              確定要刪除以下
-              {' '}
-              {selectedItems.length}
-              {' '}
-              個項目嗎？
-              <div className="mt-2 max-h-32 overflow-y-auto bg-gray-50 p-2 rounded">
-                {selectedItems.map((id) => {
-                  const item = data.find(d => d.id === id)
-                  return item
-                    ? (
-                        <div key={id} className="text-sm text-red-600 font-semibold">
-                          •
-                          {' '}
-                          {(item.account as string) || String(item.id)}
-                        </div>
-                      )
-                    : null
-                })}
-              </div>
-              <span className="text-sm text-gray-500 mt-2 block">此操作無法復原。</span>
-            </>
-          )}
-          modalAction={(
-            <>
-              <button
-                className="btn btn-ghost"
-                onClick={handleCancelBatchDelete}
-              >
-                取消
-              </button>
-              <button
-                className="btn btn-error text-white"
-                onClick={handleConfirmBatchDelete}
-              >
-                確認刪除
-              </button>
-            </>
-          )}
-          onCancel={handleCancelBatchDelete}
-        />
-      </>
     </div>
   )
 }
-
-export type { SearchFormData, SearchField, PaginationInfo, ActionButton, TableColumn, TableItem, LoadDataFunction }

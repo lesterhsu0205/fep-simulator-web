@@ -1,10 +1,14 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import type { MenuItem } from '@/services/authService'
+import type { MenuItem } from '@/services/AuthService'
 
 // 導入現有的組件
-import MaintainTestAccount from '@/pages/MaintainTestAccount'
-import CreateTestAccount from '@/pages/CreateTestAccount'
+import FinanceMaintain from '@/pages/FinanceMaintain'
+import FinanceCreate from '@/pages/FinanceCreate'
+import TestAccountCreate from '@/pages/TestAccountCreate'
+import TestAccountMaintain from '@/pages/TestAccountMaintain'
+import CreditMaintain from '@/pages/CreditMaintain'
+import CreditCreate from '@/pages/CreditCreate'
 
 export function DynamicRoutes() {
   const { user } = useAuth()
@@ -15,7 +19,7 @@ export function DynamicRoutes() {
   // 收集所有有 path 的選單項目，但只生成已實現的路由
   const collectImplementedRoutes = (menus: MenuItem[]): Array<{ path: string, name: string, code: string }> => {
     const routes: Array<{ path: string, name: string, code: string }> = []
-    const implementedPaths = ['/TEST_ACCT_MAINT', '/TEST_ACCT_CREATE']
+    const implementedPaths = import.meta.env.VITE_IMPLEMENTED_PATHS?.split(',') || []
 
     const traverse = (items: MenuItem[]) => {
       items.forEach((item) => {
@@ -40,9 +44,17 @@ export function DynamicRoutes() {
   const getComponentForPath = (path: string) => {
     switch (path) {
       case '/TEST_ACCT_MAINT':
-        return <MaintainTestAccount />
+        return <TestAccountMaintain />
       case '/TEST_ACCT_CREATE':
-        return <CreateTestAccount />
+        return <TestAccountCreate />
+      case '/TEST_SCENARIO_MAINT':
+        return <FinanceMaintain />
+      case '/TEST_SCENARIO_CREATE':
+        return <FinanceCreate />
+      case '/CREDIT_MAINT':
+        return <CreditMaintain />
+      case '/CREDIT_CREATE':
+        return <CreditCreate />
       default:
         return null
     }
