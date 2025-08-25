@@ -36,7 +36,7 @@
 
 ```bash
 git clone <repository-url>
-cd feb-simulator-web
+cd fep-simulator-web
 ```
 
 2.安裝相依套件
