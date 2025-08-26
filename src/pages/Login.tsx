@@ -5,6 +5,7 @@ import { Eye, EyeOff, User, Lock } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 import { Footer } from '@/components/Footer'
+import transactionalDataIcon from '/transactional-data.png'
 
 // 登入表單資料類型
 interface LoginFormData {
@@ -61,7 +62,7 @@ export default function Login() {
           <div className="text-center lg:text-left lg:ml-8 lg:min-w-96 lg:max-w-lg">
             <div className="flex justify-center lg:justify-start mb-6">
               <img
-                src="/transactional-data.png"
+                src={transactionalDataIcon}
                 alt="Transaction icons created by nangicon - Flaticon"
                 className="w-24 h-24"
               />

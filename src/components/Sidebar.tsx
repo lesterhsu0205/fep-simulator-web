@@ -2,6 +2,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import type { MenuItem } from '@/services/AuthService'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useCallback } from 'react'
+import transactionalDataIcon from '/transactional-data.png'
 
 export function Sidebar() {
   const { user } = useAuth()
@@ -132,7 +133,7 @@ export function Sidebar() {
           <div className="border-b border-base-300">
             <a href="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
               <img
-                src="/transactional-data.png"
+                src={transactionalDataIcon}
                 alt="Transaction icons created by nangicon - Flaticon"
                 className="w-8 h-8"
               />
@@ -156,7 +157,7 @@ export function Sidebar() {
         <div className="border-b border-base-300">
           <a href="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
             <img
-              src="/transactional-data.png"
+              src={transactionalDataIcon}
               alt="Transaction icons created by nangicon - Flaticon"
               className="w-8 h-8"
             />

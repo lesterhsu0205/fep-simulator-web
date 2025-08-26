@@ -36,7 +36,9 @@ export const routes: RouteObject[] = [
   },
 ]
 
-// 創建路由器
-const router = createBrowserRouter(routes)
+// 創建路由器  
+const router = createBrowserRouter(routes, {
+  basename: import.meta.env.BASE_URL.replace(/\/$/, '')
+})
 
 export default router
