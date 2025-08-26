@@ -131,7 +131,7 @@ export function Sidebar() {
         <label htmlFor="sidebar-drawer" className="drawer-overlay"></label>
         <aside className="bg-base-200 min-h-full w-64 shadow-lg">
           <div className="border-b border-base-300">
-            <a href="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
+            <Link to="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
               <img
                 src={transactionalDataIcon}
                 alt="Transaction icons created by nangicon - Flaticon"
@@ -155,7 +155,7 @@ export function Sidebar() {
       <aside className="bg-base-200 min-h-full w-64 shadow-lg">
         {/* 品牌標題 */}
         <div className="border-b border-base-300">
-          <a href="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
+          <Link to="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
             <img
               src={transactionalDataIcon}
               alt="Transaction icons created by nangicon - Flaticon"

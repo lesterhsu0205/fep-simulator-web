@@ -34,53 +34,55 @@ html::-webkit-scrollbar {
 }
 
 /* =============================
-   智慧滾動條 (Windows Chrome)
-   - 預設隱藏滾動條，沒有佔位
-   - 當滑鼠移入頁面或正在捲動時顯示窄滾動條
+   macOS 風格滾動條
+   - 預設完全隱藏滾動條，沒有佔位
+   - 只在正在滾動時顯示懸浮滾動條
+   - 滾動停止後自動隱藏
    ============================= */
-@media (pointer: fine) {
 
-    /* 隱藏 (但保留捲動) */
-    html::-webkit-scrollbar {
-        width: 0px;
-        height: 0px;
-    }
+/* 預設隱藏滾動條 (但保留滾動功能) */
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
 
-    html {
-        scrollbar-width: none;
-        /* Firefox 隱藏 */
-    }
+html {
+    scrollbar-width: none;
+    /* Firefox 隱藏 */
+}
 
-    /* 滑鼠移入整個視窗時顯示滾動條 */
-    html:hover::-webkit-scrollbar,
-    body.scrolling::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
+/* 只在滾動時顯示滾動條 - 使用更強的選擇器 */
+body.scrolling ::-webkit-scrollbar,
+html.scrolling ::-webkit-scrollbar {
+    width: 12px !important;
+    height: 12px !important;
+}
 
-    html:hover {
-        scrollbar-width: thin;
-        /* Firefox 顯示 */
-    }
+body.scrolling,
+html.scrolling {
+    scrollbar-width: thin !important;
+    /* Firefox 顯示 */
+}
 
-    /* WebKit 內的樣式 */
-    html:hover::-webkit-scrollbar-track,
-    body.scrolling::-webkit-scrollbar-track {
-        background: transparent;
-    }
+/* WebKit 滾動條樣式 */
+body.scrolling ::-webkit-scrollbar-track,
+html.scrolling ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1) !important;
+    border-radius: 6px;
+}
 
-    html:hover::-webkit-scrollbar-thumb,
-    body.scrolling::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.25);
-        border-radius: 4px;
-        border: 2px solid transparent;
-        background-clip: content-box;
-    }
+body.scrolling ::-webkit-scrollbar-thumb,
+html.scrolling ::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.4) !important;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+    min-height: 30px;
+}
 
-    html:hover::-webkit-scrollbar-thumb:hover,
-    body.scrolling::-webkit-scrollbar-thumb:hover {
-        background-color: rgba(0, 0, 0, 0.4);
-    }
+body.scrolling ::-webkit-scrollbar-thumb:hover,
+html.scrolling ::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.6) !important;
 }
 
 @plugin "daisyui";
