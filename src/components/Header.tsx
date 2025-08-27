@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom'
 import { Menu, LogOut, User } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import type { MenuItem } from '@/services/AuthService'
+import { useMemo } from 'react'
 
 export function Header() {
   const { user, logout } = useAuth()
@@ -11,34 +12,31 @@ export function Header() {
     logout()
   }
 
-  // 從用戶選單中找到當前頁面的標題
-  const findCurrentPageTitle = (menus: MenuItem[], currentPath: string): string => {
-    for (const menu of menus) {
-      // 檢查 path 或根據 url 生成的路徑
-      if (menu.path && menu.path === currentPath) {
-        return menu.name
-      }
-      // 如果沒有 path 但有 url，嘗試匹配基於 code 的路徑
-      if (!menu.path && menu.url && currentPath === `/${menu.code.toLowerCase().replace(/_/g, '-')}`) {
-        return menu.name
-      }
+  // 使用 useMemo 快取頁面標題計算，避免重新渲染
+  const currentPageTitle = useMemo(() => {
+    if (!user?.menus) return '系統首頁'
 
-      if (menu.children && menu.children.length > 0) {
-        const found = findCurrentPageTitle(menu.children, currentPath)
-        if (found !== '系統首頁') return found
+    const findCurrentPageTitle = (menus: MenuItem[], currentPath: string): string => {
+      for (const menu of menus) {
+        // 檢查 path 或根據 url 生成的路徑
+        if (menu.path && menu.path === currentPath) {
+          return menu.name
+        }
+        // 如果沒有 path 但有 url，嘗試匹配基於 code 的路徑
+        if (!menu.path && menu.url && currentPath === `/${menu.code.toLowerCase().replace(/_/g, '-')}`) {
+          return menu.name
+        }
+
+        if (menu.children && menu.children.length > 0) {
+          const found = findCurrentPageTitle(menu.children, currentPath)
+          if (found !== '系統首頁') return found
+        }
       }
+      return '系統首頁'
     }
-    return '系統首頁'
-  }
 
-  const currentPageTitle = user?.menus
-    ? findCurrentPageTitle(user.menus, location.pathname)
-    : '系統首頁'
-
-  // 調試輸出
-  console.log('📍 Current path:', location.pathname)
-  console.log('📋 User menus:', user?.menus)
-  console.log('📝 Found title:', currentPageTitle)
+    return findCurrentPageTitle(user.menus, location.pathname)
+  }, [user?.menus, location.pathname])
 
   return (
     <header className="navbar bg-base-100 border-b border-base-300 px-2">

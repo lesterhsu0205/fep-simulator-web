@@ -85,12 +85,14 @@ html.scrolling ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(0, 0, 0, 0.6) !important;
 } */
 
-@plugin "daisyui";
+@plugin "daisyui" {
+    themes: light --default;
+}
 
 @plugin "daisyui/theme" {
-    name: "light";
-    default: true;
-    prefersdark: true;
+    name: "my-light";
+    default: ture;
+    prefersdark: false;
     color-scheme: "light";
     --color-base-100: oklch(100% 0 0);
     --color-base-200: oklch(98% 0 0);
@@ -173,4 +175,21 @@ html.scrolling ::-webkit-scrollbar-thumb:hover {
 /* Content 內容文字 */
 .content-text {
     @apply text-base text-neutral-700 leading-relaxed;
+}
+
+/* =============================
+   Enhanced Drawer Animations
+   - Smooth fade in/out effects
+   - Transform animations
+   ============================= */
+
+/* 簡易 Drawer 動畫 - 最初版本 */
+.drawer-side aside {
+    @apply bg-base-200 min-h-full w-64 shadow-lg transform transition-all duration-500 ease-in-out;
+}
+
+/* 移除 overlay 變暗效果 */
+.drawer-overlay {
+    opacity: 0 !important;
+    pointer-events: none;
 }

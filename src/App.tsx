@@ -21,28 +21,21 @@ export default function App() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  useEffect(() => {
-    const drawerCheckbox = document.getElementById('sidebar-drawer') as HTMLInputElement
-    if (drawerCheckbox) {
-      drawerCheckbox.checked = sidebarOpen
-    }
-  }, [sidebarOpen])
-
   const handleDrawerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSidebarOpen(e.target.checked)
   }
 
   return (
 
-    <div className={`drawer ${sidebarOpen ? 'lg:drawer-open' : ''} bg-base-200 transition-none`}>
+    <div className={`drawer ${sidebarOpen ? 'lg:drawer-open' : ''} bg-base-200`}>
       <input
         id="sidebar-drawer"
         type="checkbox"
-        className="drawer-toggle transition-none"
+        className="drawer-toggle"
         checked={sidebarOpen}
         onChange={handleDrawerChange}
       />
-      <div className="drawer-content flex flex-col min-h-screen bg-base-200 p-0 lg:pt-4 lg:px-4 lg:pb-0 transition-none">
+      <div className="drawer-content flex flex-col min-h-screen p-0 lg:pt-4 lg:px-4 lg:pb-0">
         <div className="bg-white rounded-3xl overflow-hidden flex flex-col flex-grow shadow-2xs border border-gray-200">
           <Header />
           <Content />
