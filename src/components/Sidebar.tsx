@@ -138,7 +138,7 @@ export function Sidebar() {
                 className="w-8 h-8"
               />
               <span className="font-bold text-primary">FEP Simulator</span>
-            </a>
+            </Link>
           </div>
           <div className="p-6 text-center">
             <div className="loading loading-spinner loading-md text-primary mb-2"></div>
@@ -162,7 +162,7 @@ export function Sidebar() {
               className="w-8 h-8"
             />
             <span className="font-bold text-primary">FEP Simulator</span>
-          </a>
+          </Link>
         </div>
 
         {/* 動態選單 - 使用 Context7 建議的緊湊樣式 */}

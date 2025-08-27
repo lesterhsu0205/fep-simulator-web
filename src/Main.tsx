@@ -1,4 +1,4 @@
-import { StrictMode, useEffect } from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
 import { ToastProvider } from '@/contexts/ToastContext.tsx'
@@ -9,7 +9,7 @@ import '@/app.css'
 
 function Window() {
   // macOS 風格滾動條控制：只在滾動時顯示
-  useEffect(() => {
+  /* useEffect(() => {
     let timer: number | undefined
     const handleScroll = () => {
       document.body.classList.add('scrolling')
@@ -31,7 +31,7 @@ function Window() {
       document.removeEventListener('scroll', handleScroll)
       clearTimeout(timer)
     }
-  }, [])
+  }, []) */
 
   return (
     <>

@@ -21,17 +21,17 @@ body {
 }
 
 /* 全局隱藏瀏覽器滾動條，但保留滾動功能 */
-html {
+/* html {
     /* -ms-overflow-style: none; */
-    /* IE 和 Edge */
-    scrollbar-width: none;
+/* IE 和 Edge */
+/*    scrollbar-width: none;
     /* Firefox */
-}
+/* } */
 
-html::-webkit-scrollbar {
+/* html::-webkit-scrollbar {
     /* display: none; */
-    /* Chrome, Safari, Opera */
-}
+/* Chrome, Safari, Opera */
+/* } */
 
 /* =============================
    macOS 風格滾動條
@@ -41,49 +41,49 @@ html::-webkit-scrollbar {
    ============================= */
 
 /* 預設隱藏滾動條 (但保留滾動功能) */
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
     width: 0px;
     height: 0px;
-}
+} */
 
-html {
+/* html {
     scrollbar-width: none;
     /* Firefox 隱藏 */
-}
+/* } */
 
 /* 只在滾動時顯示滾動條 - 使用更強的選擇器 */
-body.scrolling ::-webkit-scrollbar,
+/* body.scrolling ::-webkit-scrollbar,
 html.scrolling ::-webkit-scrollbar {
     width: 12px !important;
     height: 12px !important;
-}
+} */
 
-body.scrolling,
+/* body.scrolling,
 html.scrolling {
     scrollbar-width: thin !important;
     /* Firefox 顯示 */
-}
+/* } */
 
 /* WebKit 滾動條樣式 */
-body.scrolling ::-webkit-scrollbar-track,
+/* body.scrolling ::-webkit-scrollbar-track,
 html.scrolling ::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.1) !important;
     border-radius: 6px;
-}
+} */
 
-body.scrolling ::-webkit-scrollbar-thumb,
+/* body.scrolling ::-webkit-scrollbar-thumb,
 html.scrolling ::-webkit-scrollbar-thumb {
     background-color: rgba(0, 0, 0, 0.4) !important;
     border-radius: 6px;
     border: 2px solid transparent;
     background-clip: content-box;
     min-height: 30px;
-}
+} */
 
-body.scrolling ::-webkit-scrollbar-thumb:hover,
+/* body.scrolling ::-webkit-scrollbar-thumb:hover,
 html.scrolling ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(0, 0, 0, 0.6) !important;
-}
+} */
 
 @plugin "daisyui";
 
