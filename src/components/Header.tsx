@@ -39,7 +39,7 @@ export function Header() {
   }, [user?.menus, location.pathname])
 
   return (
-    <header className="navbar bg-base-100 border-b border-base-300 px-2">
+    <header className="navbar border-b border-base-300">
       {/* 左側 - 漢堡選單 */}
       <div className="navbar-start px-6">
         <label htmlFor="sidebar-drawer" className="btn btn-ghost btn-circle drawer-button">

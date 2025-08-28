@@ -88,7 +88,7 @@ export function DynamicRoutes() {
         path="*"
         element={(
           <div className="p-6 text-center">
-            <div className="card bg-base-100 shadow-sm">
+            <div className="card bg-white shadow-sm">
               <div className="card-body">
                 <h2 className="card-title">頁面不存在</h2>
                 <p>您訪問的頁面不存在或您沒有權限訪問。</p>

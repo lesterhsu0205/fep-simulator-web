@@ -28,9 +28,6 @@ export default defineConfig({
         './src/App.tsx',
         './src/routes.tsx',
 
-        // UI 組件入口
-        './src/components/index.ts',
-
         // 主要布局組件
         './src/components/Header.tsx',
         './src/components/Sidebar.tsx',

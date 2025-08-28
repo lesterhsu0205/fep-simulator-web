@@ -72,7 +72,7 @@ export default function Login() {
               請登入您的帳戶開始使用 FEP Simulator - 快速、安全、專業的財金模擬平台。
             </p>
           </div>
-          <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+          <div className="card bg-white w-full max-w-sm shrink-0 shadow-2xl">
             <div className="card-body">
               <form onSubmit={handleSubmit(handleSignIn)}>
                 <fieldset className="fieldset">

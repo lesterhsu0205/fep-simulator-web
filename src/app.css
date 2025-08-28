@@ -9,15 +9,23 @@
 @import '@fontsource/noto-sans-tc/800.css';
 @import '@fontsource/noto-sans-tc/900.css';
 
-/* @font-face {
+@import '@fontsource/noto-sans';
+@import '@fontsource/noto-sans/300.css';
+@import '@fontsource/noto-sans/500.css';
+@import '@fontsource/noto-sans/600.css';
+@import '@fontsource/noto-sans/700.css';
+@import '@fontsource/noto-sans/800.css';
+@import '@fontsource/noto-sans/900.css';
+
+@font-face {
     font-family: 'jf open 粉圓';
     src: url('/fonts/jf-openhuninn-2.1.ttf') format('truetype');
     font-display: swap;
-} */
+}
 
 html,
 body {
-    font-family: 'Noto Sans TC', 'Noto Sans', 'sans-serif', 'jf open 粉圓';
+    font-family: 'Noto Sans', 'jf open 粉圓', 'Noto Sans TC', 'sans-serif';
 }
 
 /* 全局隱藏瀏覽器滾動條，但保留滾動功能 */
@@ -86,12 +94,12 @@ html.scrolling ::-webkit-scrollbar-thumb:hover {
 } */
 
 @plugin "daisyui" {
-    themes: light --default;
+    themes: false;
 }
 
 @plugin "daisyui/theme" {
     name: "my-light";
-    default: ture;
+    default: true;
     prefersdark: false;
     color-scheme: "light";
     --color-base-100: oklch(100% 0 0);
@@ -185,11 +193,26 @@ html.scrolling ::-webkit-scrollbar-thumb:hover {
 
 /* 簡易 Drawer 動畫 - 最初版本 */
 .drawer-side aside {
-    @apply bg-base-200 min-h-full w-64 shadow-lg transform transition-all duration-500 ease-in-out;
+    @apply min-h-full w-64 shadow-lg transform transition-all duration-500 ease-in-out;
 }
 
 /* 移除 overlay 變暗效果 */
 .drawer-overlay {
     opacity: 0 !important;
     pointer-events: none;
+}
+
+/* 修正滾動條背景色問題 */
+:root {
+    background-color: transparent !important;
+}
+
+/* 統一 Windows Chrome 滾動條行為 - 只在內容需要時才顯示滾動條 */
+.drawer-content {
+    overflow-y: auto !important;
+}
+
+/* 確保在所有狀態下都使用一致的滾動條行為 */
+body, html {
+    overflow-y: auto !important;
 }
