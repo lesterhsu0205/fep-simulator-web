@@ -128,7 +128,7 @@ export function Sidebar() {
   if (!user || !user.menus) {
     return (
       <div className="drawer-side">
-        <label htmlFor="sidebar-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+        <label htmlFor="sidebar-drawer" aria-label="close sidebar"></label>
         <aside>
           <Link to="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
             <img
@@ -149,7 +149,7 @@ export function Sidebar() {
 
   return (
     <div className="drawer-side">
-      <label htmlFor="sidebar-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
+      <label htmlFor="sidebar-drawer" aria-label="close sidebar"></label>
       <aside>
         {/* 品牌標題 */}
         <Link to="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">

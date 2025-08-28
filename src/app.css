@@ -28,73 +28,9 @@ body {
     font-family: 'Noto Sans', 'jf open 粉圓', 'Noto Sans TC', 'sans-serif';
 }
 
-/* 全局隱藏瀏覽器滾動條，但保留滾動功能 */
-/* html {
-    /* -ms-overflow-style: none; */
-/* IE 和 Edge */
-/*    scrollbar-width: none;
-    /* Firefox */
-/* } */
-
-/* html::-webkit-scrollbar {
-    /* display: none; */
-/* Chrome, Safari, Opera */
-/* } */
-
-/* =============================
-   macOS 風格滾動條
-   - 預設完全隱藏滾動條，沒有佔位
-   - 只在正在滾動時顯示懸浮滾動條
-   - 滾動停止後自動隱藏
-   ============================= */
-
-/* 預設隱藏滾動條 (但保留滾動功能) */
-/* ::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-} */
-
-/* html {
-    scrollbar-width: none;
-    /* Firefox 隱藏 */
-/* } */
-
-/* 只在滾動時顯示滾動條 - 使用更強的選擇器 */
-/* body.scrolling ::-webkit-scrollbar,
-html.scrolling ::-webkit-scrollbar {
-    width: 12px !important;
-    height: 12px !important;
-} */
-
-/* body.scrolling,
-html.scrolling {
-    scrollbar-width: thin !important;
-    /* Firefox 顯示 */
-/* } */
-
-/* WebKit 滾動條樣式 */
-/* body.scrolling ::-webkit-scrollbar-track,
-html.scrolling ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1) !important;
-    border-radius: 6px;
-} */
-
-/* body.scrolling ::-webkit-scrollbar-thumb,
-html.scrolling ::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.4) !important;
-    border-radius: 6px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-    min-height: 30px;
-} */
-
-/* body.scrolling ::-webkit-scrollbar-thumb:hover,
-html.scrolling ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0, 0, 0, 0.6) !important;
-} */
-
 @plugin "daisyui" {
     themes: false;
+    exclude: rootscrollgutter;
 }
 
 @plugin "daisyui/theme" {
@@ -194,25 +130,4 @@ html.scrolling ::-webkit-scrollbar-thumb:hover {
 /* 簡易 Drawer 動畫 - 最初版本 */
 .drawer-side aside {
     @apply min-h-full w-64 shadow-lg transform transition-all duration-500 ease-in-out;
-}
-
-/* 移除 overlay 變暗效果 */
-.drawer-overlay {
-    opacity: 0 !important;
-    pointer-events: none;
-}
-
-/* 修正滾動條背景色問題 */
-:root {
-    background-color: transparent !important;
-}
-
-/* 統一 Windows Chrome 滾動條行為 - 只在內容需要時才顯示滾動條 */
-.drawer-content {
-    overflow-y: auto !important;
-}
-
-/* 確保在所有狀態下都使用一致的滾動條行為 */
-body, html {
-    overflow-y: auto !important;
 }
