@@ -3,7 +3,7 @@ import { ApiError } from '@/Error/ApiError'
 
 // 創建 axios 實例
 const ApiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL_FES,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

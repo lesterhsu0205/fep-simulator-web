@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "local": "vite",
+    "local": "vite --mode development",
+    "local:oa": "vite --mode development.oa",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
