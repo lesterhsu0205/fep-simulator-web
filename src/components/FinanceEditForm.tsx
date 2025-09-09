@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form'
 import { useEffect } from 'react'
 import { Save } from 'lucide-react'
 import { type EditFormProps } from '@/components/DataTable'
-import { type FinanceEditFormData } from '@/model/FiscSituation'
+import { type FinanceEditFormData } from '@/models/FiscSituation'
 import { FinanceService } from '@/services/FinanceService'
 
 export default function FinanceEditForm({ data, afterSubmit }: EditFormProps) {

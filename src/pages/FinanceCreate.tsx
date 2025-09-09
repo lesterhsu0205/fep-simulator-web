@@ -1,7 +1,7 @@
 import { useForm, useWatch } from 'react-hook-form'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
-import { type FinanceCreateFormData } from '@/model/FiscSituation'
+import { type FinanceCreateFormData } from '@/models/FiscSituation'
 import { FinanceService } from '@/services/FinanceService'
 
 interface FinanceCreateProps {

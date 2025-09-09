@@ -3,7 +3,7 @@ import { Search, RotateCcw, Edit, Trash2, Plus, Check, X } from 'lucide-react'
 import { useState, useEffect, useCallback, type ComponentType } from 'react'
 import Modal from '@/components/Modal'
 import { useToast } from '@/contexts/ToastContext'
-import { type PaginationInfo } from '@/model/PaginationInfo'
+import { type PaginationInfo } from '@/models/PaginationInfo'
 
 // 定義查詢表單欄位類型
 export interface SearchField {

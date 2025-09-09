@@ -1,9 +1,9 @@
 import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type JcicSituation, type JcicSituationQuery } from '@/model/JcicSituation'
+import { type JcicSituation, type JcicSituationQuery } from '@/models/JcicSituation'
 import { CreditService } from '@/services/CreditService'
 import CreditCreate from '@/pages/CreditCreate'
 
-export default function MaintainTestAccount() {
+export default function CreditMaintain() {
   // 定義查詢表單欄位配置
   const searchFields: SearchField[] = [
     {

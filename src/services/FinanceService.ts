@@ -1,6 +1,6 @@
 import { type AxiosResponse } from 'axios'
 import ApiClient, { type ApiResponse } from '@/services/ApiService'
-import { type FiscSituation, type FiscSituationListResponse, type FiscSituationQuery, type FiscSituationMaintenanceRequest } from '@/model/FiscSituation'
+import { type FiscSituation, type FiscSituationListResponse, type FiscSituationQuery, type FiscSituationMaintenanceRequest } from '@/models/FiscSituation'
 
 // API 服務類
 export class FinanceService {

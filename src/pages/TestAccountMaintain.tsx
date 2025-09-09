@@ -1,5 +1,5 @@
 import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type TestAccount, type TestAccountQuery } from '@/model/TestAccount'
+import { type TestAccount, type TestAccountQuery } from '@/models/TestAccount'
 import TestAccountCreate from '@/pages/TestAccountCreate'
 import testAccountData from '@/assets/TestAccountList.json'
 

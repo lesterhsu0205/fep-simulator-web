@@ -1,10 +1,10 @@
 import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type FiscSituation, type FiscSituationQuery } from '@/model/FiscSituation'
+import { type FiscSituation, type FiscSituationQuery } from '@/models/FiscSituation'
 import { FinanceService } from '@/services/FinanceService'
 import FinanceCreate from '@/pages/FinanceCreate'
 import FinanceEditForm from '@/components/FinanceEditForm'
 
-export default function MaintainTestAccount() {
+export default function FinanceMaintain() {
   // 定義查詢表單欄位配置
   const searchFields: SearchField[] = [
     {

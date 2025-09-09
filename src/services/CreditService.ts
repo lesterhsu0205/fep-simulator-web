@@ -1,6 +1,6 @@
 import { type AxiosResponse } from 'axios'
 import ApiClient, { type ApiResponse } from '@/services/ApiService'
-import { type JcicSituation, type JcicSituationListResponse, type JcicSituationQuery } from '@/model/JcicSituation'
+import { type JcicSituation, type JcicSituationListResponse, type JcicSituationQuery } from '@/models/JcicSituation'
 
 // Credit API 服務類
 export class CreditService {

@@ -1,7 +1,7 @@
 import { useForm, Controller } from 'react-hook-form'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
-import { type JcicCreateFormData } from '@/model/JcicSituation'
+import { type JcicCreateFormData } from '@/models/JcicSituation'
 import { CreditService } from '@/services/CreditService'
 
 interface CreditCreateProps {

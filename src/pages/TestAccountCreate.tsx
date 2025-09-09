@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
-import { type TestAccountCreateFormData } from '@/model/TestAccount'
+import { type TestAccountCreateFormData } from '@/models/TestAccount'
 
 interface TestAccountCreateProps {
   afterSubmit?: () => void

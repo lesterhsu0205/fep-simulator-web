@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ApiError } from '@/Error/ApiError'
+import { ApiError } from '@/error/ApiError'
 
 // 創建 axios 實例
 const ApiClient = axios.create({
