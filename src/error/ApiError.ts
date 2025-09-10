@@ -1,10 +1,10 @@
 // 自定義 API 錯誤類別
-export class ApiError extends Error {
+export class ApiError<T = unknown | null> extends Error {
   messageDesc: string
   messageCode: string
-  messageContent?: string
+  messageContent?: T | null
 
-  constructor(message: string, messageCode: string, messageContent?: string) {
+  constructor(message: string, messageCode: string, messageContent?: T) {
     super(message)
     this.name = 'ApiError'
     this.messageDesc = message

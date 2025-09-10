@@ -11,6 +11,8 @@ import CreditMaintain from '@/pages/CreditMaintain'
 import CreditCreate from '@/pages/CreditCreate'
 import UserMaintain from '@/pages/UserMaintain'
 import RecordQuery from '@/pages/RecordQuery'
+import CreditFileUpload from '@/pages/CreditFileUpload'
+import FinanceFileUpload from '@/pages/FinanceFileUpload'
 
 export function DynamicRoutes() {
   const { user } = useAuth()
@@ -61,6 +63,10 @@ export function DynamicRoutes() {
         return <UserMaintain />
       case '/RECORD_QUERY':
         return <RecordQuery />
+      case '/CREDIT_FILE_UPLOAD':
+        return <CreditFileUpload />
+      case '/FINANCE_FILE_UPLOAD':
+        return <FinanceFileUpload />
       default:
         return null
     }

@@ -1,6 +1,7 @@
 import { type AxiosResponse } from 'axios'
 import ApiClient, { type ApiResponse } from '@/services/ApiService'
 import { type FiscSituation, type FiscSituationListResponse, type FiscSituationQuery, type FiscSituationMaintenanceRequest } from '@/models/FiscSituation'
+import { type UploadResult } from '@/models/UploadResult'
 
 // API 服務類
 export class FinanceService {
@@ -38,6 +39,27 @@ export class FinanceService {
       const response: AxiosResponse<ApiResponse<{ fiscSituation?: FiscSituation }>> = await ApiClient.post('/finance/scenario/maint', data)
 
       return response.data.messageContent?.fiscSituation || null
+    }
+    catch (error) {
+      console.error('API Error:', error)
+      throw error
+    }
+  }
+
+  // 上傳財金情境檔案
+  static async uploadFiscSituationFile(file: File, action: 'CREATE' | 'UPDATE'): Promise<ApiResponse<UploadResult> | null> {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('action', action)
+
+      const response: AxiosResponse<ApiResponse<UploadResult>> = await ApiClient.post('/finance/scenario/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+      return response.data
     }
     catch (error) {
       console.error('API Error:', error)

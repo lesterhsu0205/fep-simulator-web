@@ -1,6 +1,7 @@
 import { type AxiosResponse } from 'axios'
 import ApiClient, { type ApiResponse } from '@/services/ApiService'
 import { type JcicSituation, type JcicSituationListResponse, type JcicSituationQuery } from '@/models/JcicSituation'
+import { type UploadResult } from '@/models/UploadResult'
 
 // Credit API 服務類
 export class CreditService {
@@ -41,6 +42,27 @@ export class CreditService {
     }
     catch (error) {
       console.error('API Error:', error)
+      throw error
+    }
+  }
+
+  // 上傳聯徵情境檔案
+  static async uploadJcicSituationFile(file: File, action: string): Promise<ApiResponse<UploadResult> | null> {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('action', action)
+
+      const response: AxiosResponse<ApiResponse<UploadResult>> = await ApiClient.post('/credit/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+
+      return response.data
+    }
+    catch (error) {
+      console.error('Upload Error:', error)
       throw error
     }
   }
