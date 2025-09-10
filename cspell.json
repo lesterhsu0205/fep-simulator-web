@@ -15,7 +15,9 @@
     "tailwindcss",
     "daisyui",
     "inquery",
-    "icCkey"
+    "icCkey",
+    "txlogs",
+    "italGuidOmsgID"
   ],
   "ignorePaths": [
     "node_modules/**",

@@ -9,6 +9,8 @@ import TestAccountCreate from '@/pages/TestAccountCreate'
 import TestAccountMaintain from '@/pages/TestAccountMaintain'
 import CreditMaintain from '@/pages/CreditMaintain'
 import CreditCreate from '@/pages/CreditCreate'
+import UserMaintain from '@/pages/UserMaintain'
+import RecordQuery from '@/pages/RecordQuery'
 
 export function DynamicRoutes() {
   const { user } = useAuth()
@@ -55,6 +57,10 @@ export function DynamicRoutes() {
         return <CreditMaintain />
       case '/CREDIT_CREATE':
         return <CreditCreate />
+      case '/USER_MAINT':
+        return <UserMaintain />
+      case '/RECORD_QUERY':
+        return <RecordQuery />
       default:
         return null
     }
