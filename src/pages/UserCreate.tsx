@@ -1,4 +1,4 @@
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
 import { type UserCreateFormData } from '@/models/User'
@@ -11,7 +11,7 @@ interface UserCreateProps {
 export default function UserCreate({ afterSubmit }: UserCreateProps) {
   const { showToast } = useToast()
 
-  const { register, handleSubmit, reset, control, setValue, formState: { errors } } = useForm<UserCreateFormData>({
+  const { handleSubmit, reset } = useForm<UserCreateFormData>({
     defaultValues: {
       email: '',
       accountType: '',
