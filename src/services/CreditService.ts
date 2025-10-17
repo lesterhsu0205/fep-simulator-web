@@ -2,6 +2,7 @@ import { type AxiosResponse } from 'axios'
 import ApiClient, { type ApiResponse } from '@/services/ApiService'
 import { type JcicSituation, type JcicSituationListResponse, type JcicSituationQuery } from '@/models/JcicSituation'
 import { type UploadResult } from '@/models/UploadResult'
+import { ensureBase64Encoded } from '@/utils/base64'
 
 // Credit API 服務類
 export class CreditService {
@@ -36,7 +37,20 @@ export class CreditService {
   // 財金情境維護（新增/修改/刪除）
   static async maintainJcicSituation(data: unknown): Promise<JcicSituation | null> {
     try {
-      const response: AxiosResponse<ApiResponse<{ jcicSituation?: JcicSituation }>> = await ApiClient.post('/credit/maint', data)
+      // 處理 jcicData 的 base64 編碼
+      let processedData = data
+      if (data && typeof data === 'object' && 'jcicData' in data) {
+        const typedData = data as { jcicData?: string | null }
+        if (typedData.jcicData && typeof typedData.jcicData === 'string') {
+          // 智能處理 base64 編碼：如果不是 base64 則編碼，已編碼則保持不變
+          processedData = {
+            ...data,
+            jcicData: ensureBase64Encoded(typedData.jcicData),
+          }
+        }
+      }
+
+      const response: AxiosResponse<ApiResponse<{ jcicSituation?: JcicSituation }>> = await ApiClient.post('/credit/maint', processedData)
 
       return response.data.messageContent?.jcicSituation || null
     }

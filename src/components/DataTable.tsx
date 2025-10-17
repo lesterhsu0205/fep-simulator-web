@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, type ComponentType } from 'react'
 import Modal from '@/components/Modal'
 import { useToast } from '@/contexts/ToastContext'
 import { type PaginationInfo } from '@/models/PaginationInfo'
+import { ensureBase64Decoded } from '@/utils/base64'
 
 // 定義查詢表單欄位類型
 export interface SearchField {
@@ -315,7 +316,9 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
   // 處理 blob 詳細資料彈窗
   const handleBlobDetailClick = (content: string, title: string) => {
-    setBlobDetailContent(content)
+    // 智能解碼 base64 內容
+    const decodedContent = ensureBase64Decoded(content)
+    setBlobDetailContent(decodedContent)
     setBlobDetailTitle(title)
     setIsBlobDetailModalOpen(true)
   }
