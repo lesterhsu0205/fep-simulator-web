@@ -1,17 +1,18 @@
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { Search, RotateCcw, Edit, Trash2, Plus, Check, X } from 'lucide-react'
 import { useState, useEffect, useCallback, type ComponentType } from 'react'
 import Modal from '@/components/Modal'
 import { useToast } from '@/contexts/ToastContext'
 import { type PaginationInfo } from '@/models/PaginationInfo'
 import { ensureBase64Decoded } from '@/utils/base64'
+import DateRangePicker from '@/components/DateRangePicker'
 
 // 定義查詢表單欄位類型
 export interface SearchField {
   key: string
   label: string
   placeholder?: string
-  type?: 'text' | 'number' | 'email' | 'tel' | 'date' | 'select'
+  type?: 'text' | 'number' | 'email' | 'tel' | 'date' | 'select' | 'dateRange'
   required?: boolean
   className?: string
   options?: Array<{ value: string | number | null, label: string }>
@@ -162,11 +163,16 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   }, [data])
 
   // React Hook Form 設定
-  const defaultValues = searchFields.reduce<Record<string, string | number | undefined>>((acc, field) => {
-    acc[field.key] = ''
+  const defaultValues = searchFields.reduce<Record<string, string | number | undefined | { startDatetime?: string, endDatetime?: string }>>((acc, field) => {
+    if (field.type === 'dateRange') {
+      acc[field.key] = { startDatetime: '', endDatetime: '' }
+    }
+    else {
+      acc[field.key] = ''
+    }
     return acc
   }, {})
-  const { register, handleSubmit, reset } = useForm<Record<string, string | number | undefined>>({
+  const { register, handleSubmit, reset, control } = useForm<Record<string, string | number | undefined | { startDatetime?: string, endDatetime?: string }>>({
     defaultValues,
   })
 
@@ -185,20 +191,31 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   }
 
   // 查詢表單處理
-  const onSubmit = (formData: Record<string, string | number | undefined>) => {
-    // 將空字串轉換回 null 給 API
-    const processedData = Object.fromEntries(
-      Object.entries(formData).map(([key, value]) => [
-        key,
-        value === '' ? null : value,
-      ]),
-    )
+  const onSubmit = (formData: Record<string, string | number | undefined | { startDatetime?: string, endDatetime?: string }>) => {
+    // 處理表單數據：空字串轉換為 null，日期範圍欄位展開
+    const processedData: Record<string, string | number | null> = {}
+
+    Object.entries(formData).forEach(([key, value]) => {
+      // 處理日期範圍欄位
+      if (value && typeof value === 'object' && 'startDatetime' in value && 'endDatetime' in value) {
+        processedData.startDatetime = value.startDatetime || null
+        processedData.endDatetime = value.endDatetime || null
+      }
+      // 處理一般欄位
+      else if (value === '' || value === undefined) {
+        processedData[key] = null
+      }
+      else {
+        processedData[key] = value as string | number | null
+      }
+    })
+
     const queryParams = processedData as unknown as TQuery
     loadData(queryParams, 1, itemsPerPage)
   }
 
   const handleReset = () => {
-    reset()
+    reset(defaultValues)
     setCurrentPage(1)
     setItemsPerPage(initialItemsPerPage)
     loadData({} as TQuery, 1, initialItemsPerPage)
@@ -415,15 +432,30 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                         ))}
                       </select>
                     )
-                  : (
-                      <input
-                        type={field.type || 'text'}
-                        className={`input input-bordered w-40 ${field.className || ''}`}
-                        placeholder={field.placeholder || ''}
-                        required={field.required}
-                        {...register(field.key)}
-                      />
-                    )}
+                  : field.type === 'dateRange'
+                    ? (
+                        <Controller
+                          name={field.key}
+                          control={control}
+                          render={({ field: controllerField }) => (
+                            <DateRangePicker
+                              value={controllerField.value as { startDatetime?: string, endDatetime?: string }}
+                              onChange={controllerField.onChange}
+                              placeholder={field.placeholder}
+                              className={field.className}
+                            />
+                          )}
+                        />
+                      )
+                    : (
+                        <input
+                          type={field.type || 'text'}
+                          className={`input input-bordered w-40 ${field.className || ''}`}
+                          placeholder={field.placeholder || ''}
+                          required={field.required}
+                          {...register(field.key)}
+                        />
+                      )}
               </div>
             ))}
 

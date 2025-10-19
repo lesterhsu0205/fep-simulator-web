@@ -8,14 +8,10 @@ export default function RecordQuery() {
   // 定義查詢表單欄位配置
   const searchFields: SearchField[] = [
     {
-      key: 'startDatetime',
-      label: '查詢起日',
-      type: 'date',
-    },
-    {
-      key: 'endDatetime',
-      label: '查詢迄日',
-      type: 'date',
+      key: 'dateRange',
+      label: '查詢起迄日',
+      type: 'dateRange',
+      placeholder: '選擇查詢日期範圍',
     },
     {
       key: 'systemType',
