@@ -20,11 +20,8 @@ export interface UserCreateFormData {
 
 // 表單資料類型（使用 API 的 key 值）
 export interface UserEditFormData {
-  id: number
   email: string
-  accountType: string
-  isActive: boolean
-  roleCode: string
+  username: string
 }
 
 export interface UserListResponse {

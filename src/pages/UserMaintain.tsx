@@ -2,7 +2,7 @@ import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } 
 import { type User, type UserQuery } from '@/models/User'
 import { UserService } from '@/services/UserService'
 import UserCreate from '@/pages/UserCreate'
-// import FinanceEditForm from '@/components/FinanceEditForm'
+import UserEditForm from '@/components/UserEditForm'
 
 export default function UserMaintain() {
   // 定義查詢表單欄位配置
@@ -47,7 +47,7 @@ export default function UserMaintain() {
 
   // 載入資料函數 (傳給 DataTable 使用)
   const loadFiscData: LoadDataFunction<User, UserQuery> = async (queryParams, page, pageSize) => {
-    const response = await UserService.getUserList({
+    const response = await UserService.getSystemUserList({
       page,
       pageSize,
       ...queryParams,
@@ -71,7 +71,7 @@ export default function UserMaintain() {
     // FIXME: 缺批次刪除 API
     // 方案1：使用 Promise.all (平行執行)
     await Promise.all(selectedIds.map(async (id) => {
-      await UserService.maintainUser({
+      await UserService.maintainSystemUser({
         action: 'D',
         id,
       })
@@ -84,7 +84,7 @@ export default function UserMaintain() {
         loadDataFn={loadFiscData}
         deleteDataFn={deleteUserData}
         AddFormComponent={UserCreate}
-        // EditFormComponent={FinanceEditForm}
+        EditFormComponent={UserEditForm}
         deleteTitleAttr="username"
         columns={columns}
         searchFields={searchFields}

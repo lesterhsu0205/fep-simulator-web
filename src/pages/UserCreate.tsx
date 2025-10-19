@@ -27,7 +27,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
         ...formData,
       }
 
-      await UserService.maintainUser(requestData)
+      await UserService.maintainSystemUser(requestData)
       showToast('測試帳號建立成功', 'success')
 
       // 列表頁新增時
