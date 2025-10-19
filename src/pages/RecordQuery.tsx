@@ -83,7 +83,7 @@ export default function RecordQuery() {
     {
       key: 'txnData',
       title: 'txnData',
-      render: 'blob',
+      render: 'json',
     },
   ]
 

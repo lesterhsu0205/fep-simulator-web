@@ -120,9 +120,9 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   const [deletingItem, setDeletingItem] = useState<TableItem | null>(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isBatchDeleteModalOpen, setIsBatchDeleteModalOpen] = useState(false)
-  const [isBlobDetailModalOpen, setIsBlobDetailModalOpen] = useState(false)
-  const [blobDetailContent, setBlobDetailContent] = useState<string>('')
-  const [blobDetailTitle, setBlobDetailTitle] = useState<string>('')
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
+  const [detailContent, setDetailContent] = useState<string>('')
+  const [detailTitle, setDetailTitle] = useState<string>('')
 
   // 載入資料
   const loadData = useCallback(async (queryParams: TQuery = {} as TQuery, page = currentPage, pageSize = itemsPerPage) => {
@@ -314,19 +314,19 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
     setIsAddModalOpen(false)
   }
 
-  // 處理 blob 詳細資料彈窗
-  const handleBlobDetailClick = (content: string, title: string) => {
+  // 處理詳細資料彈窗 (blob/json)
+  const handleDetailClick = (content: string, title: string) => {
     // 智能解碼 base64 內容
     const decodedContent = ensureBase64Decoded(content)
-    setBlobDetailContent(decodedContent)
-    setBlobDetailTitle(title)
-    setIsBlobDetailModalOpen(true)
+    setDetailContent(decodedContent)
+    setDetailTitle(title)
+    setIsDetailModalOpen(true)
   }
 
-  const handleCloseBlobDetailModal = () => {
-    setBlobDetailContent('')
-    setBlobDetailTitle('')
-    setIsBlobDetailModalOpen(false)
+  const handleCloseDetailModal = () => {
+    setDetailContent('')
+    setDetailTitle('')
+    setIsDetailModalOpen(false)
   }
 
   // 渲染表格儲存格內容的輔助函數
@@ -353,13 +353,35 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
           className="btn btn-xs"
           onClick={(e) => {
             e.stopPropagation()
-            handleBlobDetailClick(String(value), column.title)
+            handleDetailClick(String(value), column.title)
           }}
           title="點擊查看詳細內容"
         >
           ******
         </button>
       )
+    }
+    else if (column.render === 'json') {
+      try {
+        const parsed = JSON.parse(String(value))
+        const prettyJson = JSON.stringify(parsed, null, 2)
+        return (
+          <button
+            className="btn btn-xs"
+            onClick={(e) => {
+              e.stopPropagation()
+              handleDetailClick(prettyJson, column.title)
+            }}
+            title="點擊查看 JSON 詳細內容"
+          >
+            ******
+          </button>
+        )
+      }
+      catch {
+        // 如果無法解析為 JSON，回傳原始值
+        return value
+      }
     }
     return value
   }
@@ -776,27 +798,27 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         />
       )}
 
-      {/* Blob 詳細資料 Modal */}
+      {/* 詳細資料 Modal (Blob/JSON) */}
       <Modal
-        isOpen={isBlobDetailModalOpen}
-        modalTitle={`詳細內容 - ${blobDetailTitle}`}
+        isOpen={isDetailModalOpen}
+        modalTitle={`詳細內容 - ${detailTitle}`}
         className="w-11/12 max-w-6xl"
         modalContent={(
           <div className="max-h-96 overflow-y-auto overflow-x-hidden">
             <pre className="whitespace-pre-wrap break-words text-sm bg-gray-50 p-4 rounded font-mono">
-              {blobDetailContent}
+              {detailContent}
             </pre>
           </div>
         )}
         modalAction={(
           <button
             className="btn btn-ghost"
-            onClick={handleCloseBlobDetailModal}
+            onClick={handleCloseDetailModal}
           >
             關閉
           </button>
         )}
-        onCancel={handleCloseBlobDetailModal}
+        onCancel={handleCloseDetailModal}
       />
 
     </div>
