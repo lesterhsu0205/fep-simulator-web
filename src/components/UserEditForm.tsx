@@ -21,7 +21,7 @@ export default function UserEditForm({ data, afterSubmit }: EditFormProps) {
   const handleFormSubmit = async (formData: UserEditFormData) => {
     const requestData = {
       action: 'U' as const,
-      id: data?.id,
+      id: data?.id as number,
       username: formData.username,
       email: formData.email,
     }

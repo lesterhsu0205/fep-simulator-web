@@ -5,6 +5,7 @@ import { Eye, EyeOff, User, Lock } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 import { Footer } from '@/components/Footer'
+import { getFirstAccessiblePath, isPathAccessible } from '@/utils/navigationHelper'
 import transactionalDataIcon from '/transactional-data.png'
 
 // 登入表單資料類型
@@ -34,9 +35,35 @@ export default function Login() {
       const success = await login(data.account, data.password)
       if (success) {
         showToast('登入成功！', 'success')
-        // 登入成功後導向之前嘗試訪問的頁面，或默認到首頁
-        const from = (location.state as { from?: { pathname: string } })?.from?.pathname || '/'
-        navigate(from, { replace: true })
+
+        // 延遲一點讓 AuthContext 更新完成，然後獲取最新的使用者資訊
+        setTimeout(() => {
+          const storedUser = localStorage.getItem('user')
+          if (storedUser) {
+            const user = JSON.parse(storedUser)
+            if (user?.menus) {
+              // 檢查是否有之前嘗試訪問的頁面
+              const from = (location.state as { from?: { pathname: string } })?.from?.pathname
+
+              // 如果之前嘗試訪問的頁面有權限，就導向該頁面
+              if (from && from !== '/' && isPathAccessible(from, user.menus)) {
+                navigate(from, { replace: true })
+                return
+              }
+
+              // 否則導向使用者有權限的第一個頁面
+              const firstAccessiblePath = getFirstAccessiblePath(user.menus)
+              if (firstAccessiblePath) {
+                navigate(firstAccessiblePath, { replace: true })
+              }
+              else {
+                // 如果沒有任何可訪問的頁面，顯示錯誤
+                showToast('您沒有任何頁面的訪問權限，請聯繫管理員', 'error')
+                navigate('/login', { replace: true })
+              }
+            }
+          }
+        }, 100)
       }
       else {
         showToast('帳號或密碼錯誤', 'error')

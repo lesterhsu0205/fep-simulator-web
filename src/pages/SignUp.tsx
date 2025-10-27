@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, User, Lock, Mail, UserCheck } from 'lucide-react'
+import { Eye, EyeOff, User, Lock, Mail } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext'
 import { signupApi, type SignupRequest } from '@/services/AuthService'
 import { Footer } from '@/components/Footer'
@@ -31,7 +31,7 @@ export default function SignUp() {
       confirmPassword: '',
       email: '',
       accountType: 'user',
-      roleCode: '',
+      roleCode: 'GENERAL',
     },
   })
 
@@ -188,7 +188,7 @@ export default function SignUp() {
                   </div>
 
                   {/* 部門代號輸入框（選填） */}
-                  <div className="mb-6">
+                  {/* <div className="mb-6">
                     <label className="input input-bordered input-lg w-full">
                       <UserCheck size={20} className="text-gray-400" />
                       <input
@@ -204,7 +204,7 @@ export default function SignUp() {
                     {errors.roleCode && (
                       <p className="label text-error text-sm mt-1">{errors.roleCode.message}</p>
                     )}
-                  </div>
+                  </div> */}
 
                   {/* Sign Up 按鈕 */}
                   <button
