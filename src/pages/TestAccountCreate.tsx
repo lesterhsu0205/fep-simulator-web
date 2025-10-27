@@ -51,29 +51,29 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
   return (
     <div className="w-full p-6">
       <h2 className="text-lg font-semibold mb-6">新增測試帳號</h2>
-      
+
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="label">帳號</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="input input-bordered w-full"
               {...register('account')}
             />
             {errors.account && <span className="text-error text-xs">{errors.account.message}</span>}
           </div>
-          
+
           <div>
             <label className="label">狀態</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               className="input input-bordered w-full"
               {...register('status')}
             />
           </div>
         </div>
-        
+
         <div className="flex justify-end gap-3 pt-4">
           <button
             type="button"
