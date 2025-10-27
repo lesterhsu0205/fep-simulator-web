@@ -2,6 +2,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import type { MenuItem } from '@/services/AuthService'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useCallback } from 'react'
+import { getFirstAccessiblePath } from '@/utils/navigationHelper'
 import transactionalDataIcon from '/transactional-data.png'
 
 export function Sidebar() {
@@ -125,6 +126,13 @@ export function Sidebar() {
     }
   }
 
+  // 獲取品牌標題的連結路徑
+  const getBrandLinkPath = () => {
+    if (!user?.menus) return '/'
+    const firstPath = getFirstAccessiblePath(user.menus)
+    return firstPath || '/'
+  }
+
   if (!user || !user.menus) {
     return (
       <div className="drawer-side">
@@ -152,7 +160,7 @@ export function Sidebar() {
       <label htmlFor="sidebar-drawer" aria-label="close sidebar"></label>
       <aside>
         {/* 品牌標題 */}
-        <Link to="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
+        <Link to={getBrandLinkPath()} className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
           <img
             src={transactionalDataIcon}
             alt="Transaction icons created by nangicon - Flaticon"

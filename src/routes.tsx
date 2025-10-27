@@ -1,4 +1,4 @@
-import { createBrowserRouter, type RouteObject, Navigate } from 'react-router-dom'
+import { createBrowserRouter, type RouteObject } from 'react-router-dom'
 import App from '@/App.tsx'
 import ProtectedRoute from '@/components/ProtectedRoute.tsx'
 import Login from '@/pages/Login.tsx'
@@ -23,11 +23,6 @@ export const routes: RouteObject[] = [
       </ProtectedRoute>
     ),
     children: [
-      // 登入後先到此頁
-      {
-        index: true,
-        element: <Navigate to="/TEST_ACCT_MAINT" replace />,
-      },
       {
         path: '*',
         element: <DynamicRoutes />,
