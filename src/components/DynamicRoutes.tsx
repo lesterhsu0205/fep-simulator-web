@@ -1,7 +1,6 @@
 import { useAuth } from '@/contexts/AuthContext'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import type { MenuItem } from '@/services/AuthService'
-import { getFirstAccessiblePath } from '@/utils/navigationHelper'
 
 // 導入現有的組件
 import FinanceMaintain from '@/pages/FinanceMaintain'
@@ -85,30 +84,8 @@ export function DynamicRoutes() {
   const routes = collectImplementedRoutes(user.menus)
   console.log('📋 收集到的已實現路由:', routes)
 
-  // 獲取第一個可訪問的路徑，用於根路徑重定向
-  const firstAccessiblePath = getFirstAccessiblePath(user.menus)
-
   return (
     <Routes>
-      {/* 根路徑重定向到第一個可訪問頁面 */}
-      <Route
-        index
-        element={
-          firstAccessiblePath
-            ? <Navigate to={firstAccessiblePath} replace />
-            : (
-                <div className="p-6 text-center">
-                  <div className="card bg-white shadow-sm">
-                    <div className="card-body">
-                      <h2 className="card-title">無可訪問頁面</h2>
-                      <p>您沒有任何頁面的訪問權限，請聯繫管理員。</p>
-                    </div>
-                  </div>
-                </div>
-              )
-        }
-      />
-
       {/* 只為已實現的路由生成路由 */}
       {routes.map(route => (
         <Route

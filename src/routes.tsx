@@ -4,6 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute.tsx'
 import Login from '@/pages/Login.tsx'
 import SignUp from '@/pages/SignUp.tsx'
 import { DynamicRoutes } from '@/components/DynamicRoutes.tsx'
+import { RootRedirect } from '@/components/RootRedirect.tsx'
 
 // 路由配置
 export const routes: RouteObject[] = [
@@ -15,8 +16,18 @@ export const routes: RouteObject[] = [
     path: '/signup',
     element: <SignUp />,
   },
+  // 根路徑重定向
   {
     path: '/',
+    element: (
+      <ProtectedRoute>
+        <RootRedirect />
+      </ProtectedRoute>
+    ),
+  },
+  // 所有其他路徑
+  {
+    path: '/*',
     element: (
       <ProtectedRoute>
         <App />
