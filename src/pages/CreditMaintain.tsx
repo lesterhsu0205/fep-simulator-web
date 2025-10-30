@@ -2,6 +2,7 @@ import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } 
 import { type JcicSituation, type JcicSituationQuery } from '@/models/JcicSituation'
 import { CreditService } from '@/services/CreditService'
 import CreditCreate from '@/pages/CreditCreate'
+import CreditEditForm from '@/components/CreditEditForm'
 
 export default function CreditMaintain() {
   // 定義查詢表單欄位配置
@@ -139,6 +140,7 @@ export default function CreditMaintain() {
         loadDataFn={loadJcicData}
         deleteDataFn={deleteJcicData}
         AddFormComponent={CreditCreate}
+        EditFormComponent={CreditEditForm}
         deleteTitleAttr="txid"
         columns={columns}
         searchFields={searchFields}

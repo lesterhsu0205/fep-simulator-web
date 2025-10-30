@@ -32,6 +32,20 @@ export interface JcicCreateFormData {
   creator: string
 }
 
+// 表單資料類型（使用 API 的 key 值）
+export interface JcicEditFormData {
+  id: number
+  txid: string
+  inqueryKey1: string
+  inqueryKey2: string | null
+  returnCode: string
+  forceToJcic: string
+  jcicDataDate: string | null
+  jcicData: string | null
+  situationDesc: string
+  memo: string | null
+}
+
 export interface JcicSituationListResponse {
   query: JcicSituationQuery
   pagination: PaginationInfo
@@ -44,4 +58,19 @@ export interface JcicSituationQuery {
   inqueryKey1?: string
   inqueryKey2?: string
   creator?: string
+}
+
+// API 維護請求
+export interface JcicSituationMaintenanceRequest {
+  action: 'A' | 'U' | 'D'
+  id?: number
+  txid?: string
+  inqueryKey1?: string
+  inqueryKey2?: string | null
+  returnCode?: string
+  forceToJcic?: string
+  jcicDataDate?: string | null
+  jcicData?: string | null
+  situationDesc?: string
+  memo?: string | null
 }

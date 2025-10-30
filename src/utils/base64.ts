@@ -8,15 +8,39 @@ import * as base64js from 'base64-js'
  */
 export function isBase64(str: string): boolean {
   try {
+    // 空字串或太短的字串不是 base64
+    if (!str || str.length < 4) {
+      return false
+    }
+
     // 檢查 base64 格式的正則表達式
     const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/
     if (!base64Regex.test(str)) {
       return false
     }
 
-    // 嘗試解碼，如果成功則是有效的 base64
-    base64js.toByteArray(str)
-    return true
+    // 純數字字串不應該被視為 base64
+    if (/^\d+$/.test(str)) {
+      return false
+    }
+
+    // base64 編碼的長度必須是 4 的倍數
+    if (str.length % 4 !== 0) {
+      return false
+    }
+
+    // 嘗試解碼，如果成功且解碼後的字串看起來合理，則是有效的 base64
+    const decoded = base64js.toByteArray(str)
+    
+    // 檢查解碼後的 bytes 是否為有效的 UTF-8
+    try {
+      const decoder = new TextDecoder('utf-8', { fatal: true })
+      decoder.decode(decoded)
+      return true
+    } catch {
+      // 如果不是有效的 UTF-8，可能是二進制數據，仍然是有效的 base64
+      return true
+    }
   }
   catch {
     return false

@@ -92,18 +92,20 @@ export default function SignUp() {
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">註冊資訊</legend>
 
-                  {/* 使用者名稱輸入框 */}
+                  {/* 員工編號輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
                       <User size={20} className="text-gray-400" />
                       <input
                         type="text"
                         className="grow"
-                        placeholder="請輸入使用者名稱"
+                        placeholder="請輸入員編(ex.BK00999)"
                         {...register('username', {
-                          required: '使用者名稱為必填項目',
-                          minLength: { value: 3, message: '使用者名稱至少需要3個字元' },
-                          maxLength: { value: 50, message: '使用者名稱不能超過50個字元' },
+                          required: '員工編為必填項目',
+                          pattern: {
+                            value: /^BK\d{5}$/,
+                            message: '員編格式須為大寫 BK + 5位數字 (ex.BK00999)',
+                          },
                         })}
                       />
                     </label>
