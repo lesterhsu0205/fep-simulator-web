@@ -68,9 +68,10 @@ export interface JcicSituationMaintenanceRequest {
   inqueryKey1?: string
   inqueryKey2?: string | null
   returnCode?: string
-  forceToJcic?: string
+  forceToJcic?: string | boolean
   jcicDataDate?: string | null
   jcicData?: string | null
   situationDesc?: string
   memo?: string | null
+  creator?: string
 }
