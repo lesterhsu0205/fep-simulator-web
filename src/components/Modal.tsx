@@ -30,12 +30,12 @@ export default function Modal({ isOpen, modalTitle, modalContent, modalAction, o
 
   return (
     <dialog className="modal" open={isOpen}>
-      <div className={`modal-box ${className || ''}`}>
-        <h3 className="font-bold text-lg">{modalTitle}</h3>
-        <div className="py-4">
+      <div className={`modal-box flex flex-col ${className || ''}`}>
+        <h3 className="font-bold text-lg flex-shrink-0">{modalTitle}</h3>
+        <div className="flex-1 min-h-0 overflow-auto mt-4 mb-4">
           {modalContent}
         </div>
-        <div className="modal-action">
+        <div className="modal-action flex-shrink-0 mt-0">
           {modalAction}
         </div>
       </div>

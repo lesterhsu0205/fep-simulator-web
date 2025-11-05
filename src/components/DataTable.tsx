@@ -707,7 +707,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         <Modal
           isOpen={isEditModalOpen}
           modalTitle="編輯項目"
-          className="w-11/12 max-w-6xl"
+          className="!max-w-none w-[90vw] h-[90vh]"
           modalContent={(
             <EditFormComponent
               data={editingItem}
@@ -765,7 +765,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         <Modal
           isOpen={isAddModalOpen}
           modalTitle="新增項目"
-          className="w-11/12 max-w-6xl"
+          className="!max-w-none w-[90vw] h-[100vh]"
           modalContent={(
             <AddFormComponent afterSubmit={handleAddSubmit} />
           )}
@@ -834,13 +834,11 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       <Modal
         isOpen={isDetailModalOpen}
         modalTitle={`詳細內容 - ${detailTitle}`}
-        className="w-11/12 max-w-6xl"
+        className="!max-w-none w-[90vw] h-[90vh]"
         modalContent={(
-          <div className="max-h-96 overflow-y-auto overflow-x-hidden">
-            <pre className="whitespace-pre-wrap break-words text-sm bg-gray-50 p-4 rounded font-mono">
-              {detailContent}
-            </pre>
-          </div>
+          <pre className="whitespace-pre-wrap break-words text-sm bg-gray-50 p-4 rounded font-mono">
+            {detailContent}
+          </pre>
         )}
         modalAction={(
           <button
