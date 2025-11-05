@@ -34,13 +34,13 @@ export default function RecordQuery() {
     },
     {
       key: 'italGuidOmsgID',
-      label: '系統類型',
+      label: 'italGuid',
       placeholder: '請輸入italGuidOmsgID',
       type: 'text',
     },
     {
       key: 'uuid',
-      label: '系統類型',
+      label: 'uuid',
       placeholder: '請輸入uuid',
       type: 'text',
     },

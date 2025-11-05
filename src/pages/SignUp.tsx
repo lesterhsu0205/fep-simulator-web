@@ -99,13 +99,14 @@ export default function SignUp() {
                       <input
                         type="text"
                         className="grow"
-                        placeholder="請輸入員編(ex.BK00999)"
+                        placeholder="請輸入員工編號(ex.BK00999)"
                         {...register('username', {
-                          required: '員工編為必填項目',
+                          required: '員工編號為必填項目',
                           pattern: {
                             value: /^BK\d{5}$/,
-                            message: '員編格式須為大寫 BK + 5位數字 (ex.BK00999)',
+                            message: '須為大寫 BK + 5位數字 (ex.BK00999)',
                           },
+                          maxLength: { value: 7, message: '員工編號不能超過7個字元' },
                         })}
                       />
                     </label>
@@ -146,8 +147,8 @@ export default function SignUp() {
                         placeholder="請輸入密碼"
                         {...register('password', {
                           required: '密碼為必填項目',
-                          minLength: { value: 6, message: '密碼至少需要6個字元' },
-                          maxLength: { value: 100, message: '密碼不能超過100個字元' },
+                          minLength: { value: 8, message: '密碼至少需要8個字元' },
+                          maxLength: { value: 30, message: '密碼不能超過30個字元' },
                         })}
                       />
                       <button
@@ -208,14 +209,14 @@ export default function SignUp() {
                     )}
                   </div> */}
 
-                  {/* Sign Up 按鈕 */}
+                  {/* 註冊 按鈕 */}
                   <button
                     type="submit"
                     className={`btn btn-primary btn-lg w-full block mt-2 ${isLoading ? 'loading' : ''}`}
                     style={{ width: '100%', boxSizing: 'border-box' }}
                     disabled={isLoading}
                   >
-                    {isLoading ? '' : 'Sign Up'}
+                    {isLoading ? '' : '註冊'}
                   </button>
                 </fieldset>
               </form>
@@ -237,7 +238,7 @@ export default function SignUp() {
               {/* 底部提示 */}
               <div className="text-center mt-6">
                 <p className="text-xs text-base-content/70">
-                  點擊 Sign Up 即表示您同意我們的
+                  點擊 註冊 即表示您同意我們的
                   <a href="#" className="link link-hover text-primary"> 服務條款 </a>
                   和
                   <a href="#" className="link link-hover text-primary"> 隱私政策</a>

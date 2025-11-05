@@ -14,7 +14,7 @@ export default function UserMaintain() {
       type: 'text',
     },
     {
-      key: 'accountType',
+      key: 'roleCode',
       label: '角色',
       placeholder: '請輸入角色',
       type: 'text',
@@ -46,7 +46,7 @@ export default function UserMaintain() {
   ]
 
   // 載入資料函數 (傳給 DataTable 使用)
-  const loadFiscData: LoadDataFunction<User, UserQuery> = async (queryParams, page, pageSize) => {
+  const loadSystemUserData: LoadDataFunction<User, UserQuery> = async (queryParams, page, pageSize) => {
     const response = await UserService.getSystemUserList({
       page,
       pageSize,
@@ -81,7 +81,7 @@ export default function UserMaintain() {
   return (
     <div className="w-full">
       <DataTable<User, UserQuery>
-        loadDataFn={loadFiscData}
+        loadDataFn={loadSystemUserData}
         deleteDataFn={deleteUserData}
         AddFormComponent={UserCreate}
         EditFormComponent={UserEditForm}

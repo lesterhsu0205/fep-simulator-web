@@ -66,7 +66,7 @@ export default function Login() {
         }, 100)
       }
       else {
-        showToast('帳號或密碼錯誤', 'error')
+        showToast('員工編號或密碼錯誤', 'error')
       }
     }
     catch (error) {
@@ -105,17 +105,21 @@ export default function Login() {
                 <fieldset className="fieldset">
                   <legend className="fieldset-legend">登入資訊</legend>
 
-                  {/* 帳號輸入框 */}
+                  {/* 員工編號輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
                       <User size={20} className="text-gray-400" />
                       <input
                         type="text"
                         className="grow"
-                        placeholder="請輸入帳號"
+                        placeholder="請輸入員工編號"
                         {...register('account', {
-                          required: '帳號為必填項目',
-                          minLength: { value: 3, message: '帳號至少需要3個字元' },
+                          required: '員工編號為必填項目',
+                          pattern: {
+                            value: /^BK\d{5}$/,
+                            message: '須為大寫 BK + 5位數字 (ex.BK00999)',
+                          },
+                          maxLength: { value: 7, message: '員工編號不能超過7個字元' },
                         })}
                       />
                     </label>
@@ -134,7 +138,8 @@ export default function Login() {
                         placeholder="請輸入密碼"
                         {...register('password', {
                           required: '密碼為必填項目',
-                          minLength: { value: 6, message: '密碼至少需要6個字元' },
+                          minLength: { value: 8, message: '密碼至少需要8個字元' },
+                          maxLength: { value: 30, message: '密碼不能超過30個字元' },
                         })}
                       />
                       <button
@@ -151,20 +156,20 @@ export default function Login() {
                   </div>
 
                   {/* 忘記密碼連結 */}
-                  <div className="text-right mb-6">
+                  {/* <div className="text-right mb-6">
                     <a href="#" className="link link-hover">
                       忘記密碼？
                     </a>
-                  </div>
+                  </div> */}
 
-                  {/* Sign In 按鈕 */}
+                  {/* 登入 按鈕 */}
                   <button
                     type="submit"
                     className={`btn btn-primary btn-lg w-full block mt-2 ${isLoading ? 'loading' : ''}`}
                     style={{ width: '100%', boxSizing: 'border-box' }}
                     disabled={isLoading}
                   >
-                    {isLoading ? '' : 'Sign In'}
+                    {isLoading ? '' : '登入'}
                   </button>
                 </fieldset>
               </form>
@@ -172,7 +177,7 @@ export default function Login() {
               {/* 分隔線 */}
               <div className="divider">或</div>
 
-              {/* Sign Up 按鈕 */}
+              {/* 註冊 按鈕 */}
               <button
                 type="button"
                 className={`btn btn-outline btn-lg w-full block ${isLoading ? 'loading' : ''}`}
@@ -180,13 +185,13 @@ export default function Login() {
                 onClick={handleSignUp}
                 disabled={isLoading}
               >
-                {isLoading ? '' : 'Sign Up'}
+                {isLoading ? '' : '註冊'}
               </button>
 
               {/* 底部提示 */}
               <div className="text-center mt-6">
                 <p className="text-xs text-base-content/70">
-                  點擊 Sign Up 即表示您同意我們的
+                  點擊 註冊 即表示您同意我們的
                   <a href="#" className="link link-hover text-primary"> 服務條款 </a>
                   和
                   <a href="#" className="link link-hover text-primary"> 隱私政策</a>
