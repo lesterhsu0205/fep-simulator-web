@@ -6,6 +6,7 @@ import { useToast } from '@/contexts/ToastContext'
 import { type PaginationInfo } from '@/models/PaginationInfo'
 import { ensureBase64Decoded } from '@/utils/base64'
 import DateRangePicker from '@/components/DateRangePicker'
+import { ApiError } from '@/error/ApiError'
 
 // 定義查詢表單欄位類型
 export interface SearchField {
@@ -264,7 +265,10 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         showToast('刪除成功', 'success')
       }
       catch (error) {
-        showToast('刪除失敗，請稍後再試', 'error')
+        const errorMessage = error instanceof ApiError
+          ? error.messageDesc
+          : '刪除失敗，請稍後再試'
+        showToast(errorMessage, 'error')
         console.error('Delete error:', error)
       }
       finally {
@@ -285,7 +289,10 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         showToast(`成功刪除 ${selectedItems.length} 筆資料`, 'success')
       }
       catch (error) {
-        showToast('批次刪除失敗，請稍後再試', 'error')
+        const errorMessage = error instanceof ApiError
+          ? error.messageDesc
+          : '批次刪除失敗，請稍後再試'
+        showToast(errorMessage, 'error')
         console.error('Batch delete error:', error)
       }
       finally {

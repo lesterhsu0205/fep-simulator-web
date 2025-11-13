@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
 import { Footer } from '@/components/Footer'
 import { getFirstAccessiblePath, isPathAccessible } from '@/utils/navigationHelper'
+import { ApiError } from '@/error/ApiError'
 import transactionalDataIcon from '/transactional-data.png'
 
 // 登入表單資料類型
@@ -70,7 +71,10 @@ export default function Login() {
       }
     }
     catch (error) {
-      showToast('登入失敗，請稍後再試', 'error')
+      const errorMessage = error instanceof ApiError
+        ? error.messageDesc
+        : '登入失敗，請稍後再試'
+      showToast(errorMessage, 'error')
       console.error('Login error:', error)
     }
     finally {

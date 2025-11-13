@@ -4,6 +4,7 @@ import { useToast } from '@/contexts/ToastContext'
 import { downloadTemplate } from '@/utils/fileDownload'
 import { type ApiResponse } from '@/services/ApiService'
 import { type UploadResult } from '@/models/UploadResult'
+import { ApiError } from '@/error/ApiError'
 
 export interface FileUploadFormData {
   action: 'CREATE' | 'UPDATE'
@@ -348,8 +349,11 @@ export default function FileUploadForm({
                   try {
                     await downloadTemplate(templateFileName)
                   }
-                  catch {
-                    showToast('範例檔案下載失敗', 'error')
+                  catch (error) {
+                    const errorMessage = error instanceof ApiError
+                      ? error.messageDesc
+                      : '範例檔案下載失敗'
+                    showToast(errorMessage, 'error')
                   }
                 }}
                 className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-transparent border-none p-0 m-0 inline-flex items-center gap-1"

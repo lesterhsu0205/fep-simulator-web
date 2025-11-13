@@ -4,6 +4,7 @@ import { Save, RotateCcw, Eye, EyeOff } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
 import { type UserCreateFormData } from '@/models/User'
 import { UserService } from '@/services/UserService'
+import { ApiError } from '@/error/ApiError'
 
 interface UserCreateProps {
   afterSubmit?: () => void
@@ -48,7 +49,10 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
       }
     }
     catch (error) {
-      showToast('建立失敗，請稍後再試', 'error')
+      const errorMessage = error instanceof ApiError
+        ? error.messageDesc
+        : '建立失敗，請稍後再試'
+      showToast(errorMessage, 'error')
       console.error('Create error:', error)
     }
   }

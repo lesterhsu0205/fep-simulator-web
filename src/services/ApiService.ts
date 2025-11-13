@@ -33,6 +33,25 @@ ApiClient.interceptors.request.use(
   },
 )
 
+// 統一處理認證相關錯誤
+const handleAuthError = (messageCode: string) => {
+  if (messageCode === '9997' || messageCode === '9996' || messageCode === '0402') {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    window.dispatchEvent(new CustomEvent('auth:logout'))
+  }
+}
+
+// 統一創建 API 錯誤
+const createApiError = (data: { messageCode: string, messageDesc?: string, messageContent?: unknown }) => {
+  handleAuthError(data.messageCode)
+  return new ApiError(
+    data.messageDesc || '交易失敗',
+    data.messageCode,
+    data.messageContent,
+  )
+}
+
 // 回應攔截器 - 處理統一錯誤
 ApiClient.interceptors.response.use(
   (response) => {
@@ -40,30 +59,26 @@ ApiClient.interceptors.response.use(
     const data = response.data
 
     if (data?.messageCode && data.messageCode !== '00000') {
-      if (data.messageCode === '9997' || data.messageCode === '9996' || data.messageCode === '0402') {
-      // Token 過期或無效，清除認證資料並觸發登出事件
-        localStorage.removeItem('token')
-        localStorage.removeItem('user')
-        window.dispatchEvent(new CustomEvent('auth:logout'))
-      }
-
       // 根據 API 規格，非 00000 都視為錯誤
-      const error = new ApiError(
-        data.messageDesc || '交易失敗',
-        data.messageCode,
-        data.messageContent,
-      )
+      const error = createApiError(data)
       return Promise.reject(error)
     }
     return response
   },
   (error) => {
+    // 處理 HTTP 401 錯誤（沒有業務錯誤訊息的情況）
     if (error.response?.status === 401) {
-      // Token 過期或無效，清除認證資料並觸發登出事件
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.dispatchEvent(new CustomEvent('auth:logout'))
     }
+
+    // 處理後端客制的錯誤回應（如 400），檢查是否包含業務錯誤訊息
+    if (error.response?.data?.messageCode && error.response?.data?.messageDesc) {
+      const apiError = createApiError(error.response.data)
+      return Promise.reject(apiError)
+    }
+
     return Promise.reject(error)
   },
 )

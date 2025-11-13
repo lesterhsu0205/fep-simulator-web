@@ -3,6 +3,7 @@ import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
 import { type FinanceCreateFormData } from '@/models/FiscSituation'
 import { FinanceService } from '@/services/FinanceService'
+import { ApiError } from '@/error/ApiError'
 
 interface FinanceCreateProps {
   afterSubmit?: () => void
@@ -90,7 +91,10 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
       }
     }
     catch (error) {
-      showToast('建立失敗，請稍後再試', 'error')
+      const errorMessage = error instanceof ApiError
+        ? error.messageDesc
+        : '建立失敗，請稍後再試'
+      showToast(errorMessage, 'error')
       console.error('Create error:', error)
     }
   }

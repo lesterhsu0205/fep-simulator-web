@@ -5,6 +5,7 @@ import { Eye, EyeOff, User, Lock, Mail } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext'
 import { signupApi, type SignupRequest } from '@/services/AuthService'
 import { Footer } from '@/components/Footer'
+import { ApiError } from '@/error/ApiError'
 import transactionalDataIcon from '/transactional-data.png'
 
 // 註冊表單資料類型
@@ -56,7 +57,9 @@ export default function SignUp() {
       }, 1500)
     }
     catch (error) {
-      const errorMessage = error instanceof Error ? error.message : '註冊失敗，請稍後再試'
+      const errorMessage = error instanceof ApiError
+        ? error.messageDesc
+        : '註冊失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Signup error:', error)
     }

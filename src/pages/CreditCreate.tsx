@@ -3,6 +3,7 @@ import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
 import { type JcicCreateFormData } from '@/models/JcicSituation'
 import { CreditService } from '@/services/CreditService'
+import { ApiError } from '@/error/ApiError'
 
 interface CreditCreateProps {
   afterSubmit?: () => void
@@ -58,7 +59,10 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
       }
     }
     catch (error) {
-      showToast('建立失敗，請稍後再試', 'error')
+      const errorMessage = error instanceof ApiError
+        ? error.messageDesc
+        : '建立失敗，請稍後再試'
+      showToast(errorMessage, 'error')
       console.error('Create error:', error)
     }
   }

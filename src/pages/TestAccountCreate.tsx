@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
 import { type TestAccountCreateFormData } from '@/models/TestAccount'
+import { ApiError } from '@/error/ApiError'
 
 interface TestAccountCreateProps {
   afterSubmit?: () => void
@@ -39,7 +40,10 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
       reset()
     }
     catch (error) {
-      showToast('建立失敗，請稍後再試', 'error')
+      const errorMessage = error instanceof ApiError
+        ? error.messageDesc
+        : '建立失敗，請稍後再試'
+      showToast(errorMessage, 'error')
       console.error('Create error:', error)
     }
   }

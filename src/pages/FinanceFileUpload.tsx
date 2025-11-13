@@ -38,8 +38,11 @@ export default function FinanceFileUpload() {
     }
     catch (error) {
       console.error('Upload error:', error)
-      const errorMessage = error instanceof Error ? error.message : '未知錯誤'
-      showToast('檔案上傳失敗，請稍後再試', 'error')
+
+      const errorMessage = error instanceof ApiError
+        ? error.messageDesc
+        : '檔案上傳失敗，請稍後再試'
+      showToast(errorMessage, 'error')
       setUploadError(`上傳失敗：${errorMessage}`)
 
       if (error instanceof ApiError) {
