@@ -1,6 +1,7 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { getFirstAccessiblePath } from '@/utils/navigationHelper'
+import { ROUTE_PATHS } from '@/routes'
 
 /**
  * 根路徑重定向組件
@@ -8,13 +9,10 @@ import { getFirstAccessiblePath } from '@/utils/navigationHelper'
  */
 export function RootRedirect() {
   const { user } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  if (!user?.menus) {
-    // 如果使用者未登入，重定向到登入頁
-    return <Navigate to="/login" replace />
-  }
-
-  const firstAccessiblePath = getFirstAccessiblePath(user.menus)
+  const firstAccessiblePath = getFirstAccessiblePath(user!.menus)
 
   if (firstAccessiblePath) {
     return <Navigate to={firstAccessiblePath} replace />
@@ -30,7 +28,7 @@ export function RootRedirect() {
           <div className="card-actions justify-center mt-4">
             <button
               className="btn btn-outline btn-sm"
-              onClick={() => window.location.href = '/login'}
+              onClick={() => navigate(ROUTE_PATHS.LOGIN, { replace: true, state: { from: location } })}
             >
               重新登入
             </button>

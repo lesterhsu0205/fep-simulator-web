@@ -1,5 +1,5 @@
 import { useAuth } from '@/contexts/AuthContext'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import type { MenuItem } from '@/services/AuthService'
 
 // 導入現有的組件
@@ -16,6 +16,7 @@ import FinanceFileUpload from '@/pages/FinanceFileUpload'
 
 export function DynamicRoutes() {
   const { user } = useAuth()
+  const location = useLocation()
 
   console.log('🔍 DynamicRoutes 組件已渲染')
   console.log('👤 用戶資訊:', user)
@@ -76,7 +77,7 @@ export function DynamicRoutes() {
     console.log('❌ 用戶未登入或沒有選單資訊，重定向到登入頁')
     return (
       <Routes>
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" state={{ from: location }} replace />} />
       </Routes>
     )
   }

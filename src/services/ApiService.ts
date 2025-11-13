@@ -40,7 +40,7 @@ ApiClient.interceptors.response.use(
     const data = response.data
 
     if (data?.messageCode && data.messageCode !== '00000') {
-      if (data.messageCode === '9997' || data.messageCode === '9996') {
+      if (data.messageCode === '9997' || data.messageCode === '9996' || data.messageCode === '0402') {
       // Token 過期或無效，清除認證資料並觸發登出事件
         localStorage.removeItem('token')
         localStorage.removeItem('user')

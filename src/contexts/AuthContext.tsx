@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { loginApi, type LoginResponse, type MenuItem } from '@/services/AuthService'
+import { ROUTE_PATHS, getFullPath } from '@/routes'
 
 interface User {
   account: string
@@ -48,13 +49,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // 監聽 API 服務觸發的登出事件
   useEffect(() => {
     const handleLogout = () => {
-      console.log('🚪 收到登出事件，清除用戶狀態')
+      console.log('🚪 收到登出事件，清除用戶狀態並導向登入頁')
       setUser(null)
+      localStorage.removeItem('user')
+      localStorage.removeItem('token')
+      // 導向登入頁
+      window.location.href = getFullPath(ROUTE_PATHS.LOGIN)
     }
 
     window.addEventListener('auth:logout', handleLogout)
     return () => window.removeEventListener('auth:logout', handleLogout)
-  }, [])
+  })
 
   const login = async (account: string, password: string): Promise<boolean> => {
     setIsLoading(true)

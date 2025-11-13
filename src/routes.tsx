@@ -47,4 +47,17 @@ const router = createBrowserRouter(routes, {
   basename: import.meta.env.BASE_URL.replace(/\/$/, ''),
 })
 
+// 導出常用路徑常數
+export const ROUTE_PATHS = {
+  LOGIN: '/login',
+  SIGNUP: '/signup',
+  ROOT: '/',
+} as const
+
+// 工具函數：取得完整路徑（包含 basename）
+export const getFullPath = (path: string): string => {
+  const basename = import.meta.env.BASE_URL?.replace(/\/$/, '') || ''
+  return `${basename}${path}`.replace(/\/+/g, '/').replace(/\/$/, '') || '/'
+}
+
 export default router
