@@ -29,9 +29,10 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
   // const accountVerificationEnabled = useWatch({ control, name: 'atmVerify' })
   // const fxmlEnabled = useWatch({ control, name: 'isFxml' })
 
-  const handleFormSubmit = async (_formData: TestAccountCreateFormData) => {
+  const handleFormSubmit = async (formData: TestAccountCreateFormData) => {
     try {
-      // TODO
+      // TODO: 實作測試帳號建立 API 呼叫
+      console.log('Form data:', formData)
 
       showToast('測試帳號建立成功', 'success')
       afterSubmit?.()

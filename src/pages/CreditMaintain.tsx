@@ -28,7 +28,7 @@ export default function CreditMaintain() {
     {
       key: 'returnCode',
       label: '回應代碼',
-      placeholder: '請輸入錯誤代碼',
+      placeholder: '請輸入回應代碼',
       type: 'text',
     },
     {

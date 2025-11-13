@@ -12,7 +12,10 @@ export interface User {
 
 // 編輯表單需要的欄位
 export interface UserCreateFormData {
+  username: string
   email: string
+  password: string
+  confirmPassword: string
   accountType: string
   isActive: boolean
   roleCode: string

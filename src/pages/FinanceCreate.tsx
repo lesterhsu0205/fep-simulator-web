@@ -418,7 +418,7 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                                 className="input input-bordered input-sm w-30"
                                 {...register('atmVerifyRDetail1')}
                               />
-                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-10 w-max">
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
                                 {`核驗結果
                                   -----------
                                   00 核驗成功
@@ -438,7 +438,7 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                                 className="input input-bordered input-sm w-30"
                                 {...register('atmVerifyRDetail2')}
                               />
-                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-10 w-max">
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
                                 {`帳號核驗結果
                                   -----------------
                                   00 帳號核驗成功
@@ -455,7 +455,7 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                                 className="input input-bordered input-sm w-30"
                                 {...register('atmVerifyRDetail3')}
                               />
-                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-10 w-max">
+                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
                                 {`開戶狀態
                                   -----------
                                   01 臨櫃開立之存款帳戶

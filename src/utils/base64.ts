@@ -31,13 +31,13 @@ export function isBase64(str: string): boolean {
 
     // 嘗試解碼，如果成功且解碼後的字串看起來合理，則是有效的 base64
     const decoded = base64js.toByteArray(str)
-    
     // 檢查解碼後的 bytes 是否為有效的 UTF-8
     try {
       const decoder = new TextDecoder('utf-8', { fatal: true })
       decoder.decode(decoded)
       return true
-    } catch {
+    }
+    catch {
       // 如果不是有效的 UTF-8，可能是二進制數據，仍然是有效的 base64
       return true
     }

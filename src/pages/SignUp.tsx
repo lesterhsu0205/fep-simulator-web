@@ -103,8 +103,8 @@ export default function SignUp() {
                         {...register('username', {
                           required: '員工編號為必填項目',
                           pattern: {
-                            value: /^BK\d{5}$/,
-                            message: '須為大寫 BK + 5位數字 (ex.BK00999)',
+                            value: /^[A-Za-z]{2}\d{5}$/,
+                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)',
                           },
                           maxLength: { value: 7, message: '員工編號不能超過7個字元' },
                         })}

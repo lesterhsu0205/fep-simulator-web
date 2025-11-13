@@ -43,7 +43,7 @@ export default function GlobalToast() {
   }
 
   return (
-    <div className="toast toast-top toast-end z-50">
+    <div className="toast toast-top toast-end z-[1001]">
       <div role="alert" className={`alert ${getAlertColor()} text-white`}>
         {getIcon()}
         <span className="text-white">{toastState.message}</span>
