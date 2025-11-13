@@ -78,9 +78,22 @@ interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>> {
   searchFields?: SearchField[]
 
   // 自訂配置
-  deleteTitleAttr?: string
+  deleteTitleAttr?: string | string[]
   emptyMessage?: string
   loadingMessage?: string
+}
+
+// 工具函數：根據 deleteTitleAttr 取得顯示標題
+const getDisplayTitle = (item: Record<string, unknown> | null | undefined, titleAttr: string | string[]): string => {
+  if (Array.isArray(titleAttr)) {
+    // 如果是陣列，串接所有屬性值
+    return titleAttr
+      .map(attr => String(item?.[attr] || ''))
+      .filter(value => value !== '')
+      .join('') || String(item?.id) || ''
+  }
+  // 如果是字串，使用原本邏輯
+  return (item?.[titleAttr] as string) || String(item?.id) || ''
 }
 
 export default function DataTable<TRawData = unknown, TQuery = Record<string, unknown>>({
@@ -741,7 +754,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
           modalContent={(
             <>
               確定要刪除項目「
-              <span className="font-semibold text-red-600">{(deletingItem?.[deleteTitleAttr] as string) || String(deletingItem?.id) || ''}</span>
+              <span className="font-semibold text-red-600">{getDisplayTitle(deletingItem, deleteTitleAttr)}</span>
               」嗎？
               <br />
               <span className="text-sm text-gray-500">此操作無法復原。</span>
@@ -808,7 +821,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                         <div key={id} className="text-sm text-red-600 font-semibold">
                           •
                           {' '}
-                          {(item[deleteTitleAttr] as string) || String(item.id)}
+                          {getDisplayTitle(item, deleteTitleAttr)}
                         </div>
                       )
                     : null

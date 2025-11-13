@@ -12,6 +12,21 @@ interface CreditCreateProps {
 export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
   const { showToast } = useToast()
 
+  // 取得當前用戶資訊
+  const getCurrentUsername = () => {
+    try {
+      const userStr = localStorage.getItem('user')
+      if (userStr) {
+        const user = JSON.parse(userStr)
+        return user.username || ''
+      }
+    }
+    catch {
+      // 忽略解析錯誤
+    }
+    return ''
+  }
+
   const { register, handleSubmit, reset, control, formState: { errors } } = useForm<JcicCreateFormData>({
     defaultValues: {
       txid: '',
@@ -23,7 +38,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
       jcicData: null,
       situationDesc: '',
       memo: null,
-      creator: '',
+      creator: getCurrentUsername(),
     },
   })
 
@@ -76,32 +91,6 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
     <div className="w-full">
       {/* 表單卡片 */}
       <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6">
-
-        {/* 基本資料區塊 */}
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-6">基本資料</h2>
-
-          <div className="grid grid-cols-2 gap-8">
-            {/* 左邊欄位 */}
-            <div className="space-y-6">
-              {/* 建立者 */}
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
-                  建立者
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered h-10 flex-1"
-                  {...register('creator')}
-                />
-              </div>
-            </div>
-
-            {/* 右邊欄位 - 留白 */}
-            <div>
-            </div>
-          </div>
-        </div>
 
         {/* 情境說明區塊 */}
         <div className="mb-8">

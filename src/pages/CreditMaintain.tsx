@@ -141,7 +141,7 @@ export default function CreditMaintain() {
         deleteDataFn={deleteJcicData}
         AddFormComponent={CreditCreate}
         EditFormComponent={CreditEditForm}
-        deleteTitleAttr="txid"
+        deleteTitleAttr={['txid', 'inqueryKey1', 'inqueryKey2', 'returnCode', 'forceToJcic']}
         columns={columns}
         searchFields={searchFields}
       />
