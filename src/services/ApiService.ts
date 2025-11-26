@@ -36,8 +36,6 @@ ApiClient.interceptors.request.use(
 // 統一處理認證相關錯誤
 const handleAuthError = (messageCode: string) => {
   if (messageCode === '9997' || messageCode === '9996' || messageCode === '0402') {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
     window.dispatchEvent(new CustomEvent('auth:logout'))
   }
 }
@@ -68,8 +66,6 @@ ApiClient.interceptors.response.use(
   (error) => {
     // 處理 HTTP 401 錯誤（沒有業務錯誤訊息的情況）
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
       window.dispatchEvent(new CustomEvent('auth:logout'))
     }
 

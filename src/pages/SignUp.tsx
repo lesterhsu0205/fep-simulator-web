@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, User, Lock, Mail } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext'
-import { signupApi, type SignupRequest } from '@/services/AuthService'
+import { useAuth } from '@/contexts/AuthContext'
+import { type SignupRequest } from '@/services/AuthService'
 import { Footer } from '@/components/Footer'
 import { ApiError } from '@/error/ApiError'
 import transactionalDataIcon from '/transactional-data.png'
@@ -21,9 +22,9 @@ interface SignupFormData {
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { showToast } = useToast()
+  const { signup, isLoading } = useAuth()
 
   const { register, handleSubmit, watch, formState: { errors } } = useForm<SignupFormData>({
     defaultValues: {
@@ -39,7 +40,6 @@ export default function SignUp() {
   const password = watch('password')
 
   const handleSignUp = async (data: SignupFormData) => {
-    setIsLoading(true)
     try {
       const signupData: SignupRequest = {
         username: data.username,
@@ -49,7 +49,7 @@ export default function SignUp() {
         roleCode: data.roleCode,
       }
 
-      await signupApi(signupData)
+      await signup(signupData)
       showToast('註冊成功！即將返回登入頁面', 'success')
       // 延遲 1.5 秒後跳轉到登入頁面
       setTimeout(() => {
@@ -62,9 +62,6 @@ export default function SignUp() {
         : '註冊失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Signup error:', error)
-    }
-    finally {
-      setIsLoading(false)
     }
   }
 

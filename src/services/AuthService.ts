@@ -31,28 +31,22 @@ export interface SignupRequest {
 export const loginApi = async (account: string, password: string): Promise<LoginResponse> => {
   console.log('🔐 開始登入流程...', { username: account, password: '***' })
 
-  try {
-    const response: AxiosResponse<ApiResponse<LoginResponse>> = await ApiClient.post('/auth/login', {
-      username: account,
-      password: password,
-    })
+  const response: AxiosResponse<ApiResponse<LoginResponse>> = await ApiClient.post('/auth/login', {
+    username: account,
+    password: password,
+  })
 
-    console.log('📊 登入 API 完整回應:', response.data)
+  console.log('📊 登入 API 完整回應:', response.data)
 
-    // 檢查回傳內容是否存在
-    if (!response.data.messageContent) {
-      throw new Error('登入回應資料為空')
-    }
-
-    const loginData: LoginResponse = response.data.messageContent
-    console.log('📊 獲取到的使用者資料:', loginData)
-
-    return loginData
+  // 檢查回傳內容是否存在
+  if (!response.data.messageContent) {
+    throw new Error('登入回應資料為空')
   }
-  catch (error) {
-    console.error('🚨 Login API error:', error)
-    throw error
-  }
+
+  const loginData: LoginResponse = response.data.messageContent
+  console.log('📊 獲取到的使用者資料:', loginData)
+
+  return loginData
 }
 
 // 將選單項目轉換為路由資訊

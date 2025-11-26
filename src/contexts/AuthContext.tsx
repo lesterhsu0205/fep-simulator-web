@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
-import { loginApi, type LoginResponse, type MenuItem } from '@/services/AuthService'
-import { ROUTE_PATHS, getFullPath } from '@/routes'
+import { loginApi, signupApi, type LoginResponse, type MenuItem, type SignupRequest } from '@/services/AuthService'
 
 interface User {
   account: string
@@ -14,7 +13,8 @@ interface User {
 interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
-  login: (account: string, password: string) => Promise<boolean>
+  login: (account: string, password: string) => Promise<void>
+  signup: (signupData: SignupRequest) => Promise<void>
   logout: () => void
   isLoading: boolean
 }
@@ -53,15 +53,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(null)
       localStorage.removeItem('user')
       localStorage.removeItem('token')
-      // 導向登入頁
-      window.location.href = getFullPath(ROUTE_PATHS.LOGIN)
     }
 
     window.addEventListener('auth:logout', handleLogout)
     return () => window.removeEventListener('auth:logout', handleLogout)
-  })
+  }, []) // 加入空的依賴陣列，只在組件 mount/unmount 時執行
 
-  const login = async (account: string, password: string): Promise<boolean> => {
+  const login = async (account: string, password: string): Promise<void> => {
     setIsLoading(true)
     try {
       // 使用 mock API 進行登入
@@ -80,11 +78,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('token', loginData.token)
 
       console.log('🔑 已將 token 存入 localStorage')
-      return true
     }
-    catch (error) {
-      console.error('Login failed:', error)
-      return false
+    finally {
+      setIsLoading(false)
+    }
+  }
+
+  const signup = async (signupData: SignupRequest): Promise<void> => {
+    setIsLoading(true)
+    try {
+      await signupApi(signupData)
     }
     finally {
       setIsLoading(false)
@@ -92,15 +95,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const logout = () => {
-    setUser(null)
-    localStorage.removeItem('user')
-    localStorage.removeItem('token')
+    window.dispatchEvent(new CustomEvent('auth:logout'))
   }
 
   const value = {
     user,
     isAuthenticated: !!user,
     login,
+    signup,
     logout,
     isLoading,
   }

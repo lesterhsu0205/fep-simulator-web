@@ -17,10 +17,9 @@ interface LoginFormData {
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const { login } = useAuth()
+  const { login, isLoading } = useAuth()
   const { showToast } = useToast()
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
@@ -31,44 +30,37 @@ export default function Login() {
   })
 
   const handleSignIn = async (data: LoginFormData) => {
-    setIsLoading(true)
     try {
-      const success = await login(data.account, data.password)
-      if (success) {
-        showToast('登入成功！', 'success')
+      await login(data.account, data.password)
+      showToast('登入成功！', 'success')
 
-        // 延遲一點讓 AuthContext 更新完成，然後獲取最新的使用者資訊
-        setTimeout(() => {
-          const storedUser = localStorage.getItem('user')
-          if (storedUser) {
-            const user = JSON.parse(storedUser)
-            if (user?.menus) {
-              // 檢查是否有之前嘗試訪問的頁面
-              const from = (location.state as { from?: { pathname: string } })?.from?.pathname
+      // 延遲一點讓 AuthContext 更新完成，然後獲取最新的使用者資訊
+      setTimeout(() => {
+        const storedUser = localStorage.getItem('user')
+        if (storedUser) {
+          const user = JSON.parse(storedUser)
+          if (user?.menus) {
+            // 檢查是否有之前嘗試訪問的頁面
+            const from = (location.state as { from?: { pathname: string } })?.from?.pathname
 
-              // 如果之前嘗試訪問的頁面有權限，就導向該頁面
-              if (from && from !== '/' && isPathAccessible(from, user.menus)) {
-                navigate(from, { replace: true })
-                return
-              }
+            // 如果之前嘗試訪問的頁面有權限，就導向該頁面
+            if (from && from !== '/' && isPathAccessible(from, user.menus)) {
+              navigate(from, { replace: true })
+              return
+            }
 
-              // 否則導向使用者有權限的第一個頁面
-              const firstAccessiblePath = getFirstAccessiblePath(user.menus)
-              if (firstAccessiblePath) {
-                navigate(firstAccessiblePath, { replace: true })
-              }
-              else {
-                // 如果沒有任何可訪問的頁面，顯示錯誤
-                showToast('您沒有任何頁面的訪問權限，請聯繫管理員', 'error')
-                navigate('/login', { replace: true })
-              }
+            // 否則導向使用者有權限的第一個頁面
+            const firstAccessiblePath = getFirstAccessiblePath(user.menus)
+            if (firstAccessiblePath) {
+              navigate(firstAccessiblePath, { replace: true })
+            }
+            else {
+              // 如果沒有任何可訪問的頁面，顯示錯誤
+              showToast('您沒有任何頁面的訪問權限，請聯繫管理員', 'error')
             }
           }
-        }, 100)
-      }
-      else {
-        showToast('員工編號或密碼錯誤', 'error')
-      }
+        }
+      }, 100)
     }
     catch (error) {
       const errorMessage = error instanceof ApiError
@@ -76,9 +68,6 @@ export default function Login() {
         : '登入失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Login error:', error)
-    }
-    finally {
-      setIsLoading(false)
     }
   }
 
