@@ -62,7 +62,6 @@ export default function FinanceFileUpload() {
 
   return (
     <FileUploadForm
-      title="財金情境管理 - 測試情境檔案上傳"
       templateFileName="SimDataUpload_FISC.xlsx"
       onSubmit={handleFileSubmit}
       isUploading={isUploading}

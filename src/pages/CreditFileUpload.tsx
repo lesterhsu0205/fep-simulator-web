@@ -62,7 +62,6 @@ export default function CreditFileUpload() {
 
   return (
     <FileUploadForm
-      title="聯徵情境管理 - 測試情境檔案上傳"
       templateFileName="SimDataUpload_JCIC.xlsx"
       onSubmit={handleFileSubmit}
       isUploading={isUploading}

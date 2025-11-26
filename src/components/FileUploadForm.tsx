@@ -12,7 +12,6 @@ export interface FileUploadFormData {
 }
 
 interface FileUploadFormProps<UploadResult> {
-  title: string
   templateFileName: string
   onSubmit: (data: FileUploadFormData) => Promise<void>
   isUploading: boolean
@@ -26,7 +25,6 @@ interface FileUploadFormProps<UploadResult> {
 }
 
 export default function FileUploadForm({
-  title,
   templateFileName,
   onSubmit,
   isUploading,
@@ -124,11 +122,6 @@ export default function FileUploadForm({
   return (
     <div className="w-full">
       <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2">
-          <FileText size={24} />
-          {title}
-        </h2>
-
         <div className="space-y-6">
           {/* 操作類型選擇 */}
           <div className="flex items-center gap-4">
