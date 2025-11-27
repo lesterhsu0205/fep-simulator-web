@@ -1,6 +1,7 @@
 import { useForm, useWatch } from 'react-hook-form'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
+import { useAuth } from '@/contexts/AuthContext.tsx'
 import { type FinanceCreateFormData } from '@/models/FiscSituation'
 import { FinanceService } from '@/services/FinanceService'
 import { ApiError } from '@/error/ApiError'
@@ -11,10 +12,11 @@ interface FinanceCreateProps {
 
 export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
   const { showToast } = useToast()
+  const { user } = useAuth()
 
   const { register, handleSubmit, reset, control, setValue, formState: { errors } } = useForm<FinanceCreateFormData>({
     defaultValues: {
-      creator: '',
+      creator: user?.username || '',
       // creatorUnit: '',
       account: '',
       situationDesc: '',
@@ -54,7 +56,7 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
     try {
       // FIXME: 尚須檢查有打勾但沒 result code 情形
 
-      // 處理帳號驗證回應代碼的邏輯，如果是 custom，已經由文字輸入框設定
+      // 處理帳號核驗回應代碼的邏輯，如果是 custom，已經由文字輸入框設定
       const processedFormData = { ...formData }
       if (formData.rmtResultCodeSelection === '00000' || formData.rmtResultCodeSelection === '0202') {
         processedFormData.rmtResultCode = formData.rmtResultCodeSelection
@@ -87,7 +89,28 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
       // 列表頁新增時
       if (afterSubmit) {
         afterSubmit?.()
-        reset()
+        reset({
+          creator: user?.username || '',
+          account: '',
+          situationDesc: '',
+          memo: null,
+          isRmt: null,
+          rmtResultCode: null,
+          isAtm: null,
+          atmResultCode: null,
+          atmVerify: null,
+          atmVerifyRCode: null,
+          atmVerifyRDetail: null,
+          atmVerifyRDetail1: null,
+          atmVerifyRDetail2: null,
+          atmVerifyRDetail3: null,
+          isFxml: null,
+          fxmlResultCode: null,
+          rmtResultCodeSelection: null,
+          atmResultCodeSelection: null,
+          atmVerifyRCodeSelection: null,
+          fxmlResultCodeSelection: null,
+        })
       }
     }
     catch (error) {
@@ -100,7 +123,28 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
   }
 
   const handleReset = () => {
-    reset()
+    reset({
+      creator: user?.username || '',
+      account: '',
+      situationDesc: '',
+      memo: null,
+      isRmt: null,
+      rmtResultCode: null,
+      isAtm: null,
+      atmResultCode: null,
+      atmVerify: null,
+      atmVerifyRCode: null,
+      atmVerifyRDetail: null,
+      atmVerifyRDetail1: null,
+      atmVerifyRDetail2: null,
+      atmVerifyRDetail3: null,
+      isFxml: null,
+      fxmlResultCode: null,
+      rmtResultCodeSelection: null,
+      atmResultCodeSelection: null,
+      atmVerifyRCodeSelection: null,
+      fxmlResultCodeSelection: null,
+    })
     showToast('表單已重置', 'info')
   }
 
@@ -116,18 +160,6 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
           <div className="grid grid-cols-2 gap-8">
             {/* 左邊欄位 */}
             <div className="space-y-6">
-              {/* 建立者 */}
-              <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
-                  建立者
-                </label>
-                <input
-                  type="text"
-                  className="input input-bordered h-10 flex-1"
-                  {...register('creator')}
-                />
-              </div>
-
               {/* 帳號 */}
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
@@ -225,7 +257,13 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="00000"
-                          {...register('rmtResultCodeSelection')}
+                          {...register('rmtResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('rmtResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">交易成功</span>
                       </label>
@@ -234,7 +272,13 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="0202"
-                          {...register('rmtResultCodeSelection')}
+                          {...register('rmtResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('rmtResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">交易失敗</span>
                       </label>
@@ -243,17 +287,31 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="custom"
-                          {...register('rmtResultCodeSelection')}
+                          {...register('rmtResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('rmtResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
                       </label>
-                      <input
-                        type="text"
-                        className="input input-bordered input-sm w-50"
-                        placeholder="輸入錯誤代碼"
-                        disabled={rmtResultCodeSelection !== 'custom'}
-                        {...register('rmtResultCode')}
-                      />
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="text"
+                          className="input input-bordered input-sm w-50"
+                          placeholder="輸入錯誤代碼"
+                          disabled={rmtResultCodeSelection !== 'custom'}
+                          {...register('rmtResultCode', {
+                            pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
+                            maxLength: { value: 5, message: '錯誤代碼最長5位數' },
+                          })}
+                        />
+                        {errors.rmtResultCode && (
+                          <span className="text-xs text-red-500 whitespace-nowrap">{errors.rmtResultCode.message}</span>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -285,7 +343,13 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="00000"
-                          {...register('atmResultCodeSelection')}
+                          {...register('atmResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('atmResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">交易成功</span>
                       </label>
@@ -294,7 +358,13 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="4507"
-                          {...register('atmResultCodeSelection')}
+                          {...register('atmResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('atmResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">交易失敗</span>
                       </label>
@@ -303,23 +373,37 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="custom"
-                          {...register('atmResultCodeSelection')}
+                          {...register('atmResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('atmResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
                       </label>
-                      <input
-                        type="text"
-                        className="input input-bordered input-sm w-50"
-                        placeholder="輸入錯誤代碼"
-                        disabled={atmResultCodeSelection !== 'custom'}
-                        {...register('atmResultCode')}
-                      />
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="text"
+                          className="input input-bordered input-sm w-50"
+                          placeholder="輸入錯誤代碼"
+                          disabled={atmResultCodeSelection !== 'custom'}
+                          {...register('atmResultCode', {
+                            pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
+                            maxLength: { value: 5, message: '錯誤代碼最長5位數' },
+                          })}
+                        />
+                        {errors.atmResultCode && (
+                          <span className="text-xs text-red-500 whitespace-nowrap">{errors.atmResultCode.message}</span>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
               </div>
 
-              {/* 帳號驗證 */}
+              {/* 帳號核驗 */}
               <div className="flex gap-4 min-h-[40px]">
                 <label className="flex items-start gap-3 cursor-pointer w-32 flex-shrink-0 pt-2">
                   <input
@@ -338,7 +422,7 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                       },
                     })}
                   />
-                  <span className="text-sm font-medium whitespace-nowrap">帳號驗證</span>
+                  <span className="text-sm font-medium whitespace-nowrap">帳號核驗</span>
                 </label>
 
                 <div className="flex items-center flex-1 justify-end">
@@ -353,6 +437,9 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                             value="00000"
                             {...register('atmVerifyRCodeSelection', {
                               onChange: (e) => {
+                                if (e.target.value !== 'custom') {
+                                  setValue('atmVerifyRCode', null)
+                                }
                                 if (e.target.value === '2999' || e.target.value === 'custom') {
                                   setValue('atmVerifyRDetail', null)
                                   setValue('atmVerifyRDetail1', null)
@@ -371,6 +458,9 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                             value="2999"
                             {...register('atmVerifyRCodeSelection', {
                               onChange: (e) => {
+                                if (e.target.value !== 'custom') {
+                                  setValue('atmVerifyRCode', null)
+                                }
                                 if (e.target.value === '2999' || e.target.value === 'custom') {
                                   setValue('atmVerifyRDetail', null)
                                   setValue('atmVerifyRDetail1', null)
@@ -389,6 +479,9 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                             value="custom"
                             {...register('atmVerifyRCodeSelection', {
                               onChange: (e) => {
+                                if (e.target.value !== 'custom') {
+                                  setValue('atmVerifyRCode', null)
+                                }
                                 if (e.target.value === '2999' || e.target.value === 'custom') {
                                   setValue('atmVerifyRDetail', null)
                                   setValue('atmVerifyRDetail1', null)
@@ -400,19 +493,27 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           />
                           <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
                         </label>
-                        <input
-                          type="text"
-                          className="input input-bordered input-sm w-50"
-                          placeholder="輸入錯誤代碼"
-                          disabled={atmVerifyRCodeSelection !== 'custom'}
-                          {...register('atmVerifyRCode')}
-                        />
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="text"
+                            className="input input-bordered input-sm w-50"
+                            placeholder="輸入錯誤代碼"
+                            disabled={atmVerifyRCodeSelection !== 'custom'}
+                            {...register('atmVerifyRCode', {
+                              pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
+                              maxLength: { value: 5, message: '錯誤代碼最長5位數' },
+                            })}
+                          />
+                          {errors.atmVerifyRCode && (
+                            <span className="text-xs text-red-500 whitespace-nowrap">{errors.atmVerifyRCode.message}</span>
+                          )}
+                        </div>
                       </div>
                     )}
 
                     {atmVerifyChecked && atmVerifyRCodeSelection === '00000' && (
                       <div>
-                        <div className="text-sm text-gray-500 mb-3 flex">檢驗交易成功回應欄位</div>
+                        <div className="text-sm text-gray-500 mb-3 flex">核驗交易成功回應欄位</div>
                         <div className="flex items-center justify-between">
                           <label className="flex items-center gap-2">
                             <span className="text-sm whitespace-nowrap">91-92:</span>
@@ -509,7 +610,13 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="00000"
-                          {...register('fxmlResultCodeSelection')}
+                          {...register('fxmlResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('fxmlResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">交易成功</span>
                       </label>
@@ -518,7 +625,13 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="2310"
-                          {...register('fxmlResultCodeSelection')}
+                          {...register('fxmlResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('fxmlResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">交易失敗</span>
                       </label>
@@ -527,17 +640,31 @@ export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
                           type="radio"
                           className="radio radio-sm"
                           value="custom"
-                          {...register('fxmlResultCodeSelection')}
+                          {...register('fxmlResultCodeSelection', {
+                            onChange: (e) => {
+                              if (e.target.value !== 'custom') {
+                                setValue('fxmlResultCode', null)
+                              }
+                            },
+                          })}
                         />
                         <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
                       </label>
-                      <input
-                        type="text"
-                        className="input input-bordered input-sm w-50"
-                        placeholder="輸入錯誤代碼"
-                        disabled={fxmlResultCodeSelection !== 'custom'}
-                        {...register('fxmlResultCode')}
-                      />
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="text"
+                          className="input input-bordered input-sm w-50"
+                          placeholder="輸入錯誤代碼"
+                          disabled={fxmlResultCodeSelection !== 'custom'}
+                          {...register('fxmlResultCode', {
+                            pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
+                            maxLength: { value: 5, message: '錯誤代碼最長5位數' },
+                          })}
+                        />
+                        {errors.fxmlResultCode && (
+                          <span className="text-xs text-red-500 whitespace-nowrap">{errors.fxmlResultCode.message}</span>
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
