@@ -52,6 +52,7 @@ export interface FinanceEditFormData {
   id: number
   account: string
   situationDesc: string
+  memo: string | null
   isRmt: boolean | null
   rmtResultCode: string | null
   isAtm: boolean | null

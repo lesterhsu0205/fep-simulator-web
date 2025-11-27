@@ -1,8 +1,6 @@
 import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
 import { type TxLog, type TxLogQuery } from '@/models/TxLog'
 import { TxLogService } from '@/services/TxLogService'
-// import UserCreate from '@/pages/UserCreate'
-// import FinanceEditForm from '@/components/FinanceEditForm'
 
 export default function RecordQuery() {
   // 定義查詢表單欄位配置
