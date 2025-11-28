@@ -1,4 +1,5 @@
 import { useForm, Controller } from 'react-hook-form'
+import { useEffect } from 'react'
 import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
 import { type JcicCreateFormData } from '@/models/JcicSituation'
@@ -27,7 +28,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
     return ''
   }
 
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<JcicCreateFormData>({
+  const { register, handleSubmit, reset, control, watch, setValue, formState: { errors } } = useForm<JcicCreateFormData>({
     defaultValues: {
       txid: '',
       inqueryKey1: '',
@@ -41,6 +42,21 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
       creator: getCurrentUsername(),
     },
   })
+
+  // 監聽強制發查欄位變化
+  const forceToJcic = watch('forceToJcic')
+
+  useEffect(() => {
+    if (forceToJcic) {
+      // 當勾選強制發查時，設定為當天日期
+      const today = new Date().toISOString().split('T')[0]
+      setValue('jcicDataDate', today)
+    }
+    else {
+      // 未勾選時清空日期
+      setValue('jcicDataDate', null)
+    }
+  }, [forceToJcic, setValue])
 
   const handleFormSubmit = async (formData: JcicCreateFormData) => {
     try {
@@ -141,12 +157,19 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
                   查詢項目
+                  <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  className="input input-bordered h-10 flex-1"
-                  {...register('txid')}
-                />
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="input input-bordered h-10 w-full"
+                    {...register('txid', {
+                      required: '查詢項目為必填項目' })}
+                  />
+                  {errors.txid && (
+                    <div className="text-xs text-red-500 mt-1">{errors.txid.message}</div>
+                  )}
+                </div>
               </div>
 
               {/* 查詢條件1 */}
@@ -204,17 +227,27 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
                   發查資料日期
+                  <span className="text-red-500">*</span>
                 </label>
                 <Controller
                   name="jcicDataDate"
                   control={control}
+                  rules={{
+                    required: '發查資料日期為必填欄位',
+                  }}
                   render={({ field }) => (
-                    <input
-                      type="date"
-                      className="input input-bordered h-10 flex-1"
-                      value={field.value || ''}
-                      onChange={field.onChange}
-                    />
+                    <div className="flex-1">
+                      <input
+                        type="date"
+                        className={`input input-bordered h-10 w-full ${forceToJcic ? 'bg-gray-100' : ''}`}
+                        value={field.value || ''}
+                        onChange={field.onChange}
+                        readOnly={!!forceToJcic}
+                      />
+                      {errors.jcicDataDate && (
+                        <div className="text-xs text-red-500 mt-1">{errors.jcicDataDate.message}</div>
+                      )}
+                    </div>
                   )}
                 />
               </div>
