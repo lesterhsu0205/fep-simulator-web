@@ -78,6 +78,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
                   員工編號
+                  <span className="text-red-500">*</span>
                 </label>
                 <div className="flex-1">
                   <input
@@ -103,6 +104,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
                   電子郵件
+                  <span className="text-red-500">*</span>
                 </label>
                 <div className="flex-1">
                   <input
@@ -127,6 +129,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
               {/* <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
                   帳戶類型
+                  <span className="text-red-500">*</span>
                 </label>
                 <div className="flex-1">
                   <select
@@ -166,6 +169,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
                   密碼
+                  <span className="text-red-500">*</span>
                 </label>
                 <div className="flex-1 relative">
                   <input
@@ -195,6 +199,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
               <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
                   確認密碼
+                  <span className="text-red-500">*</span>
                 </label>
                 <div className="flex-1 relative">
                   <input
@@ -223,6 +228,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
               {/* <div className="flex items-center gap-4">
                 <label className="text-sm font-medium w-30 flex-shrink-0">
                   角色代碼
+                  <span className="text-red-500">*</span>
                 </label>
                 <div className="flex-1">
                   <select

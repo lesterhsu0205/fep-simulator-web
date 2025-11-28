@@ -127,6 +127,7 @@ export default function FileUploadForm({
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium w-30 flex-shrink-0">
               操作類型
+              <span className="text-red-500">*</span>
             </label>
             <div className="flex gap-6 flex-1">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -157,6 +158,7 @@ export default function FileUploadForm({
           <div className="flex items-center gap-4">
             <label className="text-sm font-medium w-30 flex-shrink-0">
               選擇檔案
+              <span className="text-red-500">*</span>
             </label>
             <div className="flex-1">
               <input

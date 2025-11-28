@@ -436,6 +436,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
               <div key={field.key} className="flex items-center gap-3">
                 <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
                   {field.label}
+                  {field.required && <span className="text-red-500">*</span>}
                 </label>
                 {field.type === 'select'
                   ? (

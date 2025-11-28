@@ -45,6 +45,7 @@ export default function UserEditForm({ data, afterSubmit }: EditFormProps) {
           <div className="flex items-center gap-4 mb-6">
             <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
               名稱
+              <span className="text-red-500">*</span>
             </label>
             <div className="flex-1">
               <input
@@ -62,6 +63,7 @@ export default function UserEditForm({ data, afterSubmit }: EditFormProps) {
           <div className="flex items-center gap-4">
             <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
               電子郵件
+              <span className="text-red-500">*</span>
             </label>
             <div className="flex-1">
               <input
