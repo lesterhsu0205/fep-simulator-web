@@ -68,15 +68,15 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
         // 根據現有資料設定交易類型啟用狀態
         isRmt: initialData.rmtResultCode ? true : null,
         rmtResultCode: initialData.rmtResultCode as string | null,
-        rmtResultCodeSelection: initialData.rmtResultCode ?? '00000',
+        rmtResultCodeSelection: initialData.rmtResultCode ? initialData.rmtResultCode === '00000' || initialData.rmtResultCode === '0202' ? initialData.rmtResultCode : 'custom' : '00000',
 
         isAtm: initialData.atmResultCode ? true : null,
         atmResultCode: initialData.atmResultCode as string | null,
-        atmResultCodeSelection: initialData.atmResultCode ?? '00000',
+        atmResultCodeSelection: initialData.atmResultCode ? initialData.atmResultCode === '00000' || initialData.atmResultCode === '4507' ? initialData.atmResultCode : 'custom' : '00000',
 
         atmVerify: initialData.atmVerifyRCode ? true : null,
         atmVerifyRCode: initialData.atmVerifyRCode as string | null,
-        atmVerifyRCodeSelection: initialData.atmVerifyRCode ?? '00000',
+        atmVerifyRCodeSelection: initialData.atmVerifyRCode ? initialData.atmVerifyRCode === '00000' || initialData.atmVerifyRCode === '2999' ? initialData.atmVerifyRCode : 'custom' : '00000',
         atmVerifyRDetail: initialData.atmVerifyRDetail as string | null,
 
         // 解析 atmVerifyRDetail 為三個獨立欄位 (如果是6位數字)
@@ -86,7 +86,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
 
         isFxml: initialData.fxmlResultCode ? true : null,
         fxmlResultCode: initialData.fxmlResultCode as string | null,
-        fxmlResultCodeSelection: initialData.fxmlResultCode ?? '00000',
+        fxmlResultCodeSelection: initialData.fxmlResultCode ? initialData.fxmlResultCode === '00000' || initialData.fxmlResultCode === '2310' ? initialData.fxmlResultCode : 'custom' : '00000',
       }
 
       reset(editData)
@@ -325,67 +325,79 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
 
                 <div className="flex items-center flex-1 justify-end">
                   {isRmtChecked && (
-                    <div className="flex items-center gap-6">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="00000"
-                          {...register('rmtResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('rmtResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">交易成功</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="0202"
-                          {...register('rmtResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('rmtResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">交易失敗</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="custom"
-                          {...register('rmtResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('rmtResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
-                      </label>
-                      <div className={`flex items-center gap-3 ${rmtResultCodeSelection === 'custom' ? 'visible' : 'invisible'}`}>
-                        <input
-                          type="text"
-                          className="input input-bordered input-sm w-50"
-                          placeholder="輸入錯誤代碼"
-                          {...register('rmtResultCode', {
-                            pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
-                            maxLength: { value: 5, message: '錯誤代碼最長5位數' },
-                          })}
-                        />
-                        <span className="text-xs text-red-500 whitespace-nowrap">
-                          {errors.rmtResultCode?.message || ''}
-                        </span>
-                      </div>
-                    </div>
+                    <table className="border-0">
+                      <tr>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="00000"
+                              {...register('rmtResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('rmtResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">交易成功</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="0202"
+                              {...register('rmtResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('rmtResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">交易失敗</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="custom"
+                              {...register('rmtResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('rmtResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <div className={`${rmtResultCodeSelection === 'custom' ? 'visible' : 'invisible'}`}>
+                            <input
+                              type="text"
+                              className="input input-bordered input-sm w-50"
+                              placeholder="輸入錯誤代碼"
+                              {...register('rmtResultCode', {
+                                pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
+                                maxLength: { value: 5, message: '錯誤代碼最長5位數' },
+                              })}
+                            />
+                          </div>
+                        </td>
+                        <td className="px-3 w-40">
+                          <div className={`text-xs text-red-500 whitespace-nowrap ${errors.rmtResultCode ? 'visible' : 'invisible'}`}>
+                            {errors.rmtResultCode?.message || ''}
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
                   )}
                 </div>
               </div>
@@ -403,67 +415,79 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
 
                 <div className="flex items-center flex-1 justify-end">
                   {isAtmChecked && (
-                    <div className="flex items-center gap-6">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="00000"
-                          {...register('atmResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('atmResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">交易成功</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="4507"
-                          {...register('atmResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('atmResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">交易失敗</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="custom"
-                          {...register('atmResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('atmResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
-                      </label>
-                      <div className={`flex items-center gap-3 ${atmResultCodeSelection === 'custom' ? 'visible' : 'invisible'}`}>
-                        <input
-                          type="text"
-                          className="input input-bordered input-sm w-50"
-                          placeholder="輸入錯誤代碼"
-                          {...register('atmResultCode', {
-                            pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
-                            maxLength: { value: 5, message: '錯誤代碼最長5位數' },
-                          })}
-                        />
-                        <span className="text-xs text-red-500 whitespace-nowrap">
-                          {errors.atmResultCode?.message || ''}
-                        </span>
-                      </div>
-                    </div>
+                    <table className="border-0">
+                      <tr>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="00000"
+                              {...register('atmResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('atmResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">交易成功</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="4507"
+                              {...register('atmResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('atmResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">交易失敗</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="custom"
+                              {...register('atmResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('atmResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <div className={`${atmResultCodeSelection === 'custom' ? 'visible' : 'invisible'}`}>
+                            <input
+                              type="text"
+                              className="input input-bordered input-sm w-50"
+                              placeholder="輸入錯誤代碼"
+                              {...register('atmResultCode', {
+                                pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
+                                maxLength: { value: 5, message: '錯誤代碼最長5位數' },
+                              })}
+                            />
+                          </div>
+                        </td>
+                        <td className="px-3 w-40">
+                          <div className={`text-xs text-red-500 whitespace-nowrap ${errors.atmResultCode ? 'visible' : 'invisible'}`}>
+                            {errors.atmResultCode?.message || ''}
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
                   )}
                 </div>
               </div>
@@ -482,141 +506,154 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                 <div className="flex items-center flex-1 justify-end">
                   <div className="space-y-4">
                     {atmVerifyChecked && (
-                      <div className="flex items-center gap-6">
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            className="radio radio-sm"
-                            value="00000"
-                            {...register('atmVerifyRCodeSelection', {
-                              onChange: (e) => {
-                                if (e.target.value !== 'custom') {
-                                  setValue('atmVerifyRCode', null)
-                                }
-                                // if (e.target.value === '2999' || e.target.value === 'custom') {
-                                //   setValue('atmVerifyRDetail', null)
-                                //   setValue('atmVerifyRDetail1', null)
-                                //   setValue('atmVerifyRDetail2', null)
-                                //   setValue('atmVerifyRDetail3', null)
-                                // }
-                              },
-                            })}
-                          />
-                          <span className="text-sm whitespace-nowrap">交易成功</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            className="radio radio-sm"
-                            value="2999"
-                            {...register('atmVerifyRCodeSelection', {
-                              onChange: (e) => {
-                                if (e.target.value !== 'custom') {
-                                  setValue('atmVerifyRCode', null)
-                                }
-                              },
-                            })}
-                          />
-                          <span className="text-sm whitespace-nowrap">交易失敗</span>
-                        </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            className="radio radio-sm"
-                            value="custom"
-                            {...register('atmVerifyRCodeSelection', {
-                              onChange: (e) => {
-                                if (e.target.value !== 'custom') {
-                                  setValue('atmVerifyRCode', null)
-                                }
-                              },
-                            })}
-                          />
-                          <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
-                        </label>
-                        <div className={`flex items-center gap-3 ${atmVerifyRCodeSelection === 'custom' ? 'visible' : 'invisible'}`}>
-                          <input
-                            type="text"
-                            className="input input-bordered input-sm w-50"
-                            placeholder="輸入錯誤代碼"
-                            {...register('atmVerifyRCode', {
-                              pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
-                              maxLength: { value: 5, message: '錯誤代碼最長5位數' },
-                            })}
-                          />
-                          <span className="text-xs text-red-500 whitespace-nowrap">
-                            {errors.atmVerifyRCode?.message || ''}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                    {atmVerifyChecked && atmVerifyRCodeSelection === '00000' && (
-                      <div>
-                        <div className="text-sm text-gray-500 mb-3 flex">核驗交易成功回應欄位</div>
-                        <div className="flex items-center justify-between">
-                          <label className="flex items-center gap-2">
-                            <span className="text-sm whitespace-nowrap">91-92:</span>
-                            <div className="relative group">
+                      <table className="border-0">
+                        <tr>
+                          <td className="px-3">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                className="radio radio-sm"
+                                value="00000"
+                                {...register('atmVerifyRCodeSelection', {
+                                  onChange: (e) => {
+                                    if (e.target.value !== 'custom') {
+                                      setValue('atmVerifyRCode', null)
+                                    }
+                                    // if (e.target.value === '2999' || e.target.value === 'custom') {
+                                    //   setValue('atmVerifyRDetail', null)
+                                    //   setValue('atmVerifyRDetail1', null)
+                                    //   setValue('atmVerifyRDetail2', null)
+                                    //   setValue('atmVerifyRDetail3', null)
+                                    // }
+                                  },
+                                })}
+                              />
+                              <span className="text-sm whitespace-nowrap">交易成功</span>
+                            </label>
+                          </td>
+                          <td className="px-3">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                className="radio radio-sm"
+                                value="2999"
+                                {...register('atmVerifyRCodeSelection', {
+                                  onChange: (e) => {
+                                    if (e.target.value !== 'custom') {
+                                      setValue('atmVerifyRCode', null)
+                                    }
+                                  },
+                                })}
+                              />
+                              <span className="text-sm whitespace-nowrap">交易失敗</span>
+                            </label>
+                          </td>
+                          <td className="px-3">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input
+                                type="radio"
+                                className="radio radio-sm"
+                                value="custom"
+                                {...register('atmVerifyRCodeSelection', {
+                                  onChange: (e) => {
+                                    if (e.target.value !== 'custom') {
+                                      setValue('atmVerifyRCode', null)
+                                    }
+                                  },
+                                })}
+                              />
+                              <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
+                            </label>
+                          </td>
+                          <td className="px-3">
+                            <div className={`${atmVerifyRCodeSelection === 'custom' ? 'visible' : 'invisible'}`}>
                               <input
                                 type="text"
-                                className="input input-bordered input-sm w-30"
-                                {...register('atmVerifyRDetail1')}
+                                className="input input-bordered input-sm w-50"
+                                placeholder="輸入錯誤代碼"
+                                {...register('atmVerifyRCode', {
+                                  pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
+                                  maxLength: { value: 5, message: '錯誤代碼最長5位數' },
+                                })}
                               />
-                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
-                                {`核驗結果
-                                  -----------
-                                  00 核驗成功
-                                  01 身分證或外來人口統一證號或營利事業統一編號有誤
-                                  02 持卡人之行動電話號碼有誤
-                                  03 持卡人之出生年月日有誤
-                                  04 持卡人之住家電話號碼有誤
-                                  99 無指定之核驗項目或未核驗指定項目之內容`}
-                              </div>
                             </div>
-                          </label>
-                          <label className="flex items-center gap-2">
-                            <span className="text-sm whitespace-nowrap">93-94:</span>
-                            <div className="relative group">
-                              <input
-                                type="text"
-                                className="input input-bordered input-sm w-30"
-                                {...register('atmVerifyRDetail2')}
-                              />
-                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
-                                {`帳號核驗結果
-                                  -----------------
-                                  00 帳號核驗成功
-                                  01 該卡片之帳號為問題帳戶
-                                  99 狀態不明或未核驗帳號`}
-                              </div>
+                          </td>
+                          <td className="px-3 w-40">
+                            <div className={`text-xs text-red-500 whitespace-nowrap ${errors.atmVerifyRCode ? 'visible' : 'invisible'}`}>
+                              {errors.atmVerifyRCode?.message || ''}
                             </div>
-                          </label>
-                          <label className="flex items-center gap-2">
-                            <span className="text-sm whitespace-nowrap">95-96:</span>
-                            <div className="relative group">
-                              <input
-                                type="text"
-                                className="input input-bordered input-sm w-30"
-                                {...register('atmVerifyRDetail3')}
-                              />
-                              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
-                                {`開戶狀態
-                                  -----------
-                                  01 臨櫃開立之存款帳戶
-                                  02 數位存款帳戶
-                                  03 電子支付帳戶
-                                  05 臨櫃VTM(多功能視訊櫃檯)開立之存款帳戶
-                                  10 第一類數位存款帳戶得支援高風險交易
-                                  11 第一類數位存款帳戶僅支援低風險交易
-                                  12 第二類數位存款帳戶
-                                  13 第三類數位存款帳戶
-                                  99 無法確認開戶狀態`}
+                          </td>
+                        </tr>
+                        {atmVerifyRCodeSelection === '00000' && (
+                          <tr>
+                            <td colSpan="5" className="px-3 pt-4">
+                              <div className="text-sm text-gray-500 mb-3">核驗交易成功回應欄位</div>
+                              <div className="flex items-center gap-8">
+                                <label className="flex items-center gap-2">
+                                  <span className="text-sm whitespace-nowrap">91-92:</span>
+                                  <div className="relative group">
+                                    <input
+                                      type="text"
+                                      className="input input-bordered input-sm w-30"
+                                      {...register('atmVerifyRDetail1')}
+                                    />
+                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
+                                      {`核驗結果
+                                        -----------
+                                        00 核驗成功
+                                        01 身分證或外來人口統一證號或營利事業統一編號有誤
+                                        02 持卡人之行動電話號碼有誤
+                                        03 持卡人之出生年月日有誤
+                                        04 持卡人之住家電話號碼有誤
+                                        99 無指定之核驗項目或未核驗指定項目之內容`}
+                                    </div>
+                                  </div>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                  <span className="text-sm whitespace-nowrap">93-94:</span>
+                                  <div className="relative group">
+                                    <input
+                                      type="text"
+                                      className="input input-bordered input-sm w-30"
+                                      {...register('atmVerifyRDetail2')}
+                                    />
+                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
+                                      {`帳號核驗結果
+                                        -----------------
+                                        00 帳號核驗成功
+                                        01 該卡片之帳號為問題帳戶
+                                        99 狀態不明或未核驗帳號`}
+                                    </div>
+                                  </div>
+                                </label>
+                                <label className="flex items-center gap-2">
+                                  <span className="text-sm whitespace-nowrap">95-96:</span>
+                                  <div className="relative group">
+                                    <input
+                                      type="text"
+                                      className="input input-bordered input-sm w-30"
+                                      {...register('atmVerifyRDetail3')}
+                                    />
+                                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-pre-line z-[1000] w-max">
+                                      {`開戶狀態
+                                        -----------
+                                        01 臨櫃開立之存款帳戶
+                                        02 數位存款帳戶
+                                        03 電子支付帳戶
+                                        05 臨櫃VTM(多功能視訊櫃檯)開立之存款帳戶
+                                        10 第一類數位存款帳戶得支援高風險交易
+                                        11 第一類數位存款帳戶僅支援低風險交易
+                                        12 第二類數位存款帳戶
+                                        13 第三類數位存款帳戶
+                                        99 無法確認開戶狀態`}
+                                    </div>
+                                  </div>
+                                </label>
                               </div>
-                            </div>
-                          </label>
-                        </div>
-                      </div>
+                            </td>
+                          </tr>
+                        )}
+                      </table>
                     )}
                   </div>
                 </div>
@@ -635,67 +672,79 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
 
                 <div className="flex items-center flex-1 justify-end">
                   {isFxmlChecked && (
-                    <div className="flex items-center gap-6">
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="00000"
-                          {...register('fxmlResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('fxmlResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">交易成功</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="2310"
-                          {...register('fxmlResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('fxmlResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">交易失敗</span>
-                      </label>
-                      <label className="flex items-center gap-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          className="radio radio-sm"
-                          value="custom"
-                          {...register('fxmlResultCodeSelection', {
-                            onChange: (e) => {
-                              if (e.target.value !== 'custom') {
-                                setValue('fxmlResultCode', null)
-                              }
-                            },
-                          })}
-                        />
-                        <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
-                      </label>
-                      <div className={`flex items-center gap-3 ${fxmlResultCodeSelection === 'custom' ? 'visible' : 'invisible'}`}>
-                        <input
-                          type="text"
-                          className="input input-bordered input-sm w-50"
-                          placeholder="輸入錯誤代碼"
-                          {...register('fxmlResultCode', {
-                            pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
-                            maxLength: { value: 5, message: '錯誤代碼最長5位數' },
-                          })}
-                        />
-                        <span className="text-xs text-red-500 whitespace-nowrap">
-                          {errors.fxmlResultCode?.message || ''}
-                        </span>
-                      </div>
-                    </div>
+                    <table className="border-0">
+                      <tr>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="00000"
+                              {...register('fxmlResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('fxmlResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">交易成功</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="2310"
+                              {...register('fxmlResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('fxmlResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">交易失敗</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <label className="flex items-center gap-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              className="radio radio-sm"
+                              value="custom"
+                              {...register('fxmlResultCodeSelection', {
+                                onChange: (e) => {
+                                  if (e.target.value !== 'custom') {
+                                    setValue('fxmlResultCode', null)
+                                  }
+                                },
+                              })}
+                            />
+                            <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
+                          </label>
+                        </td>
+                        <td className="px-3">
+                          <div className={`${fxmlResultCodeSelection === 'custom' ? 'visible' : 'invisible'}`}>
+                            <input
+                              type="text"
+                              className="input input-bordered input-sm w-50"
+                              placeholder="輸入錯誤代碼"
+                              {...register('fxmlResultCode', {
+                                pattern: { value: /^\d+$/, message: '錯誤代碼必須為數字' },
+                                maxLength: { value: 5, message: '錯誤代碼最長5位數' },
+                              })}
+                            />
+                          </div>
+                        </td>
+                        <td className="px-3 w-40">
+                          <div className={`text-xs text-red-500 whitespace-nowrap ${errors.fxmlResultCode ? 'visible' : 'invisible'}`}>
+                            {errors.fxmlResultCode?.message || ''}
+                          </div>
+                        </td>
+                      </tr>
+                    </table>
                   )}
                 </div>
               </div>
