@@ -586,7 +586,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                         </tr>
                         {atmVerifyRCodeSelection === '00000' && (
                           <tr>
-                            <td colSpan="5" className="px-3 pt-4">
+                            <td colSpan={5} className="px-3 pt-4">
                               <div className="text-sm text-gray-500 mb-3">核驗交易成功回應欄位</div>
                               <div className="flex items-center gap-8">
                                 <label className="flex items-center gap-2">
