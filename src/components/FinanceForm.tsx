@@ -392,7 +392,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                           </div>
                         </td>
                         <td className="px-3 w-40">
-                          <div className={`text-xs text-red-500 whitespace-nowrap ${errors.rmtResultCode ? 'visible' : 'invisible'}`}>
+                          <div className={`text-xs text-red-500 whitespace-nowrap ${rmtResultCodeSelection === 'custom' && errors.rmtResultCode ? 'visible' : 'invisible'}`}>
                             {errors.rmtResultCode?.message || ''}
                           </div>
                         </td>
@@ -482,7 +482,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                           </div>
                         </td>
                         <td className="px-3 w-40">
-                          <div className={`text-xs text-red-500 whitespace-nowrap ${errors.atmResultCode ? 'visible' : 'invisible'}`}>
+                          <div className={`text-xs text-red-500 whitespace-nowrap ${atmResultCodeSelection === 'custom' && errors.atmResultCode ? 'visible' : 'invisible'}`}>
                             {errors.atmResultCode?.message || ''}
                           </div>
                         </td>
@@ -579,7 +579,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                             </div>
                           </td>
                           <td className="px-3 w-40">
-                            <div className={`text-xs text-red-500 whitespace-nowrap ${errors.atmVerifyRCode ? 'visible' : 'invisible'}`}>
+                            <div className={`text-xs text-red-500 whitespace-nowrap ${atmVerifyRCodeSelection === 'custom' && errors.atmVerifyRCode ? 'visible' : 'invisible'}`}>
                               {errors.atmVerifyRCode?.message || ''}
                             </div>
                           </td>
@@ -739,7 +739,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                           </div>
                         </td>
                         <td className="px-3 w-40">
-                          <div className={`text-xs text-red-500 whitespace-nowrap ${errors.fxmlResultCode ? 'visible' : 'invisible'}`}>
+                          <div className={`text-xs text-red-500 whitespace-nowrap ${fxmlResultCodeSelection === 'custom' && errors.fxmlResultCode ? 'visible' : 'invisible'}`}>
                             {errors.fxmlResultCode?.message || ''}
                           </div>
                         </td>
