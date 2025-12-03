@@ -47,5 +47,8 @@
       "@tailwindcss/oxide",
       "esbuild"
     ]
-  }
+  },
+  "trustedDependencies": [
+    "@swc/core"
+  ]
 }

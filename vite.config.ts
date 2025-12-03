@@ -27,10 +27,17 @@ export default defineConfig(({ mode }) => {
       },
       warmup: {
         clientFiles: [
-        // 核心檔案
+          // 核心檔案
           './src/main.tsx',
           './src/App.tsx',
           './src/routes.tsx',
+
+          // 路由系統（關鍵）
+          './src/components/DynamicRoutes.tsx',
+          './src/components/ProtectedRoute.tsx',
+
+          // Context 與狀態管理
+          './src/contexts/AuthContext.tsx',
 
           // 主要布局組件
           './src/components/Header.tsx',
@@ -45,7 +52,7 @@ export default defineConfig(({ mode }) => {
           './src/components/FinanceEditForm.tsx',
 
           // 主要頁面組件
-
+          './src/pages/Login.tsx',
           './src/pages/FinanceMaintain.tsx',
           './src/pages/FinanceCreate.tsx',
 
