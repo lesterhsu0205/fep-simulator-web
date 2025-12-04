@@ -9,7 +9,11 @@ import { visualizer } from 'rollup-plugin-visualizer'
 export default defineConfig(({ mode }) => {
   // 載入環境變數
   const env = loadEnv(mode, process.cwd(), '')
-  const isUAT = mode === 'uat'
+  const isUAT = ['production', 'uat', 'stg', 'dev'].includes(mode)
+
+  console.info('mode: ' + mode)
+  console.info('isUAT: ' + isUAT)
+
   const basePath = env.VITE_APP_BASE_PATH || '/'
 
   return {
@@ -107,6 +111,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       host: '0.0.0.0',
+      // only for local
       proxy: {
         [env.VITE_API_BASE_URL_FES]: {
           target: env.VITE_API_BASE_DOMAIN,
