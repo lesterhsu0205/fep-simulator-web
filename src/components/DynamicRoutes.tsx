@@ -1,18 +1,28 @@
+import { lazy, Suspense } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import type { MenuItem } from '@/services/AuthService'
 
-// 導入現有的組件
-import FinanceMaintain from '@/pages/FinanceMaintain'
-import FinanceCreate from '@/pages/FinanceCreate'
-import TestAccountCreate from '@/pages/TestAccountCreate'
-import TestAccountMaintain from '@/pages/TestAccountMaintain'
-import CreditMaintain from '@/pages/CreditMaintain'
-import CreditCreate from '@/pages/CreditCreate'
-import UserMaintain from '@/pages/UserMaintain'
-import RecordQuery from '@/pages/RecordQuery'
-import CreditFileUpload from '@/pages/CreditFileUpload'
-import FinanceFileUpload from '@/pages/FinanceFileUpload'
+// 🔥 改用 lazy loading - 每個頁面只在需要時才載入
+const FinanceMaintain = lazy(() => import('@/pages/FinanceMaintain'))
+const FinanceCreate = lazy(() => import('@/pages/FinanceCreate'))
+const TestAccountCreate = lazy(() => import('@/pages/TestAccountCreate'))
+const TestAccountMaintain = lazy(() => import('@/pages/TestAccountMaintain'))
+const CreditMaintain = lazy(() => import('@/pages/CreditMaintain'))
+const CreditCreate = lazy(() => import('@/pages/CreditCreate'))
+const UserMaintain = lazy(() => import('@/pages/UserMaintain'))
+const RecordQuery = lazy(() => import('@/pages/RecordQuery'))
+const CreditFileUpload = lazy(() => import('@/pages/CreditFileUpload'))
+const FinanceFileUpload = lazy(() => import('@/pages/FinanceFileUpload'))
+
+// Loading 組件
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <span className="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+  )
+}
 
 export function DynamicRoutes() {
   const { user } = useAuth()
@@ -86,30 +96,32 @@ export function DynamicRoutes() {
   console.log('📋 收集到的已實現路由:', routes)
 
   return (
-    <Routes>
-      {/* 只為已實現的路由生成路由 */}
-      {routes.map(route => (
-        <Route
-          key={route.path}
-          path={route.path}
-          element={getComponentForPath(route.path)}
-        />
-      ))}
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        {/* 只為已實現的路由生成路由 */}
+        {routes.map(route => (
+          <Route
+            key={route.path}
+            path={route.path}
+            element={getComponentForPath(route.path)}
+          />
+        ))}
 
-      {/* 404 頁面 */}
-      <Route
-        path="*"
-        element={(
-          <div className="p-6 text-center">
-            <div className="card bg-white shadow-sm">
-              <div className="card-body">
-                <h2 className="card-title">頁面不存在</h2>
-                <p>您訪問的頁面不存在或您沒有權限訪問。</p>
+        {/* 404 頁面 */}
+        <Route
+          path="*"
+          element={(
+            <div className="p-6 text-center">
+              <div className="card bg-white shadow-sm">
+                <div className="card-body">
+                  <h2 className="card-title">頁面不存在</h2>
+                  <p>您訪問的頁面不存在或您沒有權限訪問。</p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      />
-    </Routes>
+          )}
+        />
+      </Routes>
+    </Suspense>
   )
 }
