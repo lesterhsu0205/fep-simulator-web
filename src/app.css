@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* default weight 400  */
-@import '@fontsource/noto-sans-tc';
+/* @import '@fontsource/noto-sans-tc';
 @import '@fontsource/noto-sans-tc/300.css';
 @import '@fontsource/noto-sans-tc/500.css';
 @import '@fontsource/noto-sans-tc/600.css';
@@ -15,19 +15,21 @@
 @import '@fontsource/noto-sans/600.css';
 @import '@fontsource/noto-sans/700.css';
 @import '@fontsource/noto-sans/800.css';
-@import '@fontsource/noto-sans/900.css';
+@import '@fontsource/noto-sans/900.css'; */
 
 @font-face {
     font-family: 'LINE Seed TW';
-    src: url('/fonts/LINESeedTW_OTF_Th.woff2') format('woff2');
-    font-weight: 100;
+    src: url('/fonts/LINESeedTW_OTF_Rg.woff2') format('woff2');
+    /* 預設字重 */
+    font-weight: 400;
     font-display: swap;
 }
 
 @font-face {
     font-family: 'LINE Seed TW';
     src: url('/fonts/LINESeedTW_OTF_Rg.woff2') format('woff2');
-    font-weight: 400;
+    /* font-medium */
+    font-weight: 500;
     font-display: swap;
 }
 
@@ -38,16 +40,10 @@
     font-display: swap;
 }
 
-@font-face {
-    font-family: 'LINE Seed TW';
-    src: url('/fonts/LINESeedTW_OTF_Eb.woff2') format('woff2');
-    font-weight: 900;
-    font-display: swap;
-}
-
 html,
 body {
-    font-family: 'LINE Seed TW', 'Noto Sans', 'Noto Sans TC', 'sans-serif';
+    font-family: 'LINE Seed TW', 'sans-serif';
+    /*'Noto Sans', 'Noto Sans TC', */
 }
 
 @plugin "daisyui" {

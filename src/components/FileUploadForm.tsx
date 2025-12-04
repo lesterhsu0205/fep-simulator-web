@@ -220,7 +220,7 @@ export default function FileUploadForm({
                       : (
                           <Info className="h-6 w-6 shrink-0 text-orange-500" />
                         )}
-                  <h3 className={`font-extrabold text-2xl ${
+                  <h3 className={`font-bold text-2xl ${
                     uploadError
                       ? 'text-red-600'
                       : uploadResult?.messageCode === '00000' ? 'text-green-600' : 'text-orange-600'

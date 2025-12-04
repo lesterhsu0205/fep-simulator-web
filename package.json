@@ -8,12 +8,11 @@
     "local:oa": "vite --mode development.oa",
     "build:dev": "tsc -b && vite build",
     "build:stg": "tsc -b && vite build --mode stg",
+    "build:uat": "tsc -b && vite build --mode uat",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fontsource/noto-sans": "5.2.7",
-    "@fontsource/noto-sans-tc": "^5.2.6",
     "@tailwindcss/vite": "^4.1.12",
     "@types/node": "^24.0.0",
     "axios": "^1.10.0",
@@ -37,9 +36,12 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "rollup-plugin-visualizer": "^6.0.5",
+    "terser": "^5.44.1",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.30.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-plugin-compression": "^0.5.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -47,5 +49,8 @@
       "@tailwindcss/oxide",
       "esbuild"
     ]
-  }
+  },
+  "trustedDependencies": [
+    "@swc/core"
+  ]
 }
