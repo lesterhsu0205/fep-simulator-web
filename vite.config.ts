@@ -30,13 +30,13 @@ export default defineConfig(({ mode }) => {
         ext: '.gz',
       }),
       // 2. Brotli
-      viteCompression({
-        verbose: true,
-        disable: false,
-        threshold: 10240,
-        algorithm: 'brotliCompress',
-        ext: '.br',
-      }),
+      // viteCompression({
+      //   verbose: true,
+      //   disable: false,
+      //   threshold: 10240,
+      //   algorithm: 'brotliCompress',
+      //   ext: '.br',
+      // }),
       // 🔥 優化 1: 加入分析工具 (Build 完會產生 stats.html 讓你知道誰最胖)
       visualizer({
         open: false, // 是否自動開啟網頁，CI/CD 環境建議 false
