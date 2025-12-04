@@ -7,9 +7,9 @@
   <!-- Transaction icons created by nangicon - Flaticon -->
   <link rel="icon" type="image/png" href="/transactional-data.png" />
   <!-- 👇 優先載入最常用的字重 -->
-  <!-- 移除 crossorigin，因為字體是同源的 -->
-  <link rel="preload" href="/fonts/LINESeedTW_OTF_Rg.woff2" as="font" type="font/woff2">
-  <link rel="preload" href="/fonts/LINESeedTW_OTF_Bd.woff2" as="font" type="font/woff2">
+  <!-- crossorigin 必須存在：即使同源，@font-face 也會用 CORS 模式請求字型 -->
+  <link rel="preload" href="/fonts/LINESeedTW_OTF_Rg.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/LINESeedTW_OTF_Bd.woff2" as="font" type="font/woff2" crossorigin>
   <title>FEP Simulator</title>
 </head>
 
