@@ -130,6 +130,8 @@ export default defineConfig(({ mode }) => {
           './src/components/DynamicRoutes.tsx',
           './src/components/ProtectedRoute.tsx',
 
+          './src/services/ApiService.ts',
+
           // Context 與狀態管理
           './src/contexts/AuthContext.tsx',
 
