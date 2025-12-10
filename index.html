@@ -3,13 +3,15 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Transaction icons created by nangicon - Flaticon -->
+  <!-- 先 preload 提升優先級,再宣告 icon 使用已下載的資源 -->
+  <link rel="preload" href="/transactional-data.png" as="image" type="image/png" />
   <link rel="icon" type="image/png" href="/transactional-data.png" />
-  <!-- 👇 優先載入最常用的字重 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 優先載入最常用的字重 -->
   <!-- crossorigin 必須存在：即使同源，@font-face 也會用 CORS 模式請求字型 -->
   <link rel="preload" href="/fonts/LINESeedTW_OTF_Rg.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/fonts/LINESeedTW_OTF_Bd.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- Transaction icons created by nangicon - Flaticon -->
   <title>FEP Simulator</title>
 </head>
 
