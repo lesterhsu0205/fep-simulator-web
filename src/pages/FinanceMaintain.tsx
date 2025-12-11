@@ -57,11 +57,11 @@ export default function FinanceMaintain() {
     // },
     {
       key: 'atmVerifyRCode',
-      title: '帳號檢核',
+      title: '帳號核驗',
     },
     {
       key: 'atmVerifyRDetail',
-      title: '帳號檢核91-96',
+      title: '帳號核驗91-96',
     },
     // {
     //   key: 'isFxml',
@@ -69,7 +69,7 @@ export default function FinanceMaintain() {
     // },
     {
       key: 'fxmlResultCode',
-      title: 'FXML提領',
+      title: 'FXML 出金',
     },
     {
       key: 'updatedAt',
