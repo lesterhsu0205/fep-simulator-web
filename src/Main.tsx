@@ -7,20 +7,12 @@ import GlobalToast from '@/components/GlobalToast.tsx'
 import router from '@/routes.tsx'
 import '@/app.css'
 
-function Window() {
-  return (
-    <>
-      <RouterProvider router={router} />
-      <GlobalToast />
-    </>
-  )
-}
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <ToastProvider>
-        <Window />
+        <RouterProvider router={router} />
+        <GlobalToast />
       </ToastProvider>
     </AuthProvider>
   </StrictMode>,

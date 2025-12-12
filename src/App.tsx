@@ -36,7 +36,7 @@ export default function App() {
         onChange={handleDrawerChange}
       />
       <div className="drawer-content flex flex-col min-h-screen lg:pt-4 lg:px-4">
-        <div className="bg-white rounded-3xl overflow-hidden flex flex-col flex-grow shadow-2xs border border-gray-200">
+        <div className="bg-white rounded-3xl overflow-hidden flex flex-col grow shadow-2xs border border-gray-200">
           <Header />
           <Content />
         </div>
