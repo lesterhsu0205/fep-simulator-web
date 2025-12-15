@@ -77,7 +77,7 @@ export function Sidebar() {
             className="sidebar-details"
             data-menu-id={item.id.toString()}
           >
-            <summary className="sidebar-item font-medium">{item.name}</summary>
+            <summary className="sidebar-item">{item.name}</summary>
             <ul>
               {item.children.map(child => renderMenuItem(child))}
             </ul>
@@ -92,7 +92,7 @@ export function Sidebar() {
         ? 'sidebar-item-active'
         : isImplemented
           ? 'sidebar-item'
-          : 'sidebar-item text-xs! text-base-content/50 cursor-not-allowed'
+          : 'sidebar-item-disabled'
 
       if (isImplemented) {
         return (
@@ -120,7 +120,7 @@ export function Sidebar() {
       // 沒有路徑的項目顯示為標題
       return (
         <li key={item.id} className="menu-title">
-          <span className="sidebar-item text-xs! font-medium">{item.name}</span>
+          <span className="sidebar-title">{item.name}</span>
         </li>
       )
     }

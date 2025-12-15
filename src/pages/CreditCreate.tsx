@@ -111,7 +111,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
         {/* 情境說明區塊 */}
         <div className="mb-8">
           <div className="flex items-start gap-4">
-            <label className="text-sm font-medium w-30 flex-shrink-0">
+            <label className="text-form-label w-30 flex-shrink-0">
               情境說明
             </label>
             <div className="flex-1">
@@ -123,7 +123,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
                 })}
               />
               {errors.situationDesc && (
-                <div className="text-xs text-red-500 mt-1">{errors.situationDesc.message}</div>
+                <div className="text-form-error">{errors.situationDesc.message}</div>
               )}
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
         {/* 補充說明區塊 */}
         <div className="mb-8">
           <div className="flex items-start gap-4">
-            <label className="text-sm font-medium w-30 flex-shrink-0">
+            <label className="text-form-label w-30 flex-shrink-0">
               補充說明
             </label>
             <div className="flex-1">
@@ -141,7 +141,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
                 {...register('memo')}
               />
               {errors.memo && (
-                <div className="text-xs text-red-500 mt-1">{errors.memo.message}</div>
+                <div className="text-form-error">{errors.memo.message}</div>
               )}
             </div>
           </div>
@@ -149,15 +149,15 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
 
         {/* 交易設定區塊 - TODO: 尚未實作 */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-6">交易設定</h2>
+          <h2 className="text-card-title mb-6">交易設定</h2>
           <div className="grid grid-cols-2 gap-8">
             {/* 左邊欄位 */}
             <div className="space-y-6">
               {/* 查詢項目 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   查詢項目
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <div className="flex-1">
                   <input
@@ -167,14 +167,14 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
                       required: '查詢項目為必填項目' })}
                   />
                   {errors.txid && (
-                    <div className="text-xs text-red-500 mt-1">{errors.txid.message}</div>
+                    <div className="text-form-error">{errors.txid.message}</div>
                   )}
                 </div>
               </div>
 
               {/* 查詢條件1 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   查詢條件1
                 </label>
                 <input
@@ -186,7 +186,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
 
               {/* 強制發查 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   強制發查
                 </label>
                 <input
@@ -201,7 +201,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
             <div className="space-y-6">
               {/* 回應代碼 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   回應代碼
                 </label>
                 <input
@@ -213,7 +213,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
 
               {/* 查詢條件2 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   查詢條件2
                 </label>
                 <input
@@ -225,9 +225,9 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
 
               {/* 發查資料日期 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   發查資料日期
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <Controller
                   name="jcicDataDate"
@@ -245,7 +245,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
                         readOnly={!!forceToJcic}
                       />
                       {errors.jcicDataDate && (
-                        <div className="text-xs text-red-500 mt-1">{errors.jcicDataDate.message}</div>
+                        <div className="text-form-error">{errors.jcicDataDate.message}</div>
                       )}
                     </div>
                   )}
@@ -258,7 +258,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
         {/* 回傳資料區塊 */}
         <div className="mb-8">
           <div className="flex items-start gap-4">
-            <label className="text-sm font-medium w-30 flex-shrink-0">
+            <label className="text-form-label w-30 flex-shrink-0">
               回傳資料
             </label>
             <div className="flex-1">
@@ -267,7 +267,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
                 {...register('jcicData')}
               />
               {errors.jcicData && (
-                <div className="text-xs text-red-500 mt-1">{errors.jcicData.message}</div>
+                <div className="text-form-error">{errors.jcicData.message}</div>
               )}
             </div>
           </div>

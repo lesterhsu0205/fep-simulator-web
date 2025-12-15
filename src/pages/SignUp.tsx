@@ -81,7 +81,7 @@ export default function SignUp() {
                 className="w-24 h-24"
               />
             </div>
-            <h1 className="text-5xl font-medium">立即註冊!</h1>
+            <h1 className="text-heading">立即註冊!</h1>
             <p className="py-6 whitespace-nowrap">
               建立您的新帳戶，開始享受 FEP Simulator 的強大功能 - 快速、安全、專業的財金模擬平台。
             </p>
@@ -111,7 +111,7 @@ export default function SignUp() {
                       />
                     </label>
                     {errors.username && (
-                      <p className="label text-error text-sm mt-1">{errors.username.message}</p>
+                      <p className="text-form-error">{errors.username.message}</p>
                     )}
                   </div>
 
@@ -133,7 +133,7 @@ export default function SignUp() {
                       />
                     </label>
                     {errors.email && (
-                      <p className="label text-error text-sm mt-1">{errors.email.message}</p>
+                      <p className="text-form-error">{errors.email.message}</p>
                     )}
                   </div>
 
@@ -160,7 +160,7 @@ export default function SignUp() {
                       </button>
                     </label>
                     {errors.password && (
-                      <p className="label text-error text-sm mt-1">{errors.password.message}</p>
+                      <p className="text-form-error">{errors.password.message}</p>
                     )}
                   </div>
 
@@ -186,7 +186,7 @@ export default function SignUp() {
                       </button>
                     </label>
                     {errors.confirmPassword && (
-                      <p className="label text-error text-sm mt-1">{errors.confirmPassword.message}</p>
+                      <p className="text-form-error">{errors.confirmPassword.message}</p>
                     )}
                   </div>
 
@@ -205,7 +205,7 @@ export default function SignUp() {
                       />
                     </label>
                     {errors.roleCode && (
-                      <p className="label text-error text-sm mt-1">{errors.roleCode.message}</p>
+                      <p className="text-form-error">{errors.roleCode.message}</p>
                     )}
                   </div> */}
 
@@ -213,7 +213,6 @@ export default function SignUp() {
                   <button
                     type="submit"
                     className={`btn btn-primary btn-lg w-full block mt-2 ${isLoading ? 'loading' : ''}`}
-                    style={{ width: '100%', boxSizing: 'border-box' }}
                     disabled={isLoading}
                   >
                     {isLoading ? '' : '註冊'}
@@ -228,7 +227,6 @@ export default function SignUp() {
               <button
                 type="button"
                 className={`btn btn-outline btn-lg w-full block ${isLoading ? 'loading' : ''}`}
-                style={{ width: '100%', boxSizing: 'border-box' }}
                 onClick={handleBackToLogin}
                 disabled={isLoading}
               >

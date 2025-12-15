@@ -55,7 +55,7 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
 
   return (
     <div className="w-full p-6">
-      <h2 className="text-lg font-semibold mb-6">新增測試帳號</h2>
+      <h2 className="text-card-title mb-6">新增測試帳號</h2>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">

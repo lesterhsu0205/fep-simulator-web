@@ -45,7 +45,7 @@ export function Header() {
         <label htmlFor="sidebar-drawer" className="btn btn-ghost btn-circle drawer-button">
           <Menu size={20} />
         </label>
-        <div className="text-lg font-semibold ml-2 lg:ml-0">{currentPageTitle}</div>
+        <div className="text-card-title ml-2 lg:ml-0">{currentPageTitle}</div>
       </div>
 
       {/* 右側 - 用戶資訊 dropdown */}
@@ -66,7 +66,7 @@ export function Header() {
                   <User size={24} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-base-content truncate">
+                  <div className="font-bold text-base-content truncate">
                     {user?.username || '訪客'}
                   </div>
                   <div className="text-xs text-base-content/70 truncate">

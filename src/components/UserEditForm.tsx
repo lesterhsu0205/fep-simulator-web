@@ -43,9 +43,9 @@ export default function UserEditForm({ data, afterSubmit }: EditFormProps) {
 
           {/* 用戶名稱 */}
           <div className="flex items-center gap-4 mb-6">
-            <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+            <label className="text-form-label w-20 flex-shrink-0">
               名稱
-              <span className="text-red-500">*</span>
+              <span className="text-form-required">*</span>
             </label>
             <div className="flex-1">
               <input
@@ -54,16 +54,16 @@ export default function UserEditForm({ data, afterSubmit }: EditFormProps) {
                 {...register('username', { required: '名稱為必填項目' })}
               />
               {errors.username && (
-                <div className="text-xs text-red-500 mt-1">{errors.username.message}</div>
+                <div className="text-form-error">{errors.username.message}</div>
               )}
             </div>
           </div>
 
           {/* 電子郵件 */}
           <div className="flex items-center gap-4">
-            <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+            <label className="text-form-label w-20 flex-shrink-0">
               電子郵件
-              <span className="text-red-500">*</span>
+              <span className="text-form-required">*</span>
             </label>
             <div className="flex-1">
               <input
@@ -78,7 +78,7 @@ export default function UserEditForm({ data, afterSubmit }: EditFormProps) {
                 })}
               />
               {errors.email && (
-                <div className="text-xs text-red-500 mt-1">{errors.email.message}</div>
+                <div className="text-form-error">{errors.email.message}</div>
               )}
             </div>
           </div>

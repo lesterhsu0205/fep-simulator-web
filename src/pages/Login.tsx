@@ -87,7 +87,7 @@ export default function Login() {
                 className="w-24 h-24"
               />
             </div>
-            <h1 className="text-5xl font-medium">歡迎回來!</h1>
+            <h1 className="text-heading">歡迎回來!</h1>
             <p className="py-6 whitespace-nowrap">
               請登入您的帳戶開始使用 FEP Simulator - 快速、安全、專業的財金模擬平台。
             </p>
@@ -117,7 +117,7 @@ export default function Login() {
                       />
                     </label>
                     {errors.account && (
-                      <p className="label text-error text-sm mt-1">{errors.account.message}</p>
+                      <p className="text-form-error">{errors.account.message}</p>
                     )}
                   </div>
 
@@ -144,7 +144,7 @@ export default function Login() {
                       </button>
                     </label>
                     {errors.password && (
-                      <p className="label text-error text-sm mt-1">{errors.password.message}</p>
+                      <p className="text-form-error">{errors.password.message}</p>
                     )}
                   </div>
 
@@ -159,7 +159,6 @@ export default function Login() {
                   <button
                     type="submit"
                     className={`btn btn-primary btn-lg w-full block mt-2 ${isLoading ? 'loading' : ''}`}
-                    style={{ width: '100%', boxSizing: 'border-box' }}
                     disabled={isLoading}
                   >
                     {isLoading ? '' : '登入'}
@@ -174,7 +173,6 @@ export default function Login() {
               <button
                 type="button"
                 className={`btn btn-outline btn-lg w-full block ${isLoading ? 'loading' : ''}`}
-                style={{ width: '100%', boxSizing: 'border-box' }}
                 onClick={handleSignUp}
                 disabled={isLoading}
               >

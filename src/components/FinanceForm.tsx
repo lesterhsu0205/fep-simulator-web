@@ -219,16 +219,16 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
 
         {/* 基本資料區塊 */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-6">基本資料</h2>
+          <h2 className="text-card-title mb-6">基本資料</h2>
 
           <div className="grid grid-cols-2 gap-8">
             {/* 左邊欄位 */}
             <div className="space-y-6">
               {/* 帳號 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   帳號
-                  {!isEditMode && <span className="text-red-500">*</span>}
+                  {!isEditMode && <span className="text-form-required">*</span>}
                 </label>
                 <div className="flex-1">
                   {isEditMode
@@ -252,7 +252,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                             })}
                           />
                           {errors.account && (
-                            <div className="text-xs text-red-500 mt-1">{errors.account.message}</div>
+                            <div className="text-form-error">{errors.account.message}</div>
                           )}
                         </>
                       )}
@@ -261,9 +261,9 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
 
               {/* 情境說明 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   情境說明
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <div className="flex-1">
                   <input
@@ -276,7 +276,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                     })}
                   />
                   {errors.situationDesc && (
-                    <div className="text-xs text-red-500 mt-1">{errors.situationDesc.message}</div>
+                    <div className="text-form-error">{errors.situationDesc.message}</div>
                   )}
                 </div>
               </div>
@@ -285,7 +285,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
             {/* 右邊欄位 - 補充說明 */}
             <div className="space-y-6">
               <div className="flex items-start gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0 pt-2.5">
+                <label className="text-form-label w-30 flex-shrink-0 pt-2.5">
                   補充說明
                 </label>
                 <div className="flex-1">
@@ -297,7 +297,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                     })}
                   />
                   {errors.memo && (
-                    <div className="text-xs text-red-500 mt-1">{errors.memo.message}</div>
+                    <div className="text-form-error">{errors.memo.message}</div>
                   )}
                 </div>
               </div>
@@ -307,7 +307,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
 
         {/* 交易設定區塊 */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-6">交易設定</h2>
+          <h2 className="text-card-title mb-6">交易設定</h2>
 
           <div className="grid grid-cols-2 gap-8">
             {/* 左欄 - 交易設定項目 */}
@@ -320,7 +320,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                     className="checkbox checkbox-sm"
                     {...register('isRmt')}
                   />
-                  <span className="text-sm font-medium whitespace-nowrap">匯出匯款</span>
+                  <span className="text-feature-label">匯出匯款</span>
                 </label>
 
                 <div className="flex items-center flex-1 justify-end">
@@ -341,7 +341,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">交易成功</span>
+                            <span className="text-status">交易成功</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -358,7 +358,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">交易失敗</span>
+                            <span className="text-status">交易失敗</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -375,7 +375,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
+                            <span className="text-status">指定錯誤代碼</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -392,7 +392,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                           </div>
                         </td>
                         <td className="px-3 w-40">
-                          <div className={`text-xs text-red-500 whitespace-nowrap ${rmtResultCodeSelection === 'custom' && errors.rmtResultCode ? 'visible' : 'invisible'}`}>
+                          <div className={`text-form-error whitespace-nowrap ${rmtResultCodeSelection === 'custom' && errors.rmtResultCode ? 'visible' : 'invisible'}`}>
                             {errors.rmtResultCode?.message || ''}
                           </div>
                         </td>
@@ -410,7 +410,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                     className="checkbox checkbox-sm"
                     {...register('isAtm')}
                   />
-                  <span className="text-sm font-medium whitespace-nowrap">代理轉帳</span>
+                  <span className="text-feature-label">代理轉帳</span>
                 </label>
 
                 <div className="flex items-center flex-1 justify-end">
@@ -431,7 +431,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">交易成功</span>
+                            <span className="text-status">交易成功</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -448,7 +448,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">交易失敗</span>
+                            <span className="text-status">交易失敗</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -465,7 +465,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
+                            <span className="text-status">指定錯誤代碼</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -482,7 +482,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                           </div>
                         </td>
                         <td className="px-3 w-40">
-                          <div className={`text-xs text-red-500 whitespace-nowrap ${atmResultCodeSelection === 'custom' && errors.atmResultCode ? 'visible' : 'invisible'}`}>
+                          <div className={`text-form-error whitespace-nowrap ${atmResultCodeSelection === 'custom' && errors.atmResultCode ? 'visible' : 'invisible'}`}>
                             {errors.atmResultCode?.message || ''}
                           </div>
                         </td>
@@ -500,7 +500,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                     className="checkbox checkbox-sm"
                     {...register('atmVerify')}
                   />
-                  <span className="text-sm font-medium whitespace-nowrap">帳號核驗</span>
+                  <span className="text-feature-label">帳號核驗</span>
                 </label>
 
                 <div className="flex items-center flex-1 justify-end">
@@ -528,7 +528,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                   },
                                 })}
                               />
-                              <span className="text-sm whitespace-nowrap">交易成功</span>
+                              <span className="text-status">交易成功</span>
                             </label>
                           </td>
                           <td className="px-3">
@@ -545,7 +545,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                   },
                                 })}
                               />
-                              <span className="text-sm whitespace-nowrap">交易失敗</span>
+                              <span className="text-status">交易失敗</span>
                             </label>
                           </td>
                           <td className="px-3">
@@ -562,7 +562,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                   },
                                 })}
                               />
-                              <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
+                              <span className="text-status">指定錯誤代碼</span>
                             </label>
                           </td>
                           <td className="px-3">
@@ -579,7 +579,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                             </div>
                           </td>
                           <td className="px-3 w-40">
-                            <div className={`text-xs text-red-500 whitespace-nowrap ${atmVerifyRCodeSelection === 'custom' && errors.atmVerifyRCode ? 'visible' : 'invisible'}`}>
+                            <div className={`text-form-error whitespace-nowrap ${atmVerifyRCodeSelection === 'custom' && errors.atmVerifyRCode ? 'visible' : 'invisible'}`}>
                               {errors.atmVerifyRCode?.message || ''}
                             </div>
                           </td>
@@ -590,7 +590,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                               <div className="text-sm text-gray-500 mb-3">核驗交易成功回應欄位</div>
                               <div className="flex items-center gap-8">
                                 <label className="flex items-center gap-2">
-                                  <span className="text-sm whitespace-nowrap">91-92:</span>
+                                  <span className="text-status">91-92:</span>
                                   <div className="relative group">
                                     <input
                                       type="text"
@@ -610,7 +610,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                   </div>
                                 </label>
                                 <label className="flex items-center gap-2">
-                                  <span className="text-sm whitespace-nowrap">93-94:</span>
+                                  <span className="text-status">93-94:</span>
                                   <div className="relative group">
                                     <input
                                       type="text"
@@ -627,7 +627,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                   </div>
                                 </label>
                                 <label className="flex items-center gap-2">
-                                  <span className="text-sm whitespace-nowrap">95-96:</span>
+                                  <span className="text-status">95-96:</span>
                                   <div className="relative group">
                                     <input
                                       type="text"
@@ -667,7 +667,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                     className="checkbox checkbox-sm"
                     {...register('isFxml')}
                   />
-                  <span className="text-sm font-medium whitespace-nowrap">FXML 出金</span>
+                  <span className="text-feature-label">FXML 出金</span>
                 </label>
 
                 <div className="flex items-center flex-1 justify-end">
@@ -688,7 +688,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">交易成功</span>
+                            <span className="text-status">交易成功</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -705,7 +705,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">交易失敗</span>
+                            <span className="text-status">交易失敗</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -722,7 +722,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                                 },
                               })}
                             />
-                            <span className="text-sm whitespace-nowrap">指定錯誤代碼</span>
+                            <span className="text-status">指定錯誤代碼</span>
                           </label>
                         </td>
                         <td className="px-3">
@@ -739,7 +739,7 @@ export default function FinanceForm({ mode, initialData, afterSubmit }: FinanceF
                           </div>
                         </td>
                         <td className="px-3 w-40">
-                          <div className={`text-xs text-red-500 whitespace-nowrap ${fxmlResultCodeSelection === 'custom' && errors.fxmlResultCode ? 'visible' : 'invisible'}`}>
+                          <div className={`text-form-error whitespace-nowrap ${fxmlResultCodeSelection === 'custom' && errors.fxmlResultCode ? 'visible' : 'invisible'}`}>
                             {errors.fxmlResultCode?.message || ''}
                           </div>
                         </td>

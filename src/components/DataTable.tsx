@@ -434,9 +434,9 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
           <div className="flex items-center gap-6 flex-wrap">
             {searchFields.map(field => (
               <div key={field.key} className="flex items-center gap-3">
-                <label className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                <label className="text-form-label whitespace-nowrap">
                   {field.label}
-                  {field.required && <span className="text-red-500">*</span>}
+                  {field.required && <span className="text-form-required">*</span>}
                 </label>
                 {field.type === 'select'
                   ? (
@@ -530,10 +530,10 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       <div className="overflow-x-auto bg-white rounded-lg shadow">
         <table className="table table-zebra w-full">
           <thead>
-            <tr className="bg-base-200 text-sm">
+            <tr className="bg-base-200">
 
               {deleteDataFn && (
-                <th className="w-10 py-3">
+                <th className="text-table-header w-10 py-3">
                   <input
                     type="checkbox"
                     className="checkbox checkbox-xs"
@@ -546,13 +546,13 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
               {columns.map(column => (
                 <th
                   key={column.key}
-                  className={`py-3 ${column.width || ''} ${column.className || ''}`}
+                  className={`text-table-header py-3 ${column.width || ''} ${column.className || ''}`}
                 >
                   {column.title}
                 </th>
               ))}
 
-              {(EditFormComponent || deleteDataFn) && <th className="w-12 py-3 text-center">功能</th> }
+              {(EditFormComponent || deleteDataFn) && <th className="text-table-header w-12 py-3 text-center">功能</th> }
 
             </tr>
           </thead>
@@ -573,7 +573,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                       key={`table-row-${index}`}
                       onClick={() => handleSelectItem(item.id)}
                       className={`
-                      text-sm cursor-pointer
+                      cursor-pointer
                       transition-[background-color,transform,box-shadow] duration-150
                       ${selectedItems.includes(item.id)
                       ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md'
@@ -584,7 +584,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
                       {deleteDataFn
                         && (
-                          <td onClick={e => e.stopPropagation()}>
+                          <td className="text-table-cell" onClick={e => e.stopPropagation()}>
                             <input
                               type="checkbox"
                               className="checkbox checkbox-xs"
@@ -595,13 +595,13 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                         )}
 
                       {columns.map(column => (
-                        <td key={column.key} className={column.className || ''}>
+                        <td key={column.key} className={`text-table-cell ${column.className || ''}`}>
                           {renderCellValue(item[column.key] as string | boolean | null, column)}
                         </td>
                       ))}
                       {(EditFormComponent || deleteDataFn)
                         && (
-                          <td onClick={e => e.stopPropagation()}>
+                          <td className="text-table-cell" onClick={e => e.stopPropagation()}>
                             <div className="flex items-center justify-center gap-2">
                               {EditFormComponent && (
                                 <button
@@ -649,7 +649,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
             {`顯示 ${pagination.totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1} 到 ${Math.min(currentPage * itemsPerPage, pagination.totalItems)} 筆資料，共 ${pagination.totalItems} 筆`}
           </span>
           {selectedItems.length > 0 && (
-            <span className="text-gray-400 text-sm font-medium whitespace-nowrap">
+            <span className="text-gray-400 text-sm font-bold whitespace-nowrap">
               {`已選取 ${selectedItems.length} 筆`}
             </span>
           )}
@@ -755,7 +755,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
           modalContent={(
             <>
               確定要刪除項目「
-              <span className="font-semibold text-red-600">{getDisplayTitle(deletingItem, deleteTitleAttr)}</span>
+              <span className="font-bold text-red-600">{getDisplayTitle(deletingItem, deleteTitleAttr)}</span>
               」嗎？
               <br />
               <span className="text-sm text-gray-500">此操作無法復原。</span>
@@ -819,7 +819,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
                   const item = data.find(d => d.id === id)
                   return item
                     ? (
-                        <div key={id} className="text-sm text-red-600 font-semibold">
+                        <div key={id} className="text-sm text-red-600 font-bold">
                           •
                           {' '}
                           {getDisplayTitle(item, deleteTitleAttr)}
@@ -857,7 +857,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         modalTitle={`詳細內容 - ${detailTitle}`}
         className="!max-w-none w-[90vw] h-[90vh]"
         modalContent={(
-          <pre className="whitespace-pre-wrap break-words text-sm bg-gray-50 p-4 rounded font-mono">
+          <pre className="text-pre whitespace-pre-wrap break-words p-4 rounded">
             {detailContent}
           </pre>
         )}

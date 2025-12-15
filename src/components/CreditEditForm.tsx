@@ -87,14 +87,14 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
           {data && (
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
               <div className="text-sm text-gray-600 mb-1">查詢項目</div>
-              <div className="text-lg font-semibold">{data.txid as string}</div>
+              <div className="text-card-title">{data.txid as string}</div>
             </div>
           )}
 
           {/* 第一行：查詢條件1、查詢條件2 */}
           <div className="grid grid-cols-2 gap-8 mb-6">
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+              <label className="text-form-label w-20 flex-shrink-0">
                 查詢條件1
               </label>
               <div className="flex-1">
@@ -108,7 +108,7 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+              <label className="text-form-label w-20 flex-shrink-0">
                 查詢條件2
               </label>
               <div className="flex-1">
@@ -125,7 +125,7 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
           {/* 第二行：回應代碼、強制發查 */}
           <div className="grid grid-cols-2 gap-8 mb-6">
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+              <label className="text-form-label w-20 flex-shrink-0">
                 回應代碼
               </label>
               <div className="flex-1">
@@ -139,7 +139,7 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+              <label className="text-form-label w-20 flex-shrink-0">
                 強制發查
               </label>
               <div className="flex-1">
@@ -156,9 +156,9 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
           {/* 第三行：情境說明、發查資料日期 */}
           <div className="grid grid-cols-2 gap-8 mb-6">
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+              <label className="text-form-label w-20 flex-shrink-0">
                 情境說明
-                <span className="text-red-500">*</span>
+                <span className="text-form-required">*</span>
               </label>
               <div className="flex-1">
                 <input
@@ -167,13 +167,13 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
                   {...register('situationDesc', { required: '情境說明為必填項目' })}
                 />
                 {errors.situationDesc && (
-                  <div className="text-xs text-red-500 mt-1">{errors.situationDesc.message}</div>
+                  <div className="text-form-error">{errors.situationDesc.message}</div>
                 )}
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+              <label className="text-form-label w-20 flex-shrink-0">
                 發查資料日期
               </label>
               <div className="flex-1">
@@ -189,7 +189,7 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
           {/* 第四行：備註、回傳資料 */}
           <div className="grid grid-cols-2 gap-8">
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+              <label className="text-form-label w-20 flex-shrink-0">
                 備註
               </label>
               <div className="flex-1">
@@ -202,7 +202,7 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-sm text-gray-700 font-medium w-20 flex-shrink-0">
+              <label className="text-form-label w-20 flex-shrink-0">
                 回傳資料
               </label>
               <div className="flex-1">

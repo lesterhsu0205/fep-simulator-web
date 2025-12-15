@@ -65,7 +65,7 @@ export default function FileUploadForm({
           {content.map((item, index) => (
             <li key={index}>
               <div className="flex items-start">
-                <span className="font-medium text-gray-600 mr-2">
+                <span className="font-bold text-gray-600 mr-2">
                   [
                   {index}
                   ]:
@@ -88,7 +88,7 @@ export default function FileUploadForm({
           {entries.map(([key, value]) => (
             <li key={key}>
               <div className="flex items-start">
-                <span className="font-medium text-gray-800 mr-2">
+                <span className="font-bold text-gray-800 mr-2">
                   {key}
                   :
                 </span>
@@ -125,9 +125,9 @@ export default function FileUploadForm({
         <div className="space-y-6">
           {/* 操作類型選擇 */}
           <div className="flex items-center gap-4">
-            <label className="text-sm font-medium w-30 flex-shrink-0">
+            <label className="text-form-label w-30 flex-shrink-0">
               操作類型
-              <span className="text-red-500">*</span>
+              <span className="text-form-required">*</span>
             </label>
             <div className="flex gap-6 flex-1">
               <label className="flex items-center gap-2 cursor-pointer">
@@ -150,15 +150,15 @@ export default function FileUploadForm({
               </label>
             </div>
             {errors.action && (
-              <div className="text-xs text-red-500 mt-1">{errors.action.message}</div>
+              <div className="text-form-error">{errors.action.message}</div>
             )}
           </div>
 
           {/* 檔案選擇 */}
           <div className="flex items-center gap-4">
-            <label className="text-sm font-medium w-30 flex-shrink-0">
+            <label className="text-form-label w-30 flex-shrink-0">
               選擇檔案
-              <span className="text-red-500">*</span>
+              <span className="text-form-required">*</span>
             </label>
             <div className="flex-1">
               <input
@@ -180,9 +180,9 @@ export default function FileUploadForm({
                 })}
               />
               {errors.file && (
-                <div className="text-xs text-red-500 mt-1">{errors.file.message}</div>
+                <div className="text-form-error">{errors.file.message}</div>
               )}
-              <div className="text-xs text-gray-500 mt-1">
+              <div className="text-form-hint">
                 支援格式：.xlsx
               </div>
             </div>
@@ -220,7 +220,7 @@ export default function FileUploadForm({
                       : (
                           <Info className="h-6 w-6 shrink-0 text-orange-500" />
                         )}
-                  <h3 className={`font-bold text-2xl ${
+                  <h3 className={`text-subheading ${
                     uploadError
                       ? 'text-red-600'
                       : uploadResult?.messageCode === '00000' ? 'text-green-600' : 'text-orange-600'
@@ -237,14 +237,14 @@ export default function FileUploadForm({
                 </div>
 
                 {(!uploadResult && uploadError) && (
-                  <div className="text-sm font-medium mb-3">
+                  <div className="text-sm font-bold mb-3">
                     <strong>錯誤：</strong>
                     {uploadError}
                   </div>
                 )}
 
                 {uploadResult?.messageDesc && (
-                  <div className="text-sm font-medium mb-3">
+                  <div className="text-sm font-bold mb-3">
                     <strong>描述：</strong>
                     {uploadResult.messageDesc}
                   </div>
@@ -252,7 +252,7 @@ export default function FileUploadForm({
 
                 {(uploadResult?.messageContent !== null && uploadResult?.messageContent !== undefined) && (
                   <>
-                    <div className="text-sm font-medium mb-3">
+                    <div className="text-sm font-bold mb-3">
                       回應內容：
                     </div>
                     <div className="bg-base-200 rounded-lg p-3 flex gap-4">
@@ -266,15 +266,15 @@ export default function FileUploadForm({
                       {/* 右欄：錯誤表格 */}
                       {uploadResult?.messageContent?.errors && Array.isArray(uploadResult.messageContent.errors) && uploadResult.messageContent.errors.length > 0 && (
                         <div className="flex-1">
-                          <h4 className="font-semibold text-lg mb-3 text-red-600">錯誤詳情</h4>
+                          <h4 className="text-card-title mb-3 text-red-600">錯誤詳情</h4>
                           <div className="overflow-x-auto bg-white rounded-lg shadow-sm border-gray-200 border max-h-80 overflow-y-auto">
                             <table className="table table-zebra table-compact w-full">
                               <thead className="bg-gray-50 sticky top-0">
                                 <tr>
-                                  <th className="text-xs font-semibold text-gray-700 px-3 py-2">#</th>
+                                  <th className="text-table-header px-3 py-2">#</th>
                                   {uploadResult.messageContent.errors.length > 0 && typeof uploadResult.messageContent.errors[0] === 'object' && uploadResult.messageContent.errors[0] !== null && (
                                     Object.keys(uploadResult.messageContent.errors[0]).map(key => (
-                                      <th key={key} className="text-xs font-semibold text-gray-700 px-3 py-2">
+                                      <th key={key} className="text-table-header px-3 py-2">
                                         {key}
                                       </th>
                                     ))
@@ -284,17 +284,17 @@ export default function FileUploadForm({
                               <tbody>
                                 {uploadResult.messageContent.errors.map((error, index: number) => (
                                   <tr key={index} className="hover:bg-gray-50">
-                                    <td className="text-xs font-medium px-3 py-2">{index + 1}</td>
+                                    <td className="text-table-cell font-bold px-3 py-2">{index + 1}</td>
                                     {typeof error === 'object' && error !== null
                                       ? (
                                           Object.values(error).map((value, valueIndex) => (
-                                            <td key={valueIndex} className="text-xs px-3 py-2 max-w-xs truncate" title={String(value)}>
+                                            <td key={valueIndex} className="text-table-cell px-3 py-2 max-w-xs truncate" title={String(value)}>
                                               {String(value)}
                                             </td>
                                           ))
                                         )
                                       : (
-                                          <td className="text-xs px-3 py-2" colSpan={Object.keys(uploadResult.messageContent?.errors[0] || {}).length}>
+                                          <td className="text-table-cell px-3 py-2" colSpan={Object.keys(uploadResult.messageContent?.errors[0] || {}).length}>
                                             {String(error)}
                                           </td>
                                         )}
@@ -316,7 +316,7 @@ export default function FileUploadForm({
         {/* 說明區域 */}
         <div className="mt-8">
           <div className="divider">使用說明</div>
-          <div className="text-sm text-gray-600 space-y-2">
+          <div className="text-body space-y-2">
             <p>
               •
               {' '}

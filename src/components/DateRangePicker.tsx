@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { DayPicker, type DateRange } from 'react-day-picker'
 import { Calendar } from 'lucide-react'
+import { DATE_PICKER_STYLES } from '@/constants/datePickerStyles'
 import 'react-day-picker/style.css'
 
 interface DateRangePickerProps {
@@ -184,15 +185,7 @@ export default function DateRangePicker({
               selected={selectedRange}
               onSelect={handleRangeChange}
               className="rdp text-sm"
-              styles={{
-                root: { fontSize: '14px' },
-                month_caption: { fontSize: '14px' },
-                weekday: { fontSize: '12px' },
-                day: { fontSize: '13px', width: '32px', height: '32px' },
-                dropdown: { fontSize: '13px' },
-                button_next: { width: '24px', height: '24px' },
-                button_previous: { width: '24px', height: '24px' },
-              }}
+              styles={DATE_PICKER_STYLES}
             />
           </div>
 
@@ -202,7 +195,7 @@ export default function DateRangePicker({
               <div className="space-y-4">
                 {/* 開始時間 */}
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-form-label">
                     開始時間
                   </label>
                   <div className="flex items-center space-x-2">
@@ -217,7 +210,7 @@ export default function DateRangePicker({
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
                         placeholder="00"
                       />
-                      <span className="text-xs text-gray-500 mt-1">時</span>
+                      <span className="text-form-hint">時</span>
                     </div>
                     <span className="text-sm font-bold text-gray-400 pb-4">:</span>
                     <div className="flex flex-col items-center">
@@ -231,7 +224,7 @@ export default function DateRangePicker({
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
                         placeholder="00"
                       />
-                      <span className="text-xs text-gray-500 mt-1">分</span>
+                      <span className="text-form-hint">分</span>
                     </div>
                     <span className="text-sm font-bold text-gray-400 pb-4">:</span>
                     <div className="flex flex-col items-center">
@@ -245,14 +238,14 @@ export default function DateRangePicker({
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
                         placeholder="00"
                       />
-                      <span className="text-xs text-gray-500 mt-1">秒</span>
+                      <span className="text-form-hint">秒</span>
                     </div>
                   </div>
                 </div>
 
                 {/* 結束時間 */}
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-medium text-gray-700">
+                  <label className="text-form-label">
                     結束時間
                   </label>
                   <div className="flex items-center space-x-2">
@@ -267,7 +260,7 @@ export default function DateRangePicker({
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
                         placeholder="23"
                       />
-                      <span className="text-xs text-gray-500 mt-1">時</span>
+                      <span className="text-form-hint">時</span>
                     </div>
                     <span className="text-sm font-bold text-gray-400 pb-4">:</span>
                     <div className="flex flex-col items-center">
@@ -281,7 +274,7 @@ export default function DateRangePicker({
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
                         placeholder="59"
                       />
-                      <span className="text-xs text-gray-500 mt-1">分</span>
+                      <span className="text-form-hint">分</span>
                     </div>
                     <span className="text-sm font-bold text-gray-400 pb-4">:</span>
                     <div className="flex flex-col items-center">
@@ -295,7 +288,7 @@ export default function DateRangePicker({
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
                         placeholder="59"
                       />
-                      <span className="text-xs text-gray-500 mt-1">秒</span>
+                      <span className="text-form-hint">秒</span>
                     </div>
                   </div>
                 </div>

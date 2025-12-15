@@ -1,26 +1,46 @@
 @import "tailwindcss";
 
-/* default weight 400  */
-/* @import '@fontsource/noto-sans-tc';
-@import '@fontsource/noto-sans-tc/300.css';
-@import '@fontsource/noto-sans-tc/500.css';
-@import '@fontsource/noto-sans-tc/600.css';
-@import '@fontsource/noto-sans-tc/700.css';
-@import '@fontsource/noto-sans-tc/800.css';
-@import '@fontsource/noto-sans-tc/900.css';
-
-@import '@fontsource/noto-sans';
-@import '@fontsource/noto-sans/300.css';
-@import '@fontsource/noto-sans/500.css';
-@import '@fontsource/noto-sans/600.css';
-@import '@fontsource/noto-sans/700.css';
-@import '@fontsource/noto-sans/800.css';
-@import '@fontsource/noto-sans/900.css'; */
-
+/* =============================
+   全域字體設定
+   - 使用 LINE Seed TW 作為主要字體
+   - 針對 Windows Chrome 優化渲染
+   ============================= */
 html,
 body {
-    font-family: 'LINE Seed TW', 'sans-serif';
-    /*'Noto Sans', 'Noto Sans TC', */
+    /* 字體堆疊 - LINE Seed TW + 系統備用字體 */
+    font-family: 'LINE Seed TW', system-ui, -apple-system,
+        'Segoe UI', 'Microsoft JhengHei', sans-serif;
+
+    /* 字體渲染優化 - Windows Chrome 關鍵設定 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'kern' 1;
+
+    /* 基礎樣式 - 提升可讀性 */
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+
+    /* 使用 Regular 字重作為預設 */
+    font-weight: 400;
+}
+
+/* =============================
+   全域 UI 元素加粗設定
+   - 按鈕、標題、標籤等使用 Bold (700)
+   ============================= */
+button,
+.btn,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+th,
+strong,
+b {
+    font-weight: 700;
 }
 
 @plugin "daisyui" {
@@ -63,58 +83,151 @@ body {
     --noise: 0;
 }
 
-/* 文字樣式 */
-/* 主要標題 */
-/* .text-heading {
-    @apply text-2xl font-medium text-neutral;
-} */
+/* =============================
+   文字層級系統
+   - 定義語義化的文字樣式
+   - 可選用，也可直接使用 Tailwind 類別
+   ============================= */
 
-/* 次要標題 */
-/* .text-subheading {
-    @apply text-xl font-medium text-neutral;
-} */
-
-/* 卡片標題 */
-/* .text-card-title {
-    @apply text-lg font-medium text-neutral;
-} */
-
-/* 一般內容文字 */
-/* .text-body {
-    @apply text-base text-neutral-600;
-} */
-
-/* 小型文字 */
-/* .text-small {
-    @apply text-sm text-neutral-500;
-} */
-
-/* 極小文字（備註、說明） */
-.text-tiny {
-    @apply text-xs text-neutral-400;
+/* 主要標題 - 用於頁面最重要的標題 (h1) */
+.text-heading {
+    @apply text-4xl md:text-5xl font-normal text-neutral;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
 }
 
-/* Sidebar 項目文字 */
+/* 次要標題 - 用於區塊標題 (h2) */
+.text-subheading {
+    @apply text-2xl md:text-3xl font-normal text-neutral;
+    line-height: 1.3;
+}
+
+/* 卡片標題 - 用於卡片、表單區塊標題 (h3) */
+.text-card-title {
+    @apply text-lg font-bold text-neutral;
+    line-height: 1.4;
+}
+
+/* 一般內容文字 - 主要閱讀內容 */
+.text-body {
+    @apply text-base text-gray-700;
+    line-height: 1.7;
+}
+
+/* 小型文字 - 次要資訊 */
+.text-small {
+    @apply text-sm text-neutral-content/80;
+    line-height: 1.6;
+}
+
+/* 極小文字 - 備註、說明、提示 */
+.text-tiny {
+    @apply text-xs text-neutral-content/60;
+    line-height: 1.5;
+}
+
+/* 代碼區塊文字 - 用於 <pre> 和詳細內容顯示 */
+.text-pre {
+    @apply text-base font-mono text-gray-800 bg-gray-50;
+    line-height: 1.6;
+}
+
+/* =============================
+   表單元素文字樣式
+   ============================= */
+
+/* 表單標籤 - 用於所有表單欄位的 label */
+.text-form-label {
+    @apply text-sm font-bold text-gray-700;
+    line-height: 1.5;
+}
+
+/* 表單錯誤訊息 - 統一使用 text-sm */
+.text-form-error {
+    @apply text-error text-sm mt-1;
+    line-height: 1.4;
+}
+
+/* 必填欄位標記 */
+.text-form-required {
+    @apply text-red-500;
+}
+
+/* 表單提示文字 - 輔助說明 */
+.text-form-hint {
+    @apply text-xs text-gray-500 mt-1;
+    line-height: 1.4;
+}
+
+/* =============================
+   功能標籤和狀態文字
+   ============================= */
+
+/* 功能標籤 - 用於交易設定的選項（帶字重） */
+.text-feature-label {
+    @apply text-sm font-bold whitespace-nowrap;
+}
+
+/* 狀態文字 - 用於交易成功/失敗等狀態 */
+.text-status {
+    @apply text-sm whitespace-nowrap;
+}
+
+/* =============================
+   表格文字樣式
+   ============================= */
+
+/* 表格表頭 */
+.text-table-header {
+    @apply text-sm font-bold text-gray-700;
+}
+
+/* 表格內容 */
+.text-table-cell {
+    @apply text-sm text-gray-600;
+}
+
+/* =============================
+   導航項目文字樣式
+   - Sidebar 和選單項目
+   ============================= */
+
+/* Sidebar 項目 - 一般狀態 */
 .sidebar-item {
-    @apply text-sm transition-colors duration-200 hover:bg-primary/5;
+    @apply text-sm text-base-content hover:bg-primary/5;
+    font-weight: 400;
+    letter-spacing: 0.01em;
 }
 
 .sidebar-item:active {
-    @apply text-primary bg-primary/10;
+    @apply text-base-content bg-primary/10;
 }
 
+/* Sidebar 項目 - 啟用狀態 */
 .sidebar-item-active {
-    @apply text-sm font-semibold text-primary bg-primary/10;
+    @apply text-sm font-bold text-primary bg-primary/10;
+    letter-spacing: 0.01em;
 }
 
 .sidebar-item-active:active {
     @apply text-primary bg-primary/20;
 }
 
-/* Content 內容文字 */
-/* .content-text {
-    @apply text-base text-neutral-700 leading-relaxed;
-} */
+/* Sidebar 停用項目 - 未實作的功能 */
+.sidebar-item-disabled {
+    @apply text-xs text-base-content/50 cursor-not-allowed;
+    letter-spacing: 0.01em;
+}
+
+.sidebar-item-disabled:active {
+    @apply text-base-content/50 bg-transparent;
+}
+
+/* Sidebar 分類標題 - menu-title */
+.sidebar-title {
+    @apply text-xs font-bold;
+    letter-spacing: 0.01em;
+}
 
 /* =============================
    Enhanced Drawer Animations

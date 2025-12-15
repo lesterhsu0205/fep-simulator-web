@@ -69,16 +69,16 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
 
         {/* 基本資料區塊 */}
         <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-800 mb-6">基本資料</h2>
+          <h2 className="text-card-title mb-6">基本資料</h2>
 
           <div className="grid grid-cols-2 gap-8">
             {/* 左邊欄位 */}
             <div className="space-y-6">
               {/* 員工編號 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   員工編號
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <div className="flex-1">
                   <input
@@ -95,16 +95,16 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
                     })}
                   />
                   {errors.username && (
-                    <div className="text-xs text-red-500 mt-1">{errors.username.message}</div>
+                    <div className="text-form-error">{errors.username.message}</div>
                   )}
                 </div>
               </div>
 
               {/* 電子郵件 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   電子郵件
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <div className="flex-1">
                   <input
@@ -120,16 +120,16 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
                     })}
                   />
                   {errors.email && (
-                    <div className="text-xs text-red-500 mt-1">{errors.email.message}</div>
+                    <div className="text-form-error">{errors.email.message}</div>
                   )}
                 </div>
               </div>
 
               {/* 帳戶類型 */}
               {/* <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   帳戶類型
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <div className="flex-1">
                   <select
@@ -142,14 +142,14 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
                     <option value="admin">系統管理員</option>
                   </select>
                   {errors.accountType && (
-                    <div className="text-xs text-red-500 mt-1">{errors.accountType.message}</div>
+                    <div className="text-form-error">{errors.accountType.message}</div>
                   )}
                 </div>
               </div> */}
 
               {/* 啟用狀態 */}
               {/* <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   啟用狀態
                 </label>
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -167,9 +167,9 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
             <div className="space-y-6">
               {/* 密碼 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   密碼
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <div className="flex-1 relative">
                   <input
@@ -190,16 +190,16 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                   {errors.password && (
-                    <div className="text-xs text-red-500 mt-1">{errors.password.message}</div>
+                    <div className="text-form-error">{errors.password.message}</div>
                   )}
                 </div>
               </div>
 
               {/* 確認密碼 */}
               <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   確認密碼
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <div className="flex-1 relative">
                   <input
@@ -219,16 +219,16 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
                     {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
                   {errors.confirmPassword && (
-                    <div className="text-xs text-red-500 mt-1">{errors.confirmPassword.message}</div>
+                    <div className="text-form-error">{errors.confirmPassword.message}</div>
                   )}
                 </div>
               </div>
 
               {/* 角色代碼 */}
               {/* <div className="flex items-center gap-4">
-                <label className="text-sm font-medium w-30 flex-shrink-0">
+                <label className="text-form-label w-30 flex-shrink-0">
                   角色代碼
-                  <span className="text-red-500">*</span>
+                  <span className="text-form-required">*</span>
                 </label>
                 <div className="flex-1">
                   <select
@@ -242,7 +242,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
                     <option value="MANAGER">主管</option>
                   </select>
                   {errors.roleCode && (
-                    <div className="text-xs text-red-500 mt-1">{errors.roleCode.message}</div>
+                    <div className="text-form-error">{errors.roleCode.message}</div>
                   )}
                 </div>
               </div> */}
