@@ -1,0 +1,38 @@
+
+part2
+
+1. 「化繁為簡，精準達標」面對複雜的跨系統整合（如 Channel/Core 介接）及架構遷移任務（Dynatrace to ELK、JBoss to Tomcat），能有效拆解問題核心，克服技術與時程壓力，確保專案在符合內控合規的前提下，高品質且如期上線，達成公司預期的成本撙節與效能優化目標。
+2. 「主動發現問題，而非等待指令」展現高度的主人翁精神（Ownership），不只解決指派的任務，更主動優化現有流程。例如主動開發 BPM ELF 工具解決作業痛點，以及自發性執行系統資源盤點與資安弱點修補，將潛在風險降至最低，確保系統長期運作的穩定性與安全性。
+3. 「賦能團隊，共同成長」致力於降低團隊的技術門檻與溝通成本。透過建立標準化規範（Golden Image, Docker Templates）及撰寫完整的 Wiki 技術文件，協助同仁快速上手新技術。在跨部門合作（如 Infra 升級演練）中，能扮演技術溝通橋樑，確保團隊協作順暢無礙。
+
+
+
+part3
+
+1. 深化容器化與微服務架構
+   研究 Service Mesh 架構，評估未來導入可行性以提升微服務治理能力。
+
+2. 精進可觀測性工程 (Observability)
+   深入研究 Elastic Stack 進階功能 (如 Machine Learning 異常偵測)，不僅止於 Log 收集。
+   優化 Dashboard 可視化設計，提供更直觀的業務與系統健康度視圖，縮短 MTTR (平均修復時間)。
+
+3. 架構設計思維提升
+   閱讀大型分散式系統架構案例 (如 High Concurrency 處理)，並應用於內部的中介系統或 FEP Simulator 優化。
+
+
+
+part4
+1. 自主開發 BPM 開單工具 (BPM 開單小幫手)
+
+效率提升：主動開發 BPM 開單小幫手，解決繁瑣開單流程。採用 React Micro-frontend 架構並成功發布 Chrome Extension，有效提升作業效率。
+
+2. Web 容器成本優化與標準化 (Tomcat Migration)
+
+成本撙節：主導 JBoss 轉移至 Tomcat 專案，建立全行通用 Tomcat Golden Image，顯著降低軟體授權成本。
+資安合規：整合 Logback 標準、憑證規範，並修復 CSRF/XSS 弱點，成功通過黑箱掃描 (2025-05-07-ITREQ-035)，安全性等同 JBoss。
+技術輸出：發布標準 Docker Image 至 JFrog，並提供客製化 Template 供各專案快速導入。
+
+3. 推動服務容器化基礎建設 (Dockerization)
+
+基礎建設：制定 Docker 標準安裝、Data Root 遷移及部署流程，奠定行內服務虛擬化基礎。
+工具導入：引入 TUI 管理工具並建立完整技術文檔，優化容器運維管理效率。
