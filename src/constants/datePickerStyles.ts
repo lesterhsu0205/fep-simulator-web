@@ -23,5 +23,5 @@ export const DATE_PICKER_STYLES: Record<string, CSSProperties> = {
   /** 下一個月按鈕樣式 */
   button_next: { width: '24px', height: '24px' },
   /** 上一個月按鈕樣式 */
-  button_previous: { width: '24px', height: '24px' },
+  button_previous: { width: '24px', height: '24px' }
 } as const

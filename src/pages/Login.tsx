@@ -1,12 +1,12 @@
+import { Eye, EyeOff, Lock, User } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Eye, EyeOff, User, Lock } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Footer } from '@/components/Footer'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
-import { Footer } from '@/components/Footer'
-import { getFirstAccessiblePath, isPathAccessible } from '@/utils/navigationHelper'
 import { ApiError } from '@/error/ApiError'
+import { getFirstAccessiblePath, isPathAccessible } from '@/utils/navigationHelper'
 import transactionalDataIcon from '/transactional-data.png'
 
 // 登入表單資料類型
@@ -22,11 +22,15 @@ export default function Login() {
   const { login, isLoading } = useAuth()
   const { showToast } = useToast()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LoginFormData>({
     defaultValues: {
       account: '',
-      password: '',
-    },
+      password: ''
+    }
   })
 
   const handleSignIn = async (data: LoginFormData) => {
@@ -53,19 +57,15 @@ export default function Login() {
             const firstAccessiblePath = getFirstAccessiblePath(user.menus)
             if (firstAccessiblePath) {
               navigate(firstAccessiblePath, { replace: true })
-            }
-            else {
+            } else {
               // 如果沒有任何可訪問的頁面，顯示錯誤
               showToast('您沒有任何頁面的訪問權限，請聯繫管理員', 'error')
             }
           }
         }
       }, 100)
-    }
-    catch (error) {
-      const errorMessage = error instanceof ApiError
-        ? error.messageDesc
-        : '登入失敗，請稍後再試'
+    } catch (error) {
+      const errorMessage = error instanceof ApiError ? error.messageDesc : '登入失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Login error:', error)
     }
@@ -110,15 +110,13 @@ export default function Login() {
                           required: '員工編號為必填項目',
                           pattern: {
                             value: /^[A-Za-z]{2}\d{5}$/,
-                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)',
+                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)'
                           },
-                          maxLength: { value: 7, message: '員工編號不能超過7個字元' },
+                          maxLength: { value: 7, message: '員工編號不能超過7個字元' }
                         })}
                       />
                     </label>
-                    {errors.account && (
-                      <p className="text-form-error">{errors.account.message}</p>
-                    )}
+                    {errors.account && <p className="text-form-error">{errors.account.message}</p>}
                   </div>
 
                   {/* 密碼輸入框 */}
@@ -132,7 +130,7 @@ export default function Login() {
                         {...register('password', {
                           required: '密碼為必填項目',
                           minLength: { value: 8, message: '密碼至少需要8個字元' },
-                          maxLength: { value: 30, message: '密碼不能超過30個字元' },
+                          maxLength: { value: 30, message: '密碼不能超過30個字元' }
                         })}
                       />
                       <button
@@ -143,9 +141,7 @@ export default function Login() {
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </label>
-                    {errors.password && (
-                      <p className="text-form-error">{errors.password.message}</p>
-                    )}
+                    {errors.password && <p className="text-form-error">{errors.password.message}</p>}
                   </div>
 
                   {/* 忘記密碼連結 */}
@@ -183,9 +179,8 @@ export default function Login() {
               <div className="text-center mt-6">
                 <p className="text-xs text-base-content/70">
                   點擊 註冊 即表示您同意我們的
-                  <a href="#" className="link link-hover text-primary"> 服務條款 </a>
-                  和
-                  <a href="#" className="link link-hover text-primary"> 隱私政策</a>
+                  <span className="link link-hover text-primary"> 服務條款 </span>和
+                  <span className="link link-hover text-primary"> 隱私政策</span>
                 </p>
               </div>
             </div>

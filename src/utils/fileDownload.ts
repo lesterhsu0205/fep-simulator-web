@@ -12,8 +12,7 @@ export const downloadTemplate = async (filename: string) => {
     a.click()
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Download error:', error)
     throw error // 讓呼叫方處理錯誤顯示
   }

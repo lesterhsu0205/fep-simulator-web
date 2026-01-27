@@ -1,7 +1,7 @@
+import { useCallback, useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import type { MenuItem } from '@/services/AuthService'
-import { Link, useLocation } from 'react-router-dom'
-import { useEffect, useCallback } from 'react'
 import { getFirstAccessiblePath } from '@/utils/navigationHelper'
 import transactionalDataIcon from '/transactional-data.png'
 
@@ -51,14 +51,13 @@ export function Sidebar() {
     // 找到所有的 details 元素並根據當前路徑設置展開狀態
     const detailsElements = document.querySelectorAll('.sidebar-details')
 
-    detailsElements.forEach((details) => {
+    detailsElements.forEach(details => {
       const menuId = details.getAttribute('data-menu-id')
       if (menuId) {
-        const menu = findMenuById(user.menus, parseInt(menuId))
+        const menu = findMenuById(user.menus, parseInt(menuId, 10))
         if (menu && isPathInMenu(menu, location.pathname)) {
           ;(details as HTMLDetailsElement).open = true
-        }
-        else {
+        } else {
           ;(details as HTMLDetailsElement).open = false
         }
       }
@@ -73,14 +72,9 @@ export function Sidebar() {
     if (hasChildren) {
       return (
         <li key={item.id}>
-          <details
-            className="sidebar-details"
-            data-menu-id={item.id.toString()}
-          >
+          <details className="sidebar-details" data-menu-id={item.id.toString()}>
             <summary className="sidebar-item">{item.name}</summary>
-            <ul>
-              {item.children.map(child => renderMenuItem(child))}
-            </ul>
+            <ul>{item.children.map(child => renderMenuItem(child))}</ul>
           </details>
         </li>
       )
@@ -88,35 +82,24 @@ export function Sidebar() {
 
     // 葉子節點 - 可點擊的選單項目
     if (item.path) {
-      const linkClass = isActive
-        ? 'sidebar-item-active'
-        : isImplemented
-          ? 'sidebar-item'
-          : 'sidebar-item-disabled'
+      const linkClass = isActive ? 'sidebar-item-active' : isImplemented ? 'sidebar-item' : 'sidebar-item-disabled'
 
       if (isImplemented) {
         return (
           <li key={item.id}>
-            <Link
-              to={item.path}
-              className={linkClass}
-            >
+            <Link to={item.path} className={linkClass}>
               {item.name}
             </Link>
           </li>
         )
-      }
-      else {
+      } else {
         return (
           <li key={item.id}>
-            <span className={linkClass}>
-              {item.name}
-            </span>
+            <span className={linkClass}>{item.name}</span>
           </li>
         )
       }
-    }
-    else {
+    } else {
       // 沒有路徑的項目顯示為標題
       return (
         <li key={item.id} className="menu-title">
@@ -160,19 +143,16 @@ export function Sidebar() {
       <label htmlFor="sidebar-drawer" aria-label="close sidebar"></label>
       <aside>
         {/* 品牌標題 */}
-        <Link to={getBrandLinkPath()} className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
-          <img
-            src={transactionalDataIcon}
-            alt="Transaction icons created by nangicon - Flaticon"
-            className="w-8 h-8"
-          />
+        <Link
+          to={getBrandLinkPath()}
+          className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full"
+        >
+          <img src={transactionalDataIcon} alt="Transaction icons created by nangicon - Flaticon" className="w-8 h-8" />
           <span className="font-bold text-primary">FEP Simulator</span>
         </Link>
 
         {/* 動態選單 - 使用 Context7 建議的緊湊樣式 */}
-        <ul className="menu menu-sm p-2 w-full">
-          {user.menus.map(menu => renderMenuItem(menu))}
-        </ul>
+        <ul className="menu menu-sm p-2 w-full">{user.menus.map(menu => renderMenuItem(menu))}</ul>
       </aside>
     </div>
   )

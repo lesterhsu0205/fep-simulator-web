@@ -1,18 +1,19 @@
-import { type AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
+import type { User, UserListResponse, UserMaintenanceRequest, UserQuery } from '@/models/User'
 import ApiClient, { type ApiResponse } from '@/services/ApiService'
-import { type User, type UserListResponse, type UserQuery, type UserMaintenanceRequest } from '@/models/User'
 
 // API 服務類
 export class UserService {
   // 查詢使用者列表
-  static async getSystemUserList(params: UserQuery & { page?: number, pageSize?: number } = {}): Promise<UserListResponse | null> {
+  static async getSystemUserList(
+    params: UserQuery & { page?: number; pageSize?: number } = {}
+  ): Promise<UserListResponse | null> {
     try {
       const response: AxiosResponse<ApiResponse<UserListResponse>> = await ApiClient.get('/users/list', {
-        params,
+        params
       })
       return response.data.messageContent
-    }
-    catch (error) {
+    } catch (error) {
       console.error('API Error:', error)
       throw error
     }
@@ -24,8 +25,7 @@ export class UserService {
       const response: AxiosResponse<ApiResponse<{ user: User }>> = await ApiClient.get(`/system/users/${id}`)
 
       return response.data.messageContent?.user || null
-    }
-    catch (error) {
+    } catch (error) {
       console.error('API Error:', error)
       throw error
     }
@@ -37,8 +37,7 @@ export class UserService {
       const response: AxiosResponse<ApiResponse<{ user?: User }>> = await ApiClient.post('/users/maint', data)
 
       return response.data.messageContent?.user || null
-    }
-    catch (error) {
+    } catch (error) {
       console.error('API Error:', error)
       throw error
     }

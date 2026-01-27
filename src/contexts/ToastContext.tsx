@@ -1,5 +1,5 @@
-import { createContext, useContext, useState } from 'react'
 import type { ReactNode } from 'react'
+import { createContext, useContext, useState } from 'react'
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning'
 
@@ -25,35 +25,31 @@ export function ToastProvider({ children }: ToastProviderProps) {
   const [toastState, setToastState] = useState<ToastState>({
     message: '',
     isVisible: false,
-    type: 'success',
+    type: 'success'
   })
 
   const showToast = (message: string, type: ToastType = 'success') => {
     setToastState({
       message,
       isVisible: true,
-      type,
+      type
     })
   }
 
   const hideToast = () => {
     setToastState(prev => ({
       ...prev,
-      isVisible: false,
+      isVisible: false
     }))
   }
 
   const value = {
     showToast,
     hideToast,
-    toastState,
+    toastState
   }
 
-  return (
-    <ToastContext.Provider value={value}>
-      {children}
-    </ToastContext.Provider>
-  )
+  return <ToastContext.Provider value={value}>{children}</ToastContext.Provider>
 }
 
 export function useToast() {

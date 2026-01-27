@@ -1,4 +1,4 @@
-import { type AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
 import ApiClient, { type ApiResponse } from '@/services/ApiService'
 
 // API 登入回應的型別定義
@@ -33,7 +33,7 @@ export const loginApi = async (account: string, password: string): Promise<Login
 
   const response: AxiosResponse<ApiResponse<LoginResponse>> = await ApiClient.post('/auth/login', {
     username: account,
-    password: password,
+    password: password
   })
 
   console.log('📊 登入 API 完整回應:', response.data)
@@ -50,7 +50,9 @@ export const loginApi = async (account: string, password: string): Promise<Login
 }
 
 // 將選單項目轉換為路由資訊
-export const convertMenusToRoutes = (menus: MenuItem[]): Array<{
+export const convertMenusToRoutes = (
+  menus: MenuItem[]
+): Array<{
   path: string
   name: string
   code: string
@@ -64,17 +66,16 @@ export const convertMenusToRoutes = (menus: MenuItem[]): Array<{
   }> = []
 
   const extractRoutes = (items: MenuItem[]) => {
-    items.forEach((item) => {
+    items.forEach(item => {
       // 如果有 path，使用 path；否則如果有 url，嘗試轉換
       if (item.path) {
         routes.push({
           path: item.path,
           name: item.name,
           code: item.code,
-          url: item.url,
+          url: item.url
         })
-      }
-      else if (item.url && !item.children.length) {
+      } else if (item.url && !item.children.length) {
         // 如果沒有 path 但有 url 且沒有子項目，可以根據 url 生成路徑
         // 這裡可以根據您的需求調整路徑轉換邏輯
         const generatedPath = item.url.replace('/api', '').replace(/\//g, '-') || `/${item.code.toLowerCase()}`
@@ -82,7 +83,7 @@ export const convertMenusToRoutes = (menus: MenuItem[]): Array<{
           path: generatedPath,
           name: item.name,
           code: item.code,
-          url: item.url,
+          url: item.url
         })
       }
 
@@ -106,8 +107,7 @@ export const signupApi = async (signupData: SignupRequest): Promise<void> => {
 
     console.log('📊 註冊 API 完整回應:', response.data)
     console.log('✅ 註冊成功')
-  }
-  catch (error) {
+  } catch (error) {
     console.error('🚨 Signup API error:', error)
     throw error
   }

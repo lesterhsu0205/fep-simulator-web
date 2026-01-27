@@ -36,13 +36,11 @@ export function isBase64(str: string): boolean {
       const decoder = new TextDecoder('utf-8', { fatal: true })
       decoder.decode(decoded)
       return true
-    }
-    catch {
+    } catch {
       // 如果不是有效的 UTF-8，可能是二進制數據，仍然是有效的 base64
       return true
     }
-  }
-  catch {
+  } catch {
     return false
   }
 }
@@ -59,8 +57,7 @@ export function encodeBase64(str: string): string {
     const bytes = encoder.encode(str)
     // 使用 base64-js 編碼
     return base64js.fromByteArray(bytes)
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Base64 encode error:', error)
     throw new Error('Base64 編碼失敗')
   }
@@ -78,8 +75,7 @@ export function decodeBase64(str: string): string {
     // 使用 TextDecoder 將 UTF-8 bytes 轉為字串
     const decoder = new TextDecoder()
     return decoder.decode(bytes)
-  }
-  catch {
+  } catch {
     return str // 如果解碼失敗，返回原始字串
   }
 }

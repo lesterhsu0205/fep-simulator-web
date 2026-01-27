@@ -1,8 +1,8 @@
+import { RotateCcw, Save } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { Save, RotateCcw } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
-import { type TestAccountCreateFormData } from '@/models/TestAccount'
 import { ApiError } from '@/error/ApiError'
+import type { TestAccountCreateFormData } from '@/models/TestAccount'
 
 interface TestAccountCreateProps {
   afterSubmit?: () => void
@@ -11,7 +11,12 @@ interface TestAccountCreateProps {
 export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProps) {
   const { showToast } = useToast()
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<TestAccountCreateFormData>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<TestAccountCreateFormData>({
     defaultValues: {
       account: '',
       status: '',
@@ -20,8 +25,8 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
       icMemo: '',
       icC6Key: '',
       icCkey: '',
-      creator: '',
-    },
+      creator: ''
+    }
   })
 
   // 監聽各個交易設定的啟用狀態
@@ -38,11 +43,8 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
       showToast('測試帳號建立成功', 'success')
       afterSubmit?.()
       reset()
-    }
-    catch (error) {
-      const errorMessage = error instanceof ApiError
-        ? error.messageDesc
-        : '建立失敗，請稍後再試'
+    } catch (error) {
+      const errorMessage = error instanceof ApiError ? error.messageDesc : '建立失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Create error:', error)
     }
@@ -60,38 +62,23 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="label">帳號</label>
-            <input
-              type="text"
-              className="input input-bordered w-full"
-              {...register('account')}
-            />
+            <span className="label">帳號</span>
+            <input type="text" className="input input-bordered w-full" {...register('account')} />
             {errors.account && <span className="text-error text-xs">{errors.account.message}</span>}
           </div>
 
           <div>
-            <label className="label">狀態</label>
-            <input
-              type="text"
-              className="input input-bordered w-full"
-              {...register('status')}
-            />
+            <span className="label">狀態</span>
+            <input type="text" className="input input-bordered w-full" {...register('status')} />
           </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
-          <button
-            type="button"
-            className="btn btn-ghost"
-            onClick={handleResetForm}
-          >
+          <button type="button" className="btn btn-ghost" onClick={handleResetForm}>
             <RotateCcw size={16} />
             重置
           </button>
-          <button
-            type="submit"
-            className="btn btn-primary"
-          >
+          <button type="submit" className="btn btn-primary">
             <Save size={16} />
             新增
           </button>

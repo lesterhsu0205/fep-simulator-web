@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import { Header } from '@/components/Header'
+import { useEffect, useState } from 'react'
 import { Content } from '@/components/Content'
 import { Footer } from '@/components/Footer'
+import { Header } from '@/components/Header'
 import { Sidebar } from '@/components/Sidebar'
 
 export default function App() {
@@ -11,8 +11,7 @@ export default function App() {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
         setSidebarOpen(true)
-      }
-      else {
+      } else {
         setSidebarOpen(false)
       }
     }
@@ -26,23 +25,24 @@ export default function App() {
   }
 
   return (
-
-    <div className={`drawer ${sidebarOpen ? 'lg:drawer-open' : ''} bg-base-200`}>
-      <input
-        id="sidebar-drawer"
-        type="checkbox"
-        className="drawer-toggle"
-        checked={sidebarOpen}
-        onChange={handleDrawerChange}
-      />
-      <div className="drawer-content flex flex-col min-h-screen lg:pt-4 lg:px-4">
-        <div className="bg-white rounded-3xl overflow-hidden flex flex-col grow shadow-2xs border border-gray-200">
-          <Header />
-          <Content />
+    <div className="flex flex-col min-h-screen bg-base-200">
+      <div className={`drawer ${sidebarOpen ? 'lg:drawer-open' : ''} grow`}>
+        <input
+          id="sidebar-drawer"
+          type="checkbox"
+          className="drawer-toggle"
+          checked={sidebarOpen}
+          onChange={handleDrawerChange}
+        />
+        <div className="drawer-content flex flex-col lg:pt-4 lg:px-4">
+          <div className="bg-white rounded-3xl overflow-hidden flex flex-col grow shadow-2xs border border-gray-200">
+            <Header />
+            <Content />
+          </div>
         </div>
-        <Footer />
+        <Sidebar />
       </div>
-      <Sidebar />
+      <Footer />
     </div>
   )
 }

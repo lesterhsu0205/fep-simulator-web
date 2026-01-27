@@ -1,9 +1,9 @@
-import path from 'path'
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
-import viteCompression from 'vite-plugin-compression'
+import react from '@vitejs/plugin-react-swc'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { defineConfig, loadEnv } from 'vite'
+import viteCompression from 'vite-plugin-compression'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -11,8 +11,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const isUAT = ['production', 'uat', 'stg', 'dev'].includes(mode)
 
-  console.info('mode: ' + mode)
-  console.info('isUAT: ' + isUAT)
+  console.info(`mode: ${mode}`)
+  console.info(`isUAT: ${isUAT}`)
 
   const basePath = env.VITE_APP_BASE_PATH || '/'
 
@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => {
         disable: false,
         threshold: 10240,
         algorithm: 'gzip',
-        ext: '.gz',
+        ext: '.gz'
       }),
       // 2. Brotli
       // viteCompression({
@@ -42,8 +42,8 @@ export default defineConfig(({ mode }) => {
         open: false, // 是否自動開啟網頁，CI/CD 環境建議 false
         gzipSize: true,
         brotliSize: true,
-        filename: 'stats.html',
-      }),
+        filename: 'stats.html'
+      })
     ],
 
     build: {
@@ -54,8 +54,8 @@ export default defineConfig(({ mode }) => {
         compress: {
           drop_console: isUAT, // 只有在 Production 才移除 console
           drop_debugger: isUAT,
-          passes: 2, // 🔥 新增：多壓一遍，擠出更多水分
-        },
+          passes: 2 // 🔥 新增：多壓一遍，擠出更多水分
+        }
       },
 
       // 🔥 正式環境關閉 SourceMap
@@ -70,10 +70,10 @@ export default defineConfig(({ mode }) => {
               // 1. 嚴格過濾 React 核心 (只抓這幾個特定的包)
               // 使用完全匹配或特定路徑匹配，避免誤殺 lucide-react
               if (
-                id.includes('/node_modules/react/')
-                || id.includes('/node_modules/react-dom/')
-                || id.includes('/node_modules/react-router/')
-                || id.includes('/node_modules/scheduler/')
+                id.includes('/node_modules/react/') ||
+                id.includes('/node_modules/react-dom/') ||
+                id.includes('/node_modules/react-router/') ||
+                id.includes('/node_modules/scheduler/')
               ) {
                 return 'react-vendor'
               }
@@ -96,18 +96,18 @@ export default defineConfig(({ mode }) => {
           // 讓輸出的檔案名稱包含 hash，確保緩存更新正確
           chunkFileNames: 'assets/js/[name]-[hash].js',
           entryFileNames: 'assets/js/[name]-[hash].js',
-          assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-        },
+          assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
+        }
       },
 
       // 預警門檻，超過 1000kb 警告 (預設 500)
-      chunkSizeWarningLimit: 1000,
+      chunkSizeWarningLimit: 1000
     },
 
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
+        '@': path.resolve(__dirname, './src')
+      }
     },
     server: {
       host: '0.0.0.0',
@@ -116,8 +116,8 @@ export default defineConfig(({ mode }) => {
         [env.VITE_API_BASE_URL_FES]: {
           target: env.VITE_API_BASE_DOMAIN,
           changeOrigin: true,
-          secure: false,
-        },
+          secure: false
+        }
       },
       warmup: {
         clientFiles: [
@@ -153,9 +153,9 @@ export default defineConfig(({ mode }) => {
           './src/pages/FinanceCreate.tsx',
 
           // 樣式檔案
-          './src/app.css',
-        ],
-      },
-    },
+          './src/app.css'
+        ]
+      }
+    }
   }
 })

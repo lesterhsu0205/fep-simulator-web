@@ -1,7 +1,7 @@
-import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type TestAccount, type TestAccountQuery } from '@/models/TestAccount'
-import TestAccountCreate from '@/pages/TestAccountCreate'
 import testAccountData from '@/assets/TestAccountList.json'
+import DataTable, { type LoadDataFunction, type SearchField, type TableColumn } from '@/components/DataTable'
+import type { TestAccount, TestAccountQuery } from '@/models/TestAccount'
+import TestAccountCreate from '@/pages/TestAccountCreate'
 
 export default function TestAccountMaintain() {
   // 定義查詢表單欄位配置
@@ -10,62 +10,62 @@ export default function TestAccountMaintain() {
       key: 'account',
       label: '帳號',
       placeholder: '請輸入帳號',
-      type: 'text',
+      type: 'text'
     },
     {
       key: 'creator',
       label: '建立者',
       placeholder: '請輸入建立者',
-      type: 'text',
-    },
+      type: 'text'
+    }
   ]
 
   // 定義表格欄位配置
   const columns: TableColumn[] = [
     {
       key: 'account',
-      title: '帳號',
+      title: '帳號'
     },
     {
       key: 'status',
-      title: '狀態',
+      title: '狀態'
     },
     {
       key: 'type',
-      title: '帳號類型',
+      title: '帳號類型'
     },
     {
       key: 'icNo',
-      title: '晶片卡序號',
+      title: '晶片卡序號'
     },
     {
       key: 'icMemo',
-      title: '晶片卡備註',
+      title: '晶片卡備註'
     },
     {
       key: 'icC6Key',
-      title: '晶片卡C6資料',
+      title: '晶片卡C6資料'
     },
     {
       key: 'icCkey',
-      title: '晶片卡資料',
+      title: '晶片卡資料'
     },
     {
       key: 'updatedAt',
-      title: '最後修改時間',
+      title: '最後修改時間'
     },
     {
       key: 'updater',
-      title: '最後修改者',
+      title: '最後修改者'
     },
     {
       key: 'createdAt',
-      title: '建立時間',
+      title: '建立時間'
     },
     {
       key: 'creator',
-      title: '建立者',
-    },
+      title: '建立者'
+    }
   ]
 
   // 載入資料函數 (傳給 DataTable 使用)
@@ -81,13 +81,13 @@ export default function TestAccountMaintain() {
 
     if (queryParams.account) {
       filteredData = filteredData.filter(item =>
-        item.account.toLowerCase().includes(queryParams.account!.toLowerCase()),
+        item.account.toLowerCase().includes(queryParams.account!.toLowerCase())
       )
     }
 
     if (queryParams.creator) {
       filteredData = filteredData.filter(item =>
-        item.creator.toLowerCase().includes(queryParams.creator!.toLowerCase()),
+        item.creator.toLowerCase().includes(queryParams.creator!.toLowerCase())
       )
     }
 
@@ -107,8 +107,8 @@ export default function TestAccountMaintain() {
         totalItems,
         totalPages,
         hasNextPage: page < totalPages,
-        hasPrevPage: page > 1,
-      },
+        hasPrevPage: page > 1
+      }
     }
   }
 

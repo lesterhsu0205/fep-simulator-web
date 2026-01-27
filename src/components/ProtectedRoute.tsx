@@ -13,7 +13,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     isLoading,
     isAuthenticated,
     hasUser: !!user,
-    currentPath: location.pathname,
+    currentPath: location.pathname
   })
 
   if (isLoading) {

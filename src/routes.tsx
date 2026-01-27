@@ -1,20 +1,20 @@
 import { createBrowserRouter, type RouteObject } from 'react-router-dom'
 import App from '@/App.tsx'
+import { DynamicRoutes } from '@/components/DynamicRoutes.tsx'
 import ProtectedRoute from '@/components/ProtectedRoute.tsx'
+import { RootRedirect } from '@/components/RootRedirect.tsx'
 import Login from '@/pages/Login.tsx'
 import SignUp from '@/pages/SignUp.tsx'
-import { DynamicRoutes } from '@/components/DynamicRoutes.tsx'
-import { RootRedirect } from '@/components/RootRedirect.tsx'
 
 // 路由配置
 export const routes: RouteObject[] = [
   {
     path: '/login',
-    element: <Login />,
+    element: <Login />
   },
   {
     path: '/signup',
-    element: <SignUp />,
+    element: <SignUp />
   },
   // 根路徑重定向
   {
@@ -23,7 +23,7 @@ export const routes: RouteObject[] = [
       <ProtectedRoute>
         <RootRedirect />
       </ProtectedRoute>
-    ),
+    )
   },
   // 所有其他路徑
   {
@@ -36,22 +36,22 @@ export const routes: RouteObject[] = [
     children: [
       {
         path: '*',
-        element: <DynamicRoutes />,
-      },
-    ],
-  },
+        element: <DynamicRoutes />
+      }
+    ]
+  }
 ]
 
 // 創建路由器
 const router = createBrowserRouter(routes, {
-  basename: import.meta.env.BASE_URL.replace(/\/$/, ''),
+  basename: import.meta.env.BASE_URL.replace(/\/$/, '')
 })
 
 // 導出常用路徑常數
 export const ROUTE_PATHS = {
   LOGIN: '/login',
   SIGNUP: '/signup',
-  ROOT: '/',
+  ROOT: '/'
 } as const
 
 // 工具函數：取得完整路徑（包含 basename）

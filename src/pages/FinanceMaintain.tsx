@@ -1,8 +1,8 @@
-import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type FiscSituation, type FiscSituationQuery } from '@/models/FiscSituation'
-import { FinanceService } from '@/services/FinanceService'
-import FinanceCreate from '@/pages/FinanceCreate'
+import DataTable, { type LoadDataFunction, type SearchField, type TableColumn } from '@/components/DataTable'
 import FinanceEditForm from '@/components/FinanceEditForm'
+import type { FiscSituation, FiscSituationQuery } from '@/models/FiscSituation'
+import FinanceCreate from '@/pages/FinanceCreate'
+import { FinanceService } from '@/services/FinanceService'
 
 export default function FinanceMaintain() {
   // 定義查詢表單欄位配置
@@ -11,25 +11,25 @@ export default function FinanceMaintain() {
       key: 'account',
       label: '帳號',
       placeholder: '請輸入帳號',
-      type: 'text',
+      type: 'text'
     },
     {
       key: 'creator',
       label: '建立者',
       placeholder: '請輸入建立者',
-      type: 'text',
-    },
+      type: 'text'
+    }
   ]
 
   // 定義表格欄位配置
   const columns: TableColumn[] = [
     {
       key: 'account',
-      title: '帳號',
+      title: '帳號'
     },
     {
       key: 'situationDesc',
-      title: '情境說明',
+      title: '情境說明'
     },
     // {
     //   key: 'memo',
@@ -41,7 +41,7 @@ export default function FinanceMaintain() {
     // },
     {
       key: 'rmtResultCode',
-      title: '匯出匯款',
+      title: '匯出匯款'
     },
     // {
     //   key: 'isAtm',
@@ -49,7 +49,7 @@ export default function FinanceMaintain() {
     // },
     {
       key: 'atmResultCode',
-      title: '代理轉帳',
+      title: '代理轉帳'
     },
     // {
     //   key: 'atmVerify',
@@ -57,11 +57,11 @@ export default function FinanceMaintain() {
     // },
     {
       key: 'atmVerifyRCode',
-      title: '帳號核驗',
+      title: '帳號核驗'
     },
     {
       key: 'atmVerifyRDetail',
-      title: '帳號核驗91-96',
+      title: '帳號核驗91-96'
     },
     // {
     //   key: 'isFxml',
@@ -69,24 +69,24 @@ export default function FinanceMaintain() {
     // },
     {
       key: 'fxmlResultCode',
-      title: 'FXML 出金',
+      title: 'FXML 出金'
     },
     {
       key: 'updatedAt',
-      title: '最後修改時間',
+      title: '最後修改時間'
     },
     {
       key: 'updater',
-      title: '最後修改者',
+      title: '最後修改者'
     },
     {
       key: 'createdAt',
-      title: '建立時間',
+      title: '建立時間'
     },
     {
       key: 'creator',
-      title: '建立者',
-    },
+      title: '建立者'
+    }
   ]
 
   // 載入資料函數 (傳給 DataTable 使用)
@@ -94,7 +94,7 @@ export default function FinanceMaintain() {
     const response = await FinanceService.getFiscSituationList({
       page,
       pageSize,
-      ...queryParams,
+      ...queryParams
     })
 
     return {
@@ -105,8 +105,8 @@ export default function FinanceMaintain() {
         totalItems: 0,
         totalPages: 0,
         hasNextPage: false,
-        hasPrevPage: false,
-      },
+        hasPrevPage: false
+      }
     }
   }
 
@@ -114,12 +114,14 @@ export default function FinanceMaintain() {
   const deleteFiscData = async (selectedIds: number[]) => {
     // FIXME: 缺批次刪除 API
     // 方案1：使用 Promise.all (平行執行)
-    await Promise.all(selectedIds.map(async (id) => {
-      await FinanceService.maintainFiscSituation({
-        action: 'D',
-        id,
+    await Promise.all(
+      selectedIds.map(async id => {
+        await FinanceService.maintainFiscSituation({
+          action: 'D',
+          id
+        })
       })
-    }))
+    )
   }
 
   return (

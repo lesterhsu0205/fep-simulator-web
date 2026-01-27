@@ -1,21 +1,27 @@
-import { type AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
+import type {
+  JcicSituation,
+  JcicSituationListResponse,
+  JcicSituationMaintenanceRequest,
+  JcicSituationQuery
+} from '@/models/JcicSituation'
+import type { UploadResult } from '@/models/UploadResult'
 import ApiClient, { type ApiResponse } from '@/services/ApiService'
-import { type JcicSituation, type JcicSituationListResponse, type JcicSituationQuery, type JcicSituationMaintenanceRequest } from '@/models/JcicSituation'
-import { type UploadResult } from '@/models/UploadResult'
 import { ensureBase64Encoded } from '@/utils/base64'
 
 // Credit API 服務類
 export class CreditService {
   // 查詢財金情境列表
-  static async getJcicSituationList(params: JcicSituationQuery & { page?: number, pageSize?: number } = {}): Promise<JcicSituationListResponse | null> {
+  static async getJcicSituationList(
+    params: JcicSituationQuery & { page?: number; pageSize?: number } = {}
+  ): Promise<JcicSituationListResponse | null> {
     try {
       const response: AxiosResponse<ApiResponse<JcicSituationListResponse>> = await ApiClient.get('/credit/list', {
-        params,
+        params
       })
 
       return response.data.messageContent
-    }
-    catch (error) {
+    } catch (error) {
       console.error('API Error:', error)
       throw error
     }
@@ -24,11 +30,12 @@ export class CreditService {
   // 依ID查詢單筆財金情境
   static async getJcicSituationById(id: number): Promise<JcicSituation | null> {
     try {
-      const response: AxiosResponse<ApiResponse<{ jcicSituation: JcicSituation }>> = await ApiClient.get(`/credit/${id}`)
+      const response: AxiosResponse<ApiResponse<{ jcicSituation: JcicSituation }>> = await ApiClient.get(
+        `/credit/${id}`
+      )
 
       return response.data.messageContent?.jcicSituation || null
-    }
-    catch (error) {
+    } catch (error) {
       console.error('API Error:', error)
       throw error
     }
@@ -45,16 +52,18 @@ export class CreditService {
           // 智能處理 base64 編碼：如果不是 base64 則編碼，已編碼則保持不變
           processedData = {
             ...data,
-            jcicData: ensureBase64Encoded(typedData.jcicData),
+            jcicData: ensureBase64Encoded(typedData.jcicData)
           }
         }
       }
 
-      const response: AxiosResponse<ApiResponse<{ jcicSituation?: JcicSituation }>> = await ApiClient.post('/credit/maint', processedData)
+      const response: AxiosResponse<ApiResponse<{ jcicSituation?: JcicSituation }>> = await ApiClient.post(
+        '/credit/maint',
+        processedData
+      )
 
       return response.data.messageContent?.jcicSituation || null
-    }
-    catch (error) {
+    } catch (error) {
       console.error('API Error:', error)
       throw error
     }
@@ -69,13 +78,12 @@ export class CreditService {
 
       const response: AxiosResponse<ApiResponse<UploadResult>> = await ApiClient.post('/credit/upload', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+          'Content-Type': 'multipart/form-data'
+        }
       })
 
       return response.data
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Upload Error:', error)
       throw error
     }

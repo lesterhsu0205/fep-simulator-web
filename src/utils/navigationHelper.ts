@@ -38,7 +38,7 @@ export function getAllAccessiblePaths(menus: MenuItem[]): string[] {
   const accessiblePaths: string[] = []
 
   const collectPaths = (items: MenuItem[]) => {
-    items.forEach((item) => {
+    items.forEach(item => {
       if (item.path && implementedPaths.includes(item.path)) {
         accessiblePaths.push(item.path)
       }

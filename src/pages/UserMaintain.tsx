@@ -1,8 +1,8 @@
-import DataTable, { type SearchField, type TableColumn, type LoadDataFunction } from '@/components/DataTable'
-import { type User, type UserQuery } from '@/models/User'
-import { UserService } from '@/services/UserService'
-import UserCreate from '@/pages/UserCreate'
+import DataTable, { type LoadDataFunction, type SearchField, type TableColumn } from '@/components/DataTable'
 import UserEditForm from '@/components/UserEditForm'
+import type { User, UserQuery } from '@/models/User'
+import UserCreate from '@/pages/UserCreate'
+import { UserService } from '@/services/UserService'
 
 export default function UserMaintain() {
   // 定義查詢表單欄位配置
@@ -11,38 +11,38 @@ export default function UserMaintain() {
       key: 'username',
       label: '名稱',
       placeholder: '請輸入名稱',
-      type: 'text',
+      type: 'text'
     },
     {
       key: 'roleCode',
       label: '角色',
       placeholder: '請輸入角色',
-      type: 'text',
-    },
+      type: 'text'
+    }
   ]
 
   // 定義表格欄位配置
   const columns: TableColumn[] = [
     {
       key: 'username',
-      title: '名稱',
+      title: '名稱'
     },
     {
       key: 'email',
-      title: '電子郵件',
+      title: '電子郵件'
     },
     {
       key: 'accountType',
-      title: '類別',
+      title: '類別'
     },
     {
       key: 'isActive',
-      title: '狀態',
+      title: '狀態'
     },
     {
       key: 'roleCode',
-      title: '角色',
-    },
+      title: '角色'
+    }
   ]
 
   // 載入資料函數 (傳給 DataTable 使用)
@@ -50,7 +50,7 @@ export default function UserMaintain() {
     const response = await UserService.getSystemUserList({
       page,
       pageSize,
-      ...queryParams,
+      ...queryParams
     })
 
     return {
@@ -61,8 +61,8 @@ export default function UserMaintain() {
         totalItems: 0,
         totalPages: 0,
         hasNextPage: false,
-        hasPrevPage: false,
-      },
+        hasPrevPage: false
+      }
     }
   }
 
@@ -70,12 +70,14 @@ export default function UserMaintain() {
   const deleteUserData = async (selectedIds: number[]) => {
     // FIXME: 缺批次刪除 API
     // 方案1：使用 Promise.all (平行執行)
-    await Promise.all(selectedIds.map(async (id) => {
-      await UserService.maintainSystemUser({
-        action: 'D',
-        id,
+    await Promise.all(
+      selectedIds.map(async id => {
+        await UserService.maintainSystemUser({
+          action: 'D',
+          id
+        })
       })
-    }))
+    )
   }
 
   return (

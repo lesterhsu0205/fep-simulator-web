@@ -1,5 +1,5 @@
+import { AlertCircle, CheckCircle, Info, X } from 'lucide-react'
 import { useEffect } from 'react'
-import { CheckCircle, X, AlertCircle, Info } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext'
 
 export default function GlobalToast() {
@@ -43,11 +43,12 @@ export default function GlobalToast() {
   }
 
   return (
-    <div className="toast toast-top toast-end z-[1001]">
+    <div className="toast toast-top toast-end z-1001">
       <div role="alert" className={`alert ${getAlertColor()} text-white`}>
         {getIcon()}
         <span className="text-white">{toastState.message}</span>
         <button
+          type="button"
           className="btn btn-ghost btn-xs text-white hover:text-gray-200"
           onClick={hideToast}
           aria-label="關閉通知"

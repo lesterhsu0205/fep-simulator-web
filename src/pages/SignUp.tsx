@@ -1,12 +1,12 @@
+import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, User, Lock, Mail } from 'lucide-react'
-import { useToast } from '@/contexts/ToastContext'
-import { useAuth } from '@/contexts/AuthContext'
-import { type SignupRequest } from '@/services/AuthService'
 import { Footer } from '@/components/Footer'
+import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 import { ApiError } from '@/error/ApiError'
+import type { SignupRequest } from '@/services/AuthService'
 import transactionalDataIcon from '/transactional-data.png'
 
 // 註冊表單資料類型
@@ -26,15 +26,20 @@ export default function SignUp() {
   const { showToast } = useToast()
   const { signup, isLoading } = useAuth()
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<SignupFormData>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm<SignupFormData>({
     defaultValues: {
       username: '',
       password: '',
       confirmPassword: '',
       email: '',
       accountType: 'user',
-      roleCode: 'GENERAL',
-    },
+      roleCode: 'GENERAL'
+    }
   })
 
   const password = watch('password')
@@ -46,7 +51,7 @@ export default function SignUp() {
         password: data.password,
         email: data.email,
         accountType: 'user',
-        roleCode: data.roleCode,
+        roleCode: data.roleCode
       }
 
       await signup(signupData)
@@ -55,11 +60,8 @@ export default function SignUp() {
       setTimeout(() => {
         navigate('/login')
       }, 1500)
-    }
-    catch (error) {
-      const errorMessage = error instanceof ApiError
-        ? error.messageDesc
-        : '註冊失敗，請稍後再試'
+    } catch (error) {
+      const errorMessage = error instanceof ApiError ? error.messageDesc : '註冊失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Signup error:', error)
     }
@@ -104,15 +106,13 @@ export default function SignUp() {
                           required: '員工編號為必填項目',
                           pattern: {
                             value: /^[A-Za-z]{2}\d{5}$/,
-                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)',
+                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)'
                           },
-                          maxLength: { value: 7, message: '員工編號不能超過7個字元' },
+                          maxLength: { value: 7, message: '員工編號不能超過7個字元' }
                         })}
                       />
                     </label>
-                    {errors.username && (
-                      <p className="text-form-error">{errors.username.message}</p>
-                    )}
+                    {errors.username && <p className="text-form-error">{errors.username.message}</p>}
                   </div>
 
                   {/* 電子郵件輸入框 */}
@@ -127,14 +127,12 @@ export default function SignUp() {
                           required: '電子郵件為必填項目',
                           pattern: {
                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: '請輸入有效的電子郵件地址',
-                          },
+                            message: '請輸入有效的電子郵件地址'
+                          }
                         })}
                       />
                     </label>
-                    {errors.email && (
-                      <p className="text-form-error">{errors.email.message}</p>
-                    )}
+                    {errors.email && <p className="text-form-error">{errors.email.message}</p>}
                   </div>
 
                   {/* 密碼輸入框 */}
@@ -148,7 +146,7 @@ export default function SignUp() {
                         {...register('password', {
                           required: '密碼為必填項目',
                           minLength: { value: 8, message: '密碼至少需要8個字元' },
-                          maxLength: { value: 30, message: '密碼不能超過30個字元' },
+                          maxLength: { value: 30, message: '密碼不能超過30個字元' }
                         })}
                       />
                       <button
@@ -159,9 +157,7 @@ export default function SignUp() {
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </label>
-                    {errors.password && (
-                      <p className="text-form-error">{errors.password.message}</p>
-                    )}
+                    {errors.password && <p className="text-form-error">{errors.password.message}</p>}
                   </div>
 
                   {/* 確認密碼輸入框 */}
@@ -174,7 +170,7 @@ export default function SignUp() {
                         placeholder="請再次輸入密碼"
                         {...register('confirmPassword', {
                           required: '請確認密碼',
-                          validate: value => value === password || '密碼不一致',
+                          validate: value => value === password || '密碼不一致'
                         })}
                       />
                       <button
@@ -185,9 +181,7 @@ export default function SignUp() {
                         {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </label>
-                    {errors.confirmPassword && (
-                      <p className="text-form-error">{errors.confirmPassword.message}</p>
-                    )}
+                    {errors.confirmPassword && <p className="text-form-error">{errors.confirmPassword.message}</p>}
                   </div>
 
                   {/* 部門代號輸入框（選填） */}
@@ -237,9 +231,8 @@ export default function SignUp() {
               <div className="text-center mt-6">
                 <p className="text-xs text-base-content/70">
                   點擊 註冊 即表示您同意我們的
-                  <a href="#" className="link link-hover text-primary"> 服務條款 </a>
-                  和
-                  <a href="#" className="link link-hover text-primary"> 隱私政策</a>
+                  <span className="link link-hover text-primary"> 服務條款 </span>和
+                  <span className="link link-hover text-primary"> 隱私政策</span>
                 </p>
               </div>
             </div>

@@ -10,44 +10,37 @@
     "editor.suggestSelection": "first",
     "editor.accessibilitySupport": "off",
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit"
+        "source.organizeImports.biome": "explicit",
+        "source.fixAll.biome": "explicit"
     },
-    "editor.formatOnSave": false,
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.foldingImportsByDefault": true,
-    "editor.rulers": [
-        80,
-        120
-    ],
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        "typescript",
-        "typescriptreact"
-    ],
-    "eslint.format.enable": true,
-    "eslint.debug": true,
+    "editor.rulers": [80, 120],
     "javascript.updateImportsOnFileMove.enabled": "always",
     "[html]": {
-        "editor.defaultFormatter": "vscode.html-language-features"
+        // "editor.defaultFormatter": "vscode.html-language-features"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[xml]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "DotJoshJohnson.xml"
+        // "editor.defaultFormatter": "DotJoshJohnson.xml"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[css]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "vscode.css-language-features"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[json]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "vscode.json-language-features"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[jsonc]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "vscode.json-language-features"
+        "editor.defaultFormatter": "biomejs.biome"
     },
     "[nginx]": {
-        "editor.defaultFormatter": "ahmadalli.vscode-nginx-conf"
-    },
+        // "editor.defaultFormatter": "ahmadalli.vscode-nginx-conf"
+        "editor.defaultFormatter": "biomejs.biome"
+    }
 }

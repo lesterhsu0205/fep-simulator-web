@@ -1,7 +1,7 @@
-import { Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-import { getFirstAccessiblePath } from '@/utils/navigationHelper'
 import { ROUTE_PATHS } from '@/routes'
+import { getFirstAccessiblePath } from '@/utils/navigationHelper'
 
 /**
  * 根路徑重定向組件
@@ -27,6 +27,7 @@ export function RootRedirect() {
           <p className="text-base-content/70">您沒有任何頁面的訪問權限，請聯繫管理員。</p>
           <div className="card-actions justify-center mt-4">
             <button
+              type="button"
               className="btn btn-outline btn-sm"
               onClick={() => navigate(ROUTE_PATHS.LOGIN, { replace: true, state: { from: location } })}
             >

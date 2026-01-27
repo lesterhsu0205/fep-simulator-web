@@ -31,16 +31,14 @@ export default function Modal({ isOpen, modalTitle, modalContent, modalAction, o
   return (
     <dialog className="modal" open={isOpen}>
       <div className={`modal-box flex flex-col ${className || ''}`}>
-        <h3 className="text-card-title flex-shrink-0">{modalTitle}</h3>
-        <div className="flex-1 min-h-0 overflow-auto mt-4 mb-4">
-          {modalContent}
-        </div>
-        <div className="modal-action flex-shrink-0 mt-0">
-          {modalAction}
-        </div>
+        <h3 className="text-card-title shrink-0">{modalTitle}</h3>
+        <div className="flex-1 min-h-0 overflow-auto mt-4 mb-4">{modalContent}</div>
+        <div className="modal-action shrink-0 mt-0">{modalAction}</div>
       </div>
       <form method="dialog" className="modal-backdrop">
-        <button onClick={onCancel}>close</button>
+        <button type="button" onClick={onCancel}>
+          close
+        </button>
       </form>
     </dialog>
   )

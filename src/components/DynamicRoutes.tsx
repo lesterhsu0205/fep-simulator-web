@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import type { MenuItem } from '@/services/AuthService'
 
 // 🔥 改用 lazy loading - 每個頁面只在需要時才載入
@@ -32,17 +32,17 @@ export function DynamicRoutes() {
   console.log('👤 用戶資訊:', user)
 
   // 收集所有有 path 的選單項目，但只生成已實現的路由
-  const collectImplementedRoutes = (menus: MenuItem[]): Array<{ path: string, name: string, code: string }> => {
-    const routes: Array<{ path: string, name: string, code: string }> = []
+  const collectImplementedRoutes = (menus: MenuItem[]): Array<{ path: string; name: string; code: string }> => {
+    const routes: Array<{ path: string; name: string; code: string }> = []
     const implementedPaths = import.meta.env.VITE_IMPLEMENTED_PATHS?.split(',') || []
 
     const traverse = (items: MenuItem[]) => {
-      items.forEach((item) => {
+      items.forEach(item => {
         if (item.path && implementedPaths.includes(item.path)) {
           routes.push({
             path: item.path,
             name: item.name,
-            code: item.code,
+            code: item.code
           })
         }
         if (item.children.length > 0) {
@@ -100,17 +100,13 @@ export function DynamicRoutes() {
       <Routes>
         {/* 只為已實現的路由生成路由 */}
         {routes.map(route => (
-          <Route
-            key={route.path}
-            path={route.path}
-            element={getComponentForPath(route.path)}
-          />
+          <Route key={route.path} path={route.path} element={getComponentForPath(route.path)} />
         ))}
 
         {/* 404 頁面 */}
         <Route
           path="*"
-          element={(
+          element={
             <div className="p-6 text-center">
               <div className="card bg-white shadow-sm">
                 <div className="card-body">
@@ -119,7 +115,7 @@ export function DynamicRoutes() {
                 </div>
               </div>
             </div>
-          )}
+          }
         />
       </Routes>
     </Suspense>
