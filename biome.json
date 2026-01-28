@@ -1,50 +1,14 @@
 {
-    "$schema": "https://biomejs.dev/schemas/2.3.12/schema.json",
-    "vcs": {
-        "enabled": true,
-        "clientKind": "git",
-        "useIgnoreFile": true
-    },
-    "files": {
-        "ignoreUnknown": false,
-        "includes": ["**", "!**/public/fonts"]
-    },
-    "formatter": {
-        "enabled": true,
-        "indentStyle": "space",
-        "indentWidth": 2,
-        "lineEnding": "lf",
-        "lineWidth": 120
-    },
-    "linter": {
-        "enabled": true,
-        "rules": {
-            "recommended": true,
-            "correctness": {
-                "useExhaustiveDependencies": "warn",
-                "useHookAtTopLevel": "error"
-            },
-            "style": {
-                "noNonNullAssertion": "off"
-            },
-            "complexity": {
-                "noStaticOnlyClass": "off"
+    "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+    "assist": {
+        "actions": {
+            "source": {
+                "organizeImports": "on",
+                "recommended": true,
+                "useSortedAttributes": "on",
+                "useSortedKeys": "on",
+                "useSortedProperties": "on"
             }
-        }
-    },
-    "javascript": {
-        "formatter": {
-            "quoteStyle": "single",
-            "semicolons": "asNeeded",
-            "jsxQuoteStyle": "double",
-            "trailingCommas": "none",
-            "arrowParentheses": "asNeeded"
-        }
-    },
-    "json": {
-        "formatter": {
-            "trailingCommas": "none",
-            "indentWidth": 4
         }
     },
     "css": {
@@ -52,5 +16,43 @@
             "cssModules": true,
             "tailwindDirectives": true
         }
+    },
+    "files": {
+        "includes": ["**", "!**/public", "!**/test"]
+    },
+    "formatter": {
+        "indentStyle": "space",
+        "lineWidth": 120
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "semicolons": "asNeeded",
+            "trailingCommas": "none"
+        }
+    },
+    "json": {
+        "formatter": {
+            "indentWidth": 4
+        }
+    },
+    "linter": {
+        "rules": {
+            "complexity": {
+                "noStaticOnlyClass": "off"
+            },
+            "correctness": {
+                "useExhaustiveDependencies": "warn",
+                "useHookAtTopLevel": "error"
+            },
+            "style": {
+                "noNonNullAssertion": "off"
+            }
+        }
+    },
+    "vcs": {
+        "clientKind": "git",
+        "enabled": true,
+        "useIgnoreFile": true
     }
 }

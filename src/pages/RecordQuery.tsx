@@ -8,21 +8,21 @@ export default function RecordQuery() {
     {
       key: 'dateRange',
       label: '查詢起迄日',
-      type: 'dateRange',
-      placeholder: '選擇查詢日期範圍'
+      placeholder: '選擇查詢日期範圍',
+      type: 'dateRange'
     },
     {
       key: 'systemType',
       label: '系統類型',
-      placeholder: '請選擇系統類型',
-      type: 'select',
       options: [
         { label: '全部', value: null },
         { label: 'ATM', value: 'FA' },
         { label: '通匯', value: 'FI' },
         { label: 'FXML', value: 'FX' },
         { label: '聯徵', value: 'JC' }
-      ]
+      ],
+      placeholder: '請選擇系統類型',
+      type: 'select'
     },
     {
       key: 'txnId',
@@ -82,8 +82,8 @@ export default function RecordQuery() {
     },
     {
       key: 'txnData',
-      title: 'txnData',
-      render: 'json'
+      render: 'json',
+      title: 'txnData'
     }
   ]
 
@@ -99,18 +99,18 @@ export default function RecordQuery() {
       data: response?.txlogs || [],
       pagination: response?.pagination || {
         currentPage: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
         itemsPerPage: 10,
         totalItems: 0,
-        totalPages: 0,
-        hasNextPage: false,
-        hasPrevPage: false
+        totalPages: 0
       }
     }
   }
 
   return (
     <div className="w-full">
-      <DataTable<TxLog, TxLogQuery> loadDataFn={loadTxLogData} columns={columns} searchFields={searchFields} />
+      <DataTable<TxLog, TxLogQuery> columns={columns} loadDataFn={loadTxLogData} searchFields={searchFields} />
     </div>
   )
 }

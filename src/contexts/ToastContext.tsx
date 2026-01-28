@@ -23,29 +23,29 @@ interface ToastProviderProps {
 
 export function ToastProvider({ children }: ToastProviderProps) {
   const [toastState, setToastState] = useState<ToastState>({
-    message: '',
     isVisible: false,
+    message: '',
     type: 'success'
   })
 
   const showToast = (message: string, type: ToastType = 'success') => {
     setToastState({
-      message,
       isVisible: true,
+      message,
       type
     })
   }
 
   const hideToast = () => {
-    setToastState(prev => ({
+    setToastState((prev) => ({
       ...prev,
       isVisible: false
     }))
   }
 
   const value = {
-    showToast,
     hideToast,
+    showToast,
     toastState
   }
 

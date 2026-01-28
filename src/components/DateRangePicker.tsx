@@ -123,8 +123,8 @@ export default function DateRangePicker({
       const startDateTime = formatDateTime(selectedRange.from, startTime)
       const endDateTime = formatDateTime(selectedRange.to, endTime)
       onChange({
-        startDatetime: startDateTime,
-        endDatetime: endDateTime
+        endDatetime: endDateTime,
+        startDatetime: startDateTime
       })
     }
     setIsOpen(false)
@@ -135,7 +135,7 @@ export default function DateRangePicker({
     setSelectedRange(undefined)
     setStartTime({ hours: '00', minutes: '00', seconds: '00' })
     setEndTime({ hours: '23', minutes: '59', seconds: '59' })
-    onChange?.({ startDatetime: null, endDatetime: null })
+    onChange?.({ endDatetime: null, startDatetime: null })
   }
 
   // 格式化顯示文字
@@ -155,11 +155,11 @@ export default function DateRangePicker({
     <div className={`relative ${className}`}>
       {/* 輸入框觸發器 */}
       <button
-        type="button"
         className="input input-bordered w-100 flex items-center cursor-pointer hover:border-primary transition-colors"
         onClick={() => setIsOpen(!isOpen)}
+        type="button"
       >
-        <Calendar size={16} className="mr-2 text-gray-400" />
+        <Calendar className="mr-2 text-gray-400" size={16} />
         <span
           className={`font-normal ${selectedRange?.from && selectedRange?.to ? 'text-base-content' : 'text-base-content/50'}`}
         >
@@ -175,16 +175,16 @@ export default function DateRangePicker({
             <DayPicker
               animate
               captionLayout="dropdown-years"
+              className="rdp text-sm"
               mode="range"
               navLayout="around"
+              onSelect={handleRangeChange}
               required
+              selected={selectedRange}
               showOutsideDays
+              styles={DATE_PICKER_STYLES}
               timeZone="Asia/Taipei"
               weekStartsOn={0}
-              selected={selectedRange}
-              onSelect={handleRangeChange}
-              className="rdp text-sm"
-              styles={DATE_PICKER_STYLES}
             />
           </div>
 
@@ -198,42 +198,42 @@ export default function DateRangePicker({
                   <div className="flex items-center space-x-2">
                     <div className="flex flex-col items-center">
                       <input
-                        type="number"
-                        min="0"
-                        max="23"
-                        value={startTime.hours}
-                        onChange={e => handleTimeChange(true, 'hours', e.target.value)}
-                        onBlur={e => handleTimeBlur(true, 'hours', e.target.value)}
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
+                        max="23"
+                        min="0"
+                        onBlur={(e) => handleTimeBlur(true, 'hours', e.target.value)}
+                        onChange={(e) => handleTimeChange(true, 'hours', e.target.value)}
                         placeholder="00"
+                        type="number"
+                        value={startTime.hours}
                       />
                       <span className="text-form-hint">時</span>
                     </div>
                     <span className="text-sm font-bold text-gray-400 pb-4">:</span>
                     <div className="flex flex-col items-center">
                       <input
-                        type="number"
-                        min="0"
-                        max="59"
-                        value={startTime.minutes}
-                        onChange={e => handleTimeChange(true, 'minutes', e.target.value)}
-                        onBlur={e => handleTimeBlur(true, 'minutes', e.target.value)}
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
+                        max="59"
+                        min="0"
+                        onBlur={(e) => handleTimeBlur(true, 'minutes', e.target.value)}
+                        onChange={(e) => handleTimeChange(true, 'minutes', e.target.value)}
                         placeholder="00"
+                        type="number"
+                        value={startTime.minutes}
                       />
                       <span className="text-form-hint">分</span>
                     </div>
                     <span className="text-sm font-bold text-gray-400 pb-4">:</span>
                     <div className="flex flex-col items-center">
                       <input
-                        type="number"
-                        min="0"
-                        max="59"
-                        value={startTime.seconds}
-                        onChange={e => handleTimeChange(true, 'seconds', e.target.value)}
-                        onBlur={e => handleTimeBlur(true, 'seconds', e.target.value)}
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
+                        max="59"
+                        min="0"
+                        onBlur={(e) => handleTimeBlur(true, 'seconds', e.target.value)}
+                        onChange={(e) => handleTimeChange(true, 'seconds', e.target.value)}
                         placeholder="00"
+                        type="number"
+                        value={startTime.seconds}
                       />
                       <span className="text-form-hint">秒</span>
                     </div>
@@ -246,42 +246,42 @@ export default function DateRangePicker({
                   <div className="flex items-center space-x-2">
                     <div className="flex flex-col items-center">
                       <input
-                        type="number"
-                        min="0"
-                        max="23"
-                        value={endTime.hours}
-                        onChange={e => handleTimeChange(false, 'hours', e.target.value)}
-                        onBlur={e => handleTimeBlur(false, 'hours', e.target.value)}
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
+                        max="23"
+                        min="0"
+                        onBlur={(e) => handleTimeBlur(false, 'hours', e.target.value)}
+                        onChange={(e) => handleTimeChange(false, 'hours', e.target.value)}
                         placeholder="23"
+                        type="number"
+                        value={endTime.hours}
                       />
                       <span className="text-form-hint">時</span>
                     </div>
                     <span className="text-sm font-bold text-gray-400 pb-4">:</span>
                     <div className="flex flex-col items-center">
                       <input
-                        type="number"
-                        min="0"
-                        max="59"
-                        value={endTime.minutes}
-                        onChange={e => handleTimeChange(false, 'minutes', e.target.value)}
-                        onBlur={e => handleTimeBlur(false, 'minutes', e.target.value)}
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
+                        max="59"
+                        min="0"
+                        onBlur={(e) => handleTimeBlur(false, 'minutes', e.target.value)}
+                        onChange={(e) => handleTimeChange(false, 'minutes', e.target.value)}
                         placeholder="59"
+                        type="number"
+                        value={endTime.minutes}
                       />
                       <span className="text-form-hint">分</span>
                     </div>
                     <span className="text-sm font-bold text-gray-400 pb-4">:</span>
                     <div className="flex flex-col items-center">
                       <input
-                        type="number"
-                        min="0"
-                        max="59"
-                        value={endTime.seconds}
-                        onChange={e => handleTimeChange(false, 'seconds', e.target.value)}
-                        onBlur={e => handleTimeBlur(false, 'seconds', e.target.value)}
                         className="input input-bordered input-sm w-12 h-8 text-center font-mono text-sm"
+                        max="59"
+                        min="0"
+                        onBlur={(e) => handleTimeBlur(false, 'seconds', e.target.value)}
+                        onChange={(e) => handleTimeChange(false, 'seconds', e.target.value)}
                         placeholder="59"
+                        type="number"
+                        value={endTime.seconds}
                       />
                       <span className="text-form-hint">秒</span>
                     </div>
@@ -294,10 +294,10 @@ export default function DateRangePicker({
           {/* 操作按鈕 */}
           <div className="flex justify-end px-6 py-4 bg-gray-50 rounded-b-lg border-t border-gray-200">
             <div className="flex space-x-3">
-              <button type="button" className="btn btn-ghost btn-sm px-4" onClick={handleClear}>
+              <button className="btn btn-ghost btn-sm px-4" onClick={handleClear} type="button">
                 清除
               </button>
-              <button type="button" className="btn btn-primary btn-sm px-6" onClick={handleConfirm}>
+              <button className="btn btn-primary btn-sm px-6" onClick={handleConfirm} type="button">
                 確定
               </button>
             </div>

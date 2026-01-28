@@ -1,6 +1,7 @@
 {
-    "version": "0.2",
+    "ignorePaths": ["node_modules/**", "dist/**", "build/**", "*.min.js"],
     "language": "en",
+    "version": "0.2",
     "words": [
         "acct",
         "angus",
@@ -23,6 +24,5 @@
         "tsx",
         "txlogs",
         "vite"
-    ],
-    "ignorePaths": ["node_modules/**", "dist/**", "build/**", "*.min.js"]
+    ]
 }

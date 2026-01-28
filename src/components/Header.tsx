@@ -42,7 +42,7 @@ export function Header() {
     <header className="navbar border-b border-base-300">
       {/* 左側 - 漢堡選單 */}
       <div className="navbar-start px-6">
-        <label htmlFor="sidebar-drawer" className="btn btn-ghost btn-circle drawer-button">
+        <label className="btn btn-ghost btn-circle drawer-button" htmlFor="sidebar-drawer">
           <Menu size={20} />
         </label>
         <div className="text-card-title ml-2 lg:ml-0">{currentPageTitle}</div>
@@ -51,7 +51,7 @@ export function Header() {
       {/* 右側 - 用戶資訊 dropdown */}
       <div className="navbar-end px-6">
         <div className="dropdown dropdown-end">
-          <button type="button" className="btn btn-circle avatar">
+          <button className="btn btn-circle avatar" type="button">
             <div className="avatar avatar-placeholder">
               <div className="w-8 rounded-full">
                 <User size={16} />
@@ -77,16 +77,16 @@ export function Header() {
 
             {/* 操作選項 */}
             <li>
-              <button type="button" className="sidebar-item flex items-center gap-2 px-3 py-2">
+              <button className="sidebar-item flex items-center gap-2 px-3 py-2" type="button">
                 <User size={14} />
                 個人設定
               </button>
             </li>
             <li>
               <button
-                type="button"
-                onClick={handleLogout}
                 className="sidebar-item flex items-center gap-2 px-3 py-2 text-error hover:bg-error/10"
+                onClick={handleLogout}
+                type="button"
               >
                 <LogOut size={14} />
                 登出

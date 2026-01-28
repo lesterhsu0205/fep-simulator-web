@@ -1,13 +1,13 @@
 {
     "servers": {
         "Context7": {
-            "type": "stdio",
+            "args": ["-y", "@upstash/context7-mcp@latest"],
             "command": "npx",
-            "args": ["-y", "@upstash/context7-mcp@latest"]
+            "type": "stdio"
         },
         "daisyui Docs": {
-            "command": "npx",
-            "args": ["mcp-remote", "https://gitmcp.io/saadeghi/daisyui"]
+            "args": ["mcp-remote", "https://gitmcp.io/saadeghi/daisyui"],
+            "command": "npx"
         }
     }
 }

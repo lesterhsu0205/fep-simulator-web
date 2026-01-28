@@ -32,26 +32,26 @@ export default function GlobalToast() {
   const getIcon = () => {
     switch (toastState.type) {
       case 'success':
-        return <CheckCircle size={20} className="text-white" />
+        return <CheckCircle className="text-white" size={20} />
       case 'error':
-        return <AlertCircle size={20} className="text-white" />
+        return <AlertCircle className="text-white" size={20} />
       case 'info':
-        return <Info size={20} className="text-white" />
+        return <Info className="text-white" size={20} />
       default:
-        return <CheckCircle size={20} className="text-white" />
+        return <CheckCircle className="text-white" size={20} />
     }
   }
 
   return (
     <div className="toast toast-top toast-end z-1001">
-      <div role="alert" className={`alert ${getAlertColor()} text-white`}>
+      <div className={`alert ${getAlertColor()} text-white`} role="alert">
         {getIcon()}
         <span className="text-white">{toastState.message}</span>
         <button
-          type="button"
+          aria-label="關閉通知"
           className="btn btn-ghost btn-xs text-white hover:text-gray-200"
           onClick={hideToast}
-          aria-label="關閉通知"
+          type="button"
         >
           <X size={16} />
         </button>

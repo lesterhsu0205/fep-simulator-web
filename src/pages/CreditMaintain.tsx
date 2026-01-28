@@ -73,8 +73,8 @@ export default function CreditMaintain() {
     },
     {
       key: 'jcicData',
-      title: '回傳資料',
-      render: 'blob'
+      render: 'blob',
+      title: '回傳資料'
     },
     {
       key: 'situationDesc',
@@ -114,11 +114,11 @@ export default function CreditMaintain() {
       data: response?.jcicSituations || [],
       pagination: response?.pagination || {
         currentPage: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
         itemsPerPage: 10,
         totalItems: 0,
-        totalPages: 0,
-        hasNextPage: false,
-        hasPrevPage: false
+        totalPages: 0
       }
     }
   }
@@ -128,7 +128,7 @@ export default function CreditMaintain() {
     // FIXME: 缺批次刪除 API
     // 方案1：使用 Promise.all (平行執行)
     await Promise.all(
-      selectedIds.map(async id => {
+      selectedIds.map(async (id) => {
         await CreditService.maintainJcicSituation({
           action: 'D',
           id
@@ -140,12 +140,12 @@ export default function CreditMaintain() {
   return (
     <div className="w-full">
       <DataTable<JcicSituation, JcicSituationQuery>
-        loadDataFn={loadJcicData}
-        deleteDataFn={deleteJcicData}
         AddFormComponent={CreditCreate}
-        EditFormComponent={CreditEditForm}
-        deleteTitleAttr={['txid', 'inqueryKey1', 'inqueryKey2', 'returnCode', 'forceToJcic']}
         columns={columns}
+        deleteDataFn={deleteJcicData}
+        deleteTitleAttr={['txid', 'inqueryKey1', 'inqueryKey2', 'returnCode', 'forceToJcic']}
+        EditFormComponent={CreditEditForm}
+        loadDataFn={loadJcicData}
         searchFields={searchFields}
       />
     </div>

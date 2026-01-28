@@ -5,5 +5,5 @@ interface FinanceCreateProps {
 }
 
 export default function FinanceCreate({ afterSubmit }: FinanceCreateProps) {
-  return <FinanceForm mode="create" afterSubmit={afterSubmit} />
+  return <FinanceForm afterSubmit={afterSubmit} mode="create" />
 }

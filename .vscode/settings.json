@@ -1,46 +1,43 @@
 {
-    "files.autoSave": "off",
-    "files.trimTrailingWhitespace": false,
-    "files.insertFinalNewline": true,
-    "files.trimFinalNewlines": true,
-    "files.eol": "\n",
-    "diffEditor.ignoreTrimWhitespace": true,
-    "editor.maxTokenizationLineLength": 32767,
-    "editor.inlineSuggest.enabled": true,
-    "editor.suggestSelection": "first",
-    "editor.accessibilitySupport": "off",
-    "editor.codeActionsOnSave": {
-        "source.organizeImports.biome": "explicit",
-        "source.fixAll.biome": "explicit"
-    },
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "biomejs.biome",
-    "editor.foldingImportsByDefault": true,
-    "editor.rulers": [80, 120],
-    "javascript.updateImportsOnFileMove.enabled": "always",
     "[html]": {
         // "editor.defaultFormatter": "vscode.html-language-features"
         "editor.defaultFormatter": "biomejs.biome"
     },
-    "[xml]": {
-        "editor.formatOnSave": true,
-        // "editor.defaultFormatter": "DotJoshJohnson.xml"
-        "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[css]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[json]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "biomejs.biome"
-    },
-    "[jsonc]": {
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "biomejs.biome"
-    },
     "[nginx]": {
-        // "editor.defaultFormatter": "ahmadalli.vscode-nginx-conf"
-        "editor.defaultFormatter": "biomejs.biome"
-    }
+        "editor.defaultFormatter": "ahmadalli.vscode-nginx-conf"
+    },
+    "[xml]": {
+        "editor.defaultFormatter": "DotJoshJohnson.xml"
+    },
+    "editor.accessibilitySupport": "off",
+    "editor.codeActionsOnSave": {
+        "source.action.useSortedAttributes.biome": "explicit",
+        "source.action.useSortedKeys.biome": "explicit",
+        "source.action.useSortedProperties.biome": "explicit",
+        "source.fixAll.biome": "explicit",
+        "source.organizeImports.biome": "explicit"
+    },
+    "editor.defaultFormatter": "biomejs.biome",
+    // 控制編輯器是否會自動摺疊匯入範圍。
+    // "editor.foldingImportsByDefault": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "editor.guides.bracketPairs": true,
+    "editor.linkedEditing": true,
+    "editor.maxTokenizationLineLength": 32767,
+    // 在編輯器中顯示垂直參考線，位於第 80 和 120 個字元位置
+    // "editor.rulers": [80, 120],
+    "explorer.confirmDragAndDrop": false,
+    "files.associations": {
+        "*.yml": "yaml"
+    },
+    "files.eol": "\n",
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "git.autofetch": true,
+    "gitlens.blame.format": "${message|50?} ${agoOrDate|14-} ${author|14-}",
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "vsicons.dontShowNewVersionMessage": true
 }

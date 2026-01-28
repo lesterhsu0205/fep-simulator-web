@@ -19,13 +19,13 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
   } = useForm<TestAccountCreateFormData>({
     defaultValues: {
       account: '',
-      status: '',
-      type: '',
-      icNo: '',
-      icMemo: '',
+      creator: '',
       icC6Key: '',
       icCkey: '',
-      creator: ''
+      icMemo: '',
+      icNo: '',
+      status: '',
+      type: ''
     }
   })
 
@@ -59,26 +59,26 @@ export default function TestAccountCreate({ afterSubmit }: TestAccountCreateProp
     <div className="w-full p-6">
       <h2 className="text-card-title mb-6">新增測試帳號</h2>
 
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <span className="label">帳號</span>
-            <input type="text" className="input input-bordered w-full" {...register('account')} />
+            <input className="input input-bordered w-full" type="text" {...register('account')} />
             {errors.account && <span className="text-error text-xs">{errors.account.message}</span>}
           </div>
 
           <div>
             <span className="label">狀態</span>
-            <input type="text" className="input input-bordered w-full" {...register('status')} />
+            <input className="input input-bordered w-full" type="text" {...register('status')} />
           </div>
         </div>
 
         <div className="flex justify-end gap-3 pt-4">
-          <button type="button" className="btn btn-ghost" onClick={handleResetForm}>
+          <button className="btn btn-ghost" onClick={handleResetForm} type="button">
             <RotateCcw size={16} />
             重置
           </button>
-          <button type="submit" className="btn btn-primary">
+          <button className="btn btn-primary" type="submit">
             <Save size={16} />
             新增
           </button>

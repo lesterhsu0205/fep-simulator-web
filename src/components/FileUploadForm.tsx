@@ -116,7 +116,7 @@ export default function FileUploadForm({
 
   return (
     <div className="w-full">
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6">
+      <form className="p-6" onSubmit={handleSubmit(handleFormSubmit)}>
         <div className="space-y-6">
           {/* 操作類型選擇 */}
           <div className="flex items-center gap-4">
@@ -127,8 +127,8 @@ export default function FileUploadForm({
             <div className="flex gap-6 flex-1">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
-                  type="radio"
                   className="radio radio-primary radio-sm"
+                  type="radio"
                   value="CREATE"
                   {...register('action', { required: '請選擇操作類型' })}
                 />
@@ -136,8 +136,8 @@ export default function FileUploadForm({
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
-                  type="radio"
                   className="radio radio-primary radio-sm"
+                  type="radio"
                   value="UPDATE"
                   {...register('action', { required: '請選擇操作類型' })}
                 />
@@ -155,13 +155,13 @@ export default function FileUploadForm({
             </span>
             <div className="flex-1">
               <input
-                type="file"
-                className="file-input file-input-bordered w-full h-10"
                 accept=".xlsx"
+                className="file-input file-input-bordered w-full h-10"
+                type="file"
                 {...register('file', {
                   required: '請選擇要上傳的檔案',
                   validate: {
-                    fileType: files => {
+                    fileType: (files) => {
                       if (!files || files.length === 0) return true
                       const file = files[0]
                       const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
@@ -178,9 +178,9 @@ export default function FileUploadForm({
           {/* 上傳按鈕 */}
           <div className="flex justify-end gap-3 pt-4">
             <button
-              type="submit"
               className={`btn btn-primary px-6 ${isUploading ? 'loading' : ''}`}
               disabled={isUploading}
+              type="submit"
             >
               <Upload size={16} />
               {isUploading ? '上傳中...' : '上傳'}
@@ -255,8 +255,8 @@ export default function FileUploadForm({
                                     {uploadResult.messageContent.errors.length > 0 &&
                                       typeof uploadResult.messageContent.errors[0] === 'object' &&
                                       uploadResult.messageContent.errors[0] !== null &&
-                                      Object.keys(uploadResult.messageContent.errors[0]).map(key => (
-                                        <th key={key} className="text-table-header px-3 py-2">
+                                      Object.keys(uploadResult.messageContent.errors[0]).map((key) => (
+                                        <th className="text-table-header px-3 py-2" key={key}>
                                           {key}
                                         </th>
                                       ))}
@@ -265,14 +265,14 @@ export default function FileUploadForm({
                                 <tbody>
                                   {uploadResult.messageContent.errors.map((error, index: number) => (
                                     // biome-ignore lint/suspicious/noArrayIndexKey: 純展示資料，不會重排
-                                    <tr key={index} className="hover:bg-gray-50">
+                                    <tr className="hover:bg-gray-50" key={index}>
                                       <td className="text-table-cell font-bold px-3 py-2">{index + 1}</td>
                                       {typeof error === 'object' && error !== null ? (
                                         Object.values(error).map((value, valueIndex) => (
                                           <td
+                                            className="text-table-cell px-3 py-2 max-w-xs truncate"
                                             // biome-ignore lint/suspicious/noArrayIndexKey: 純展示資料，不會重排
                                             key={valueIndex}
-                                            className="text-table-cell px-3 py-2 max-w-xs truncate"
                                             title={String(value)}
                                           >
                                             {String(value)}
@@ -321,7 +321,7 @@ export default function FileUploadForm({
             <p>
               • 範例檔案請參考：
               <button
-                type="button"
+                className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-transparent border-none p-0 m-0 inline-flex items-center gap-1"
                 onClick={async () => {
                   try {
                     await downloadTemplate(templateFileName)
@@ -330,7 +330,7 @@ export default function FileUploadForm({
                     showToast(errorMessage, 'error')
                   }
                 }}
-                className="text-blue-600 hover:text-blue-800 underline cursor-pointer bg-transparent border-none p-0 m-0 inline-flex items-center gap-1"
+                type="button"
               >
                 <FileText size={14} />
                 {templateFileName}

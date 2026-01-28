@@ -37,16 +37,16 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
     formState: { errors }
   } = useForm<JcicCreateFormData>({
     defaultValues: {
-      txid: '',
+      creator: getCurrentUsername(),
+      forceToJcic: '',
       inqueryKey1: '',
       inqueryKey2: null,
-      returnCode: '',
-      forceToJcic: '',
-      jcicDataDate: null,
       jcicData: null,
-      situationDesc: '',
+      jcicDataDate: null,
       memo: null,
-      creator: getCurrentUsername()
+      returnCode: '',
+      situationDesc: '',
+      txid: ''
     }
   })
 
@@ -109,7 +109,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
   return (
     <div className="w-full">
       {/* 表單卡片 */}
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6">
+      <form className="p-6" onSubmit={handleSubmit(handleFormSubmit)}>
         {/* 情境說明區塊 */}
         <div className="mb-8">
           <div className="flex items-start gap-4">
@@ -119,7 +119,7 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
                 className="textarea textarea-bordered h-32 resize-none w-full"
                 placeholder="(小於 100 字)"
                 {...register('situationDesc', {
-                  maxLength: { value: 20, message: '情境說明不可超過100字' }
+                  maxLength: { message: '情境說明不可超過100字', value: 20 }
                 })}
               />
               {errors.situationDesc && <div className="text-form-error">{errors.situationDesc.message}</div>}
@@ -152,8 +152,8 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
                 </span>
                 <div className="flex-1">
                   <input
-                    type="text"
                     className="input input-bordered h-10 w-full"
+                    type="text"
                     {...register('txid', {
                       required: '查詢項目為必填項目'
                     })}
@@ -165,13 +165,13 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
               {/* 查詢條件1 */}
               <div className="flex items-center gap-4">
                 <span className="text-form-label w-30 shrink-0">查詢條件1</span>
-                <input type="text" className="input input-bordered h-10 flex-1" {...register('inqueryKey1')} />
+                <input className="input input-bordered h-10 flex-1" type="text" {...register('inqueryKey1')} />
               </div>
 
               {/* 強制發查 */}
               <div className="flex items-center gap-4">
                 <span className="text-form-label w-30 shrink-0">強制發查</span>
-                <input type="checkbox" className="checkbox" {...register('forceToJcic')} />
+                <input className="checkbox" type="checkbox" {...register('forceToJcic')} />
               </div>
             </div>
 
@@ -180,13 +180,13 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
               {/* 回應代碼 */}
               <div className="flex items-center gap-4">
                 <span className="text-form-label w-30 shrink-0">回應代碼</span>
-                <input type="text" className="input input-bordered h-10 flex-1" {...register('returnCode')} />
+                <input className="input input-bordered h-10 flex-1" type="text" {...register('returnCode')} />
               </div>
 
               {/* 查詢條件2 */}
               <div className="flex items-center gap-4">
                 <span className="text-form-label w-30 shrink-0">查詢條件2</span>
-                <input type="text" className="input input-bordered h-10 flex-1" {...register('inqueryKey2')} />
+                <input className="input input-bordered h-10 flex-1" type="text" {...register('inqueryKey2')} />
               </div>
 
               {/* 發查資料日期 */}
@@ -196,23 +196,23 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
                   <span className="text-form-required">*</span>
                 </span>
                 <Controller
-                  name="jcicDataDate"
                   control={control}
-                  rules={{
-                    required: '發查資料日期為必填欄位'
-                  }}
+                  name="jcicDataDate"
                   render={({ field }) => (
                     <div className="flex-1">
                       <input
-                        type="date"
                         className={`input input-bordered h-10 w-full ${forceToJcic ? 'bg-gray-100' : ''}`}
-                        value={field.value || ''}
                         onChange={field.onChange}
                         readOnly={!!forceToJcic}
+                        type="date"
+                        value={field.value || ''}
                       />
                       {errors.jcicDataDate && <div className="text-form-error">{errors.jcicDataDate.message}</div>}
                     </div>
                   )}
+                  rules={{
+                    required: '發查資料日期為必填欄位'
+                  }}
                 />
               </div>
             </div>
@@ -232,11 +232,11 @@ export default function CreditCreate({ afterSubmit }: CreditCreateProps) {
 
         {/* 操作按鈕 */}
         <div className="flex justify-end gap-3 pt-4">
-          <button type="button" className="btn btn-ghost px-6" onClick={handleReset}>
+          <button className="btn btn-ghost px-6" onClick={handleReset} type="button">
             <RotateCcw size={16} />
             重置
           </button>
-          <button type="submit" className="btn btn-primary px-6">
+          <button className="btn btn-primary px-6" type="submit">
             <Save size={16} />
             新增
           </button>

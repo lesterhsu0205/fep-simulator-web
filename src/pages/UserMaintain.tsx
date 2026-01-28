@@ -57,11 +57,11 @@ export default function UserMaintain() {
       data: response?.users || [],
       pagination: response?.pagination || {
         currentPage: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
         itemsPerPage: 10,
         totalItems: 0,
-        totalPages: 0,
-        hasNextPage: false,
-        hasPrevPage: false
+        totalPages: 0
       }
     }
   }
@@ -71,7 +71,7 @@ export default function UserMaintain() {
     // FIXME: 缺批次刪除 API
     // 方案1：使用 Promise.all (平行執行)
     await Promise.all(
-      selectedIds.map(async id => {
+      selectedIds.map(async (id) => {
         await UserService.maintainSystemUser({
           action: 'D',
           id
@@ -83,12 +83,12 @@ export default function UserMaintain() {
   return (
     <div className="w-full">
       <DataTable<User, UserQuery>
-        loadDataFn={loadSystemUserData}
-        deleteDataFn={deleteUserData}
         AddFormComponent={UserCreate}
-        EditFormComponent={UserEditForm}
-        deleteTitleAttr="username"
         columns={columns}
+        deleteDataFn={deleteUserData}
+        deleteTitleAttr="username"
+        EditFormComponent={UserEditForm}
+        loadDataFn={loadSystemUserData}
         searchFields={searchFields}
       />
     </div>

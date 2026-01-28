@@ -35,8 +35,8 @@ export default function Modal({ isOpen, modalTitle, modalContent, modalAction, o
         <div className="flex-1 min-h-0 overflow-auto mt-4 mb-4">{modalContent}</div>
         <div className="modal-action shrink-0 mt-0">{modalAction}</div>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button type="button" onClick={onCancel}>
+      <form className="modal-backdrop" method="dialog">
+        <button onClick={onCancel} type="button">
           close
         </button>
       </form>

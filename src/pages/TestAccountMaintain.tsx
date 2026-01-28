@@ -71,7 +71,7 @@ export default function TestAccountMaintain() {
   // 載入資料函數 (傳給 DataTable 使用)
   const loadTestAccountData: LoadDataFunction<TestAccount, TestAccountQuery> = async (queryParams, page, pageSize) => {
     // 模擬 API 呼叫延遲
-    await new Promise(resolve => setTimeout(resolve, 300))
+    await new Promise((resolve) => setTimeout(resolve, 300))
 
     // 從 JSON 檔案載入資料
     const allData = testAccountData as TestAccount[]
@@ -80,13 +80,13 @@ export default function TestAccountMaintain() {
     let filteredData = allData
 
     if (queryParams.account) {
-      filteredData = filteredData.filter(item =>
+      filteredData = filteredData.filter((item) =>
         item.account.toLowerCase().includes(queryParams.account!.toLowerCase())
       )
     }
 
     if (queryParams.creator) {
-      filteredData = filteredData.filter(item =>
+      filteredData = filteredData.filter((item) =>
         item.creator.toLowerCase().includes(queryParams.creator!.toLowerCase())
       )
     }
@@ -103,11 +103,11 @@ export default function TestAccountMaintain() {
       data: paginatedData,
       pagination: {
         currentPage: page,
+        hasNextPage: page < totalPages,
+        hasPrevPage: page > 1,
         itemsPerPage: pageSize,
         totalItems,
-        totalPages,
-        hasNextPage: page < totalPages,
-        hasPrevPage: page > 1
+        totalPages
       }
     }
   }
@@ -122,11 +122,11 @@ export default function TestAccountMaintain() {
   return (
     <div className="w-full">
       <DataTable<TestAccount, TestAccountQuery>
-        loadDataFn={loadTestAccountData}
-        deleteDataFn={deleteTestAccountData}
         AddFormComponent={TestAccountCreate}
-        deleteTitleAttr=""
         columns={columns}
+        deleteDataFn={deleteTestAccountData}
+        deleteTitleAttr=""
+        loadDataFn={loadTestAccountData}
         searchFields={searchFields}
       />
     </div>

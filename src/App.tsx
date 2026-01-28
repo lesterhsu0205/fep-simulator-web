@@ -28,11 +28,11 @@ export default function App() {
     <div className="flex flex-col min-h-screen bg-base-200">
       <div className={`drawer ${sidebarOpen ? 'lg:drawer-open' : ''} grow`}>
         <input
-          id="sidebar-drawer"
-          type="checkbox"
-          className="drawer-toggle"
           checked={sidebarOpen}
+          className="drawer-toggle"
+          id="sidebar-drawer"
           onChange={handleDrawerChange}
+          type="checkbox"
         />
         <div className="drawer-content flex flex-col lg:pt-4 lg:px-4">
           <div className="bg-white rounded-3xl overflow-hidden flex flex-col grow shadow-2xs border border-gray-200">

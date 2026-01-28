@@ -15,7 +15,7 @@ export function RootRedirect() {
   const firstAccessiblePath = getFirstAccessiblePath(user!.menus)
 
   if (firstAccessiblePath) {
-    return <Navigate to={firstAccessiblePath} replace />
+    return <Navigate replace to={firstAccessiblePath} />
   }
 
   // 如果沒有任何可訪問的頁面，顯示錯誤訊息
@@ -27,9 +27,9 @@ export function RootRedirect() {
           <p className="text-base-content/70">您沒有任何頁面的訪問權限，請聯繫管理員。</p>
           <div className="card-actions justify-center mt-4">
             <button
-              type="button"
               className="btn btn-outline btn-sm"
               onClick={() => navigate(ROUTE_PATHS.LOGIN, { replace: true, state: { from: location } })}
+              type="button"
             >
               重新登入
             </button>

@@ -101,11 +101,11 @@ export default function FinanceMaintain() {
       data: response?.fiscSituations || [],
       pagination: response?.pagination || {
         currentPage: 1,
+        hasNextPage: false,
+        hasPrevPage: false,
         itemsPerPage: 10,
         totalItems: 0,
-        totalPages: 0,
-        hasNextPage: false,
-        hasPrevPage: false
+        totalPages: 0
       }
     }
   }
@@ -115,7 +115,7 @@ export default function FinanceMaintain() {
     // FIXME: 缺批次刪除 API
     // 方案1：使用 Promise.all (平行執行)
     await Promise.all(
-      selectedIds.map(async id => {
+      selectedIds.map(async (id) => {
         await FinanceService.maintainFiscSituation({
           action: 'D',
           id
@@ -127,12 +127,12 @@ export default function FinanceMaintain() {
   return (
     <div className="w-full">
       <DataTable<FiscSituation, FiscSituationQuery>
-        loadDataFn={loadFiscData}
-        deleteDataFn={deleteFiscData}
         AddFormComponent={FinanceCreate}
-        EditFormComponent={FinanceEditForm}
-        deleteTitleAttr="account"
         columns={columns}
+        deleteDataFn={deleteFiscData}
+        deleteTitleAttr="account"
+        EditFormComponent={FinanceEditForm}
+        loadDataFn={loadFiscData}
         searchFields={searchFields}
       />
     </div>

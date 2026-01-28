@@ -67,10 +67,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const user: User = {
         account,
-        username: loginData.username,
+        menus: loginData.menus,
         role: loginData.role,
         token: loginData.token,
-        menus: loginData.menus
+        username: loginData.username
       }
 
       setUser(user)
@@ -97,12 +97,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const value = {
-    user,
     isAuthenticated: !!user,
+    isLoading,
     login,
-    signup,
     logout,
-    isLoading
+    signup,
+    user
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

@@ -29,11 +29,11 @@ export interface SignupRequest {
 
 // 使用者登入 API
 export const loginApi = async (account: string, password: string): Promise<LoginResponse> => {
-  console.log('🔐 開始登入流程...', { username: account, password: '***' })
+  console.log('🔐 開始登入流程...', { password: '***', username: account })
 
   const response: AxiosResponse<ApiResponse<LoginResponse>> = await ApiClient.post('/auth/login', {
-    username: account,
-    password: password
+    password: password,
+    username: account
   })
 
   console.log('📊 登入 API 完整回應:', response.data)
@@ -66,13 +66,13 @@ export const convertMenusToRoutes = (
   }> = []
 
   const extractRoutes = (items: MenuItem[]) => {
-    items.forEach(item => {
+    items.forEach((item) => {
       // 如果有 path，使用 path；否則如果有 url，嘗試轉換
       if (item.path) {
         routes.push({
-          path: item.path,
-          name: item.name,
           code: item.code,
+          name: item.name,
+          path: item.path,
           url: item.url
         })
       } else if (item.url && !item.children.length) {
@@ -80,9 +80,9 @@ export const convertMenusToRoutes = (
         // 這裡可以根據您的需求調整路徑轉換邏輯
         const generatedPath = item.url.replace('/api', '').replace(/\//g, '-') || `/${item.code.toLowerCase()}`
         routes.push({
-          path: generatedPath,
-          name: item.name,
           code: item.code,
+          name: item.name,
+          path: generatedPath,
           url: item.url
         })
       }

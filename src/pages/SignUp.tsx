@@ -33,12 +33,12 @@ export default function SignUp() {
     formState: { errors }
   } = useForm<SignupFormData>({
     defaultValues: {
-      username: '',
-      password: '',
+      accountType: 'user',
       confirmPassword: '',
       email: '',
-      accountType: 'user',
-      roleCode: 'GENERAL'
+      password: '',
+      roleCode: 'GENERAL',
+      username: ''
     }
   })
 
@@ -47,11 +47,11 @@ export default function SignUp() {
   const handleSignUp = async (data: SignupFormData) => {
     try {
       const signupData: SignupRequest = {
-        username: data.username,
-        password: data.password,
-        email: data.email,
         accountType: 'user',
-        roleCode: data.roleCode
+        email: data.email,
+        password: data.password,
+        roleCode: data.roleCode,
+        username: data.username
       }
 
       await signup(signupData)
@@ -78,9 +78,9 @@ export default function SignUp() {
           <div className="text-center lg:text-left lg:ml-8 lg:min-w-96 lg:max-w-lg">
             <div className="flex justify-center lg:justify-start mb-6">
               <img
-                src={transactionalDataIcon}
                 alt="Transaction icons created by nangicon - Flaticon"
                 className="w-24 h-24"
+                src={transactionalDataIcon}
               />
             </div>
             <h1 className="text-heading">立即註冊!</h1>
@@ -97,18 +97,18 @@ export default function SignUp() {
                   {/* 員工編號輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <User size={20} className="text-gray-400" />
+                      <User className="text-gray-400" size={20} />
                       <input
-                        type="text"
                         className="grow"
                         placeholder="請輸入員工編號(ex.BK00999)"
+                        type="text"
                         {...register('username', {
-                          required: '員工編號為必填項目',
+                          maxLength: { message: '員工編號不能超過7個字元', value: 7 },
                           pattern: {
-                            value: /^[A-Za-z]{2}\d{5}$/,
-                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)'
+                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)',
+                            value: /^[A-Za-z]{2}\d{5}$/
                           },
-                          maxLength: { value: 7, message: '員工編號不能超過7個字元' }
+                          required: '員工編號為必填項目'
                         })}
                       />
                     </label>
@@ -118,17 +118,17 @@ export default function SignUp() {
                   {/* 電子郵件輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <Mail size={20} className="text-gray-400" />
+                      <Mail className="text-gray-400" size={20} />
                       <input
-                        type="email"
                         className="grow"
                         placeholder="請輸入電子郵件"
+                        type="email"
                         {...register('email', {
-                          required: '電子郵件為必填項目',
                           pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: '請輸入有效的電子郵件地址'
-                          }
+                            message: '請輸入有效的電子郵件地址',
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+                          },
+                          required: '電子郵件為必填項目'
                         })}
                       />
                     </label>
@@ -138,21 +138,21 @@ export default function SignUp() {
                   {/* 密碼輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <Lock size={20} className="text-gray-400" />
+                      <Lock className="text-gray-400" size={20} />
                       <input
-                        type={showPassword ? 'text' : 'password'}
                         className="grow"
                         placeholder="請輸入密碼"
+                        type={showPassword ? 'text' : 'password'}
                         {...register('password', {
-                          required: '密碼為必填項目',
-                          minLength: { value: 8, message: '密碼至少需要8個字元' },
-                          maxLength: { value: 30, message: '密碼不能超過30個字元' }
+                          maxLength: { message: '密碼不能超過30個字元', value: 30 },
+                          minLength: { message: '密碼至少需要8個字元', value: 8 },
+                          required: '密碼為必填項目'
                         })}
                       />
                       <button
-                        type="button"
                         className="btn btn-ghost btn-sm"
                         onClick={() => setShowPassword(!showPassword)}
+                        type="button"
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
@@ -163,20 +163,20 @@ export default function SignUp() {
                   {/* 確認密碼輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <Lock size={20} className="text-gray-400" />
+                      <Lock className="text-gray-400" size={20} />
                       <input
-                        type={showConfirmPassword ? 'text' : 'password'}
                         className="grow"
                         placeholder="請再次輸入密碼"
+                        type={showConfirmPassword ? 'text' : 'password'}
                         {...register('confirmPassword', {
                           required: '請確認密碼',
-                          validate: value => value === password || '密碼不一致'
+                          validate: (value) => value === password || '密碼不一致'
                         })}
                       />
                       <button
-                        type="button"
                         className="btn btn-ghost btn-sm"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        type="button"
                       >
                         {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
@@ -205,9 +205,9 @@ export default function SignUp() {
 
                   {/* 註冊 按鈕 */}
                   <button
-                    type="submit"
                     className={`btn btn-primary btn-lg w-full block mt-2 ${isLoading ? 'loading' : ''}`}
                     disabled={isLoading}
+                    type="submit"
                   >
                     {isLoading ? '' : '註冊'}
                   </button>
@@ -219,10 +219,10 @@ export default function SignUp() {
 
               {/* 返回登入按鈕 */}
               <button
-                type="button"
                 className={`btn btn-outline btn-lg w-full block ${isLoading ? 'loading' : ''}`}
-                onClick={handleBackToLogin}
                 disabled={isLoading}
+                onClick={handleBackToLogin}
+                type="button"
               >
                 {isLoading ? '' : '返回登入'}
               </button>

@@ -82,9 +82,9 @@ export default function Login() {
           <div className="text-center lg:text-left lg:ml-8 lg:min-w-96 lg:max-w-lg">
             <div className="flex justify-center lg:justify-start mb-6">
               <img
-                src={transactionalDataIcon}
                 alt="Transaction icons created by nangicon - Flaticon"
                 className="w-24 h-24"
+                src={transactionalDataIcon}
               />
             </div>
             <h1 className="text-heading">歡迎回來!</h1>
@@ -101,18 +101,18 @@ export default function Login() {
                   {/* 員工編號輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <User size={20} className="text-gray-400" />
+                      <User className="text-gray-400" size={20} />
                       <input
-                        type="text"
                         className="grow"
                         placeholder="請輸入員工編號"
+                        type="text"
                         {...register('account', {
-                          required: '員工編號為必填項目',
+                          maxLength: { message: '員工編號不能超過7個字元', value: 7 },
                           pattern: {
-                            value: /^[A-Za-z]{2}\d{5}$/,
-                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)'
+                            message: '須為兩位英文字 + 5位數字 (ex.BK00999)',
+                            value: /^[A-Za-z]{2}\d{5}$/
                           },
-                          maxLength: { value: 7, message: '員工編號不能超過7個字元' }
+                          required: '員工編號為必填項目'
                         })}
                       />
                     </label>
@@ -122,21 +122,21 @@ export default function Login() {
                   {/* 密碼輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <Lock size={20} className="text-gray-400" />
+                      <Lock className="text-gray-400" size={20} />
                       <input
-                        type={showPassword ? 'text' : 'password'}
                         className="grow"
                         placeholder="請輸入密碼"
+                        type={showPassword ? 'text' : 'password'}
                         {...register('password', {
-                          required: '密碼為必填項目',
-                          minLength: { value: 8, message: '密碼至少需要8個字元' },
-                          maxLength: { value: 30, message: '密碼不能超過30個字元' }
+                          maxLength: { message: '密碼不能超過30個字元', value: 30 },
+                          minLength: { message: '密碼至少需要8個字元', value: 8 },
+                          required: '密碼為必填項目'
                         })}
                       />
                       <button
-                        type="button"
                         className="btn btn-ghost btn-sm"
                         onClick={() => setShowPassword(!showPassword)}
+                        type="button"
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
@@ -153,9 +153,9 @@ export default function Login() {
 
                   {/* 登入 按鈕 */}
                   <button
-                    type="submit"
                     className={`btn btn-primary btn-lg w-full block mt-2 ${isLoading ? 'loading' : ''}`}
                     disabled={isLoading}
+                    type="submit"
                   >
                     {isLoading ? '' : '登入'}
                   </button>
@@ -167,10 +167,10 @@ export default function Login() {
 
               {/* 註冊 按鈕 */}
               <button
-                type="button"
                 className={`btn btn-outline btn-lg w-full block ${isLoading ? 'loading' : ''}`}
-                onClick={handleSignUp}
                 disabled={isLoading}
+                onClick={handleSignUp}
+                type="button"
               >
                 {isLoading ? '' : '註冊'}
               </button>

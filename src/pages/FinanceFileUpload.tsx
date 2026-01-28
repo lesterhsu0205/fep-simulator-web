@@ -43,9 +43,9 @@ export default function FinanceFileUpload() {
 
       if (error instanceof ApiError) {
         const uploadResult: ApiResponse<UploadResult> = {
-          messageDesc: error.messageDesc,
           messageCode: error.messageCode,
-          messageContent: error.messageContent as UploadResult | null
+          messageContent: error.messageContent as UploadResult | null,
+          messageDesc: error.messageDesc
         }
 
         setUploadResult(uploadResult)
@@ -57,11 +57,11 @@ export default function FinanceFileUpload() {
 
   return (
     <FileUploadForm
-      templateFileName="SimDataUpload_FISC.xlsx"
-      onSubmit={handleFileSubmit}
       isUploading={isUploading}
-      uploadResult={uploadResult}
+      onSubmit={handleFileSubmit}
+      templateFileName="SimDataUpload_FISC.xlsx"
       uploadError={uploadError}
+      uploadResult={uploadResult}
     />
   )
 }

@@ -9,36 +9,36 @@ import SignUp from '@/pages/SignUp.tsx'
 // 路由配置
 export const routes: RouteObject[] = [
   {
-    path: '/login',
-    element: <Login />
+    element: <Login />,
+    path: '/login'
   },
   {
-    path: '/signup',
-    element: <SignUp />
+    element: <SignUp />,
+    path: '/signup'
   },
   // 根路徑重定向
   {
-    path: '/',
     element: (
       <ProtectedRoute>
         <RootRedirect />
       </ProtectedRoute>
-    )
+    ),
+    path: '/'
   },
   // 所有其他路徑
   {
-    path: '/*',
+    children: [
+      {
+        element: <DynamicRoutes />,
+        path: '*'
+      }
+    ],
     element: (
       <ProtectedRoute>
         <App />
       </ProtectedRoute>
     ),
-    children: [
-      {
-        path: '*',
-        element: <DynamicRoutes />
-      }
-    ]
+    path: '/*'
   }
 ]
 
@@ -50,8 +50,8 @@ const router = createBrowserRouter(routes, {
 // 導出常用路徑常數
 export const ROUTE_PATHS = {
   LOGIN: '/login',
-  SIGNUP: '/signup',
-  ROOT: '/'
+  ROOT: '/',
+  SIGNUP: '/signup'
 } as const
 
 // 工具函數：取得完整路徑（包含 basename）

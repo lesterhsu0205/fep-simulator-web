@@ -24,7 +24,7 @@ export function Sidebar() {
 
     // 遞歸檢查子項目
     if (menu.children && menu.children.length > 0) {
-      return menu.children.some(child => isPathInMenu(child, currentPath))
+      return menu.children.some((child) => isPathInMenu(child, currentPath))
     }
 
     return false
@@ -51,7 +51,7 @@ export function Sidebar() {
     // 找到所有的 details 元素並根據當前路徑設置展開狀態
     const detailsElements = document.querySelectorAll('.sidebar-details')
 
-    detailsElements.forEach(details => {
+    detailsElements.forEach((details) => {
       const menuId = details.getAttribute('data-menu-id')
       if (menuId) {
         const menu = findMenuById(user.menus, parseInt(menuId, 10))
@@ -74,7 +74,7 @@ export function Sidebar() {
         <li key={item.id}>
           <details className="sidebar-details" data-menu-id={item.id.toString()}>
             <summary className="sidebar-item">{item.name}</summary>
-            <ul>{item.children.map(child => renderMenuItem(child))}</ul>
+            <ul>{item.children.map((child) => renderMenuItem(child))}</ul>
           </details>
         </li>
       )
@@ -87,7 +87,7 @@ export function Sidebar() {
       if (isImplemented) {
         return (
           <li key={item.id}>
-            <Link to={item.path} className={linkClass}>
+            <Link className={linkClass} to={item.path}>
               {item.name}
             </Link>
           </li>
@@ -102,7 +102,7 @@ export function Sidebar() {
     } else {
       // 沒有路徑的項目顯示為標題
       return (
-        <li key={item.id} className="menu-title">
+        <li className="menu-title" key={item.id}>
           <span className="sidebar-title">{item.name}</span>
         </li>
       )
@@ -119,13 +119,13 @@ export function Sidebar() {
   if (!user || !user.menus) {
     return (
       <div className="drawer-side">
-        <label htmlFor="sidebar-drawer" aria-label="close sidebar"></label>
+        <label aria-label="close sidebar" htmlFor="sidebar-drawer"></label>
         <aside>
-          <Link to="/" className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full">
+          <Link className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full" to="/">
             <img
-              src={transactionalDataIcon}
               alt="Transaction icons created by nangicon - Flaticon"
               className="w-8 h-8"
+              src={transactionalDataIcon}
             />
             <span className="font-bold text-primary">FEP Simulator</span>
           </Link>
@@ -140,19 +140,19 @@ export function Sidebar() {
 
   return (
     <div className="drawer-side">
-      <label htmlFor="sidebar-drawer" aria-label="close sidebar"></label>
+      <label aria-label="close sidebar" htmlFor="sidebar-drawer"></label>
       <aside>
         {/* 品牌標題 */}
         <Link
-          to={getBrandLinkPath()}
           className="btn btn-ghost text-xl justify-start p-4 h-auto min-h-16 rounded-none w-full"
+          to={getBrandLinkPath()}
         >
-          <img src={transactionalDataIcon} alt="Transaction icons created by nangicon - Flaticon" className="w-8 h-8" />
+          <img alt="Transaction icons created by nangicon - Flaticon" className="w-8 h-8" src={transactionalDataIcon} />
           <span className="font-bold text-primary">FEP Simulator</span>
         </Link>
 
         {/* 動態選單 - 使用 Context7 建議的緊湊樣式 */}
-        <ul className="menu menu-sm p-2 w-full">{user.menus.map(menu => renderMenuItem(menu))}</ul>
+        <ul className="menu menu-sm p-2 w-full">{user.menus.map((menu) => renderMenuItem(menu))}</ul>
       </aside>
     </div>
   )
