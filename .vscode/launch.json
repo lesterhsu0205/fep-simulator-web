@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "name": "Launch Edge + Local Server",
+            "preLaunchTask": "local server",
+            "request": "launch",
+            // "runtimeArgs": ["--user-data-dir=${workspaceFolder}/.vscode/.edge-debug"],
+            "type": "msedge",
+            "url": "http://localhost:5173/fep-simulator",
+            "webRoot": "${workspaceFolder}"
+        }
+    ],
+    "version": "0.2.0"
+}
