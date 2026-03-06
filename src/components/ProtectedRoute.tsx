@@ -10,10 +10,10 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const location = useLocation()
 
   console.log('🛡️ ProtectedRoute 檢查:', {
-    isLoading,
-    isAuthenticated,
-    hasUser: !!user,
     currentPath: location.pathname,
+    hasUser: !!user,
+    isAuthenticated,
+    isLoading
   })
 
   if (isLoading) {
@@ -28,7 +28,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (!isAuthenticated) {
     console.log('❌ 用戶未認證，重定向到登入頁')
     // 保存用戶嘗試訪問的路徑，登入成功後可以重定向回來
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate replace state={{ from: location }} to="/login" />
   }
 
   console.log('✅ 用戶已認證，渲染子組件')

@@ -4,9 +4,8 @@ import { ApiError } from '@/error/ApiError'
 // 創建 axios 實例
 const ApiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL_FES,
-  timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    'Content-Type': 'application/json'
   },
   paramsSerializer: (params) => {
     const searchParams = new URLSearchParams()
@@ -17,6 +16,7 @@ const ApiClient = axios.create({
     })
     return searchParams.toString()
   },
+  timeout: 10000
 })
 
 // 請求攔截器 - 自動添加 Authorization header
@@ -30,7 +30,7 @@ ApiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error)
-  },
+  }
 )
 
 // 統一處理認證相關錯誤
@@ -41,13 +41,9 @@ const handleAuthError = (messageCode: string) => {
 }
 
 // 統一創建 API 錯誤
-const createApiError = (data: { messageCode: string, messageDesc?: string, messageContent?: unknown }) => {
+const createApiError = (data: { messageCode: string; messageDesc?: string; messageContent?: unknown }) => {
   handleAuthError(data.messageCode)
-  return new ApiError(
-    data.messageDesc || '交易失敗',
-    data.messageCode,
-    data.messageContent,
-  )
+  return new ApiError(data.messageDesc || '交易失敗', data.messageCode, data.messageContent)
 }
 
 // 回應攔截器 - 處理統一錯誤
@@ -76,7 +72,7 @@ ApiClient.interceptors.response.use(
     }
 
     return Promise.reject(error)
-  },
+  }
 )
 
 // API 回應格式

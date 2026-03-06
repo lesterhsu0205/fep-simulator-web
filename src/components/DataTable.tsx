@@ -1,12 +1,12 @@
-import { useForm, Controller } from 'react-hook-form'
-import { Search, RotateCcw, Edit, Trash2, Plus, Check, X } from 'lucide-react'
-import { useState, useEffect, useCallback, type ComponentType } from 'react'
+import { Check, Edit, Plus, RotateCcw, Search, Trash2, X } from 'lucide-react'
+import { type ComponentType, useCallback, useEffect, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import DateRangePicker from '@/components/DateRangePicker'
 import Modal from '@/components/Modal'
 import { useToast } from '@/contexts/ToastContext'
-import { type PaginationInfo } from '@/models/PaginationInfo'
-import { ensureBase64Decoded } from '@/utils/base64'
-import DateRangePicker from '@/components/DateRangePicker'
 import { ApiError } from '@/error/ApiError'
+import type { PaginationInfo } from '@/models/PaginationInfo'
+import { ensureBase64Decoded } from '@/utils/base64'
 
 // 定義查詢表單欄位類型
 export interface SearchField {
@@ -16,7 +16,7 @@ export interface SearchField {
   type?: 'text' | 'number' | 'email' | 'tel' | 'date' | 'select' | 'dateRange'
   required?: boolean
   className?: string
-  options?: Array<{ value: string | number | null, label: string }>
+  options?: Array<{ value: string | number | null; label: string }>
 }
 
 // 表格欄位配置介面
@@ -87,10 +87,14 @@ interface DataTableProps<TRawData = unknown, TQuery = Record<string, unknown>> {
 const getDisplayTitle = (item: Record<string, unknown> | null | undefined, titleAttr: string | string[]): string => {
   if (Array.isArray(titleAttr)) {
     // 如果是陣列，串接所有屬性值
-    return titleAttr
-      .map(attr => String(item?.[attr] || ''))
-      .filter(value => value !== '')
-      .join('') || String(item?.id) || ''
+    return (
+      titleAttr
+        .map((attr) => String(item?.[attr] || ''))
+        .filter((value) => value !== '')
+        .join('') ||
+      String(item?.id) ||
+      ''
+    )
   }
   // 如果是字串，使用原本邏輯
   return (item?.[titleAttr] as string) || String(item?.id) || ''
@@ -107,7 +111,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   itemsPerPageOptions = [10, 20, 50, 100],
   searchFields = [],
   emptyMessage = '暫無資料',
-  deleteTitleAttr = 'account',
+  deleteTitleAttr = 'account'
   // loadingMessage = '載入中...',
 }: DataTableProps<TRawData, TQuery>) {
   const { showToast } = useToast()
@@ -117,11 +121,11 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   // const [loading, setLoading] = useState(false)
   const [pagination, setPagination] = useState<PaginationInfo>({
     currentPage: initialCurrentPage,
-    itemsPerPage: initialItemsPerPage,
-    totalItems: 0,
-    totalPages: 0,
     hasNextPage: false,
     hasPrevPage: false,
+    itemsPerPage: initialItemsPerPage,
+    totalItems: 0,
+    totalPages: 0
   })
   const [currentPage, setCurrentPage] = useState(initialCurrentPage)
   const [itemsPerPage, setItemsPerPage] = useState(initialItemsPerPage)
@@ -140,72 +144,78 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   const [detailTitle, setDetailTitle] = useState<string>('')
 
   // 載入資料
-  const loadData = useCallback(async (queryParams: TQuery = {} as TQuery, page = currentPage, pageSize = itemsPerPage) => {
-    // setLoading(true)
-    try {
-      const response = await loadDataFn(queryParams, page, pageSize)
+  const loadData = useCallback(
+    async (queryParams: TQuery = {} as TQuery, page = currentPage, pageSize = itemsPerPage) => {
+      // setLoading(true)
+      try {
+        const response = await loadDataFn(queryParams, page, pageSize)
 
-      setData(response.data as TableItem[])
-      setPagination(response.pagination)
-      setCurrentPage(response.pagination.currentPage)
-      setItemsPerPage(response.pagination.itemsPerPage)
-      setCurrentQuery(queryParams)
-    }
-    catch (error) {
-      console.error('載入資料失敗:', error)
-      if (error instanceof Error) {
-        showToast(`載入資料失敗，${error.message}`, 'error')
+        setData(response.data as TableItem[])
+        setPagination(response.pagination)
+        setCurrentPage(response.pagination.currentPage)
+        setItemsPerPage(response.pagination.itemsPerPage)
+        setCurrentQuery(queryParams)
+      } catch (error) {
+        console.error('載入資料失敗:', error)
+        if (error instanceof Error) {
+          showToast(`載入資料失敗，${error.message}`, 'error')
+        } else {
+          showToast(`載入資料失敗，${String(error)}`, 'error')
+        }
+      } finally {
+        // setLoading(false)
       }
-      else {
-        showToast(`載入資料失敗，${String(error)}`, 'error')
-      }
-    }
-    finally {
-      // setLoading(false)
-    }
-  }, [loadDataFn, currentPage, itemsPerPage, showToast])
+    },
+    [loadDataFn, currentPage, itemsPerPage, showToast]
+  )
 
   // 初始化資料
+  // biome-ignore lint/correctness/useExhaustiveDependencies: 只在組件掛載時執行一次
   useEffect(() => {
     loadData()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // 只在組件掛載時執行一次
+  }, [])
 
   // 當資料變化時重置選擇項目
+  // biome-ignore lint/correctness/useExhaustiveDependencies: setSelectedItems 是穩定的 setter
   useEffect(() => {
     setSelectedItems([])
   }, [data])
 
   // React Hook Form 設定
-  const defaultValues = searchFields.reduce<Record<string, string | number | undefined | { startDatetime?: string, endDatetime?: string }>>((acc, field) => {
+  const defaultValues = searchFields.reduce<
+    Record<string, string | number | undefined | { startDatetime?: string; endDatetime?: string }>
+  >((acc, field) => {
     if (field.type === 'dateRange') {
-      acc[field.key] = { startDatetime: '', endDatetime: '' }
-    }
-    else {
+      acc[field.key] = { endDatetime: '', startDatetime: '' }
+    } else {
       acc[field.key] = ''
     }
     return acc
   }, {})
-  const { register, handleSubmit, reset, control } = useForm<Record<string, string | number | undefined | { startDatetime?: string, endDatetime?: string }>>({
-    defaultValues,
+  const { register, handleSubmit, reset, control } = useForm<
+    Record<string, string | number | undefined | { startDatetime?: string; endDatetime?: string }>
+  >({
+    defaultValues
   })
 
   // 選擇項目
   const handleSelectItem = (id: number) => {
     const newSelection = selectedItems.includes(id)
-      ? selectedItems.filter(itemId => itemId !== id)
+      ? selectedItems.filter((itemId) => itemId !== id)
       : [...selectedItems, id]
     setSelectedItems(newSelection)
   }
 
   // 選擇全部項目
   const handleSelectAll = () => {
-    const newSelection = selectedItems.length === data.length ? [] : data.map(item => item.id)
+    const newSelection = selectedItems.length === data.length ? [] : data.map((item) => item.id)
     setSelectedItems(newSelection)
   }
 
   // 查詢表單處理
-  const onSubmit = (formData: Record<string, string | number | undefined | { startDatetime?: string, endDatetime?: string }>) => {
+  const onSubmit = (
+    formData: Record<string, string | number | undefined | { startDatetime?: string; endDatetime?: string }>
+  ) => {
     // 處理表單數據：空字串轉換為 null，日期範圍欄位展開
     const processedData: Record<string, string | number | null> = {}
 
@@ -218,8 +228,7 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       // 處理一般欄位
       else if (value === '' || value === undefined) {
         processedData[key] = null
-      }
-      else {
+      } else {
         processedData[key] = value as string | number | null
       }
     })
@@ -274,17 +283,13 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         await deleteDataFn([deletingItem.id])
 
         // 暫時從本地資料中移除
-        setData(prev => prev.filter(d => d.id !== deletingItem.id))
+        setData((prev) => prev.filter((d) => d.id !== deletingItem.id))
         showToast('刪除成功', 'success')
-      }
-      catch (error) {
-        const errorMessage = error instanceof ApiError
-          ? error.messageDesc
-          : '刪除失敗，請稍後再試'
+      } catch (error) {
+        const errorMessage = error instanceof ApiError ? error.messageDesc : '刪除失敗，請稍後再試'
         showToast(errorMessage, 'error')
         console.error('Delete error:', error)
-      }
-      finally {
+      } finally {
         setDeletingItem(null)
         setIsDeleteModalOpen(false)
       }
@@ -298,17 +303,13 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         await deleteDataFn(selectedItems)
 
         // 暫時從本地資料中移除選中的項目
-        setData(prev => prev.filter(item => !selectedItems.includes(item.id)))
+        setData((prev) => prev.filter((item) => !selectedItems.includes(item.id)))
         showToast(`成功刪除 ${selectedItems.length} 筆資料`, 'success')
-      }
-      catch (error) {
-        const errorMessage = error instanceof ApiError
-          ? error.messageDesc
-          : '批次刪除失敗，請稍後再試'
+      } catch (error) {
+        const errorMessage = error instanceof ApiError ? error.messageDesc : '批次刪除失敗，請稍後再試'
         showToast(errorMessage, 'error')
         console.error('Batch delete error:', error)
-      }
-      finally {
+      } finally {
         setSelectedItems([])
         setIsBatchDeleteModalOpen(false)
       }
@@ -370,21 +371,17 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
   const renderCellValue = (value: string | boolean | null, column: TableColumn) => {
     if (value === null || value === '' || value === undefined) {
       return <span className="badge badge-outline border-gray-300 text-xs text-gray-500">None</span>
-    }
-    else if (typeof value === 'boolean') {
+    } else if (typeof value === 'boolean') {
       return (
         <div>
-          {value
-            ? (
-                <Check size={18} className="text-green-600 stroke-[5]" />
-              )
-            : (
-                <X size={18} className="text-red-600 stroke-[5]" />
-              )}
+          {value ? (
+            <Check className="text-green-600 stroke-5" size={18} />
+          ) : (
+            <X className="text-red-600 stroke-5" size={18} />
+          )}
         </div>
       )
-    }
-    else if (column.render === 'blob') {
+    } else if (column.render === 'blob') {
       return (
         <button
           className="btn btn-xs"
@@ -393,12 +390,12 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
             handleDetailClick(String(value), column.title)
           }}
           title="點擊查看詳細內容"
+          type="button"
         >
           ******
         </button>
       )
-    }
-    else if (column.render === 'json') {
+    } else if (column.render === 'json') {
       try {
         const parsed = JSON.parse(String(value))
         const prettyJson = JSON.stringify(parsed, null, 2)
@@ -410,12 +407,12 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
               handleDetailClick(prettyJson, column.title)
             }}
             title="點擊查看 JSON 詳細內容"
+            type="button"
           >
             ******
           </button>
         )
-      }
-      catch {
+      } catch {
         // 如果無法解析為 JSON，回傳原始值
         return value
       }
@@ -430,91 +427,76 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
     <div className="w-full">
       {/* 查詢表單 */}
       {searchFields.length > 0 && (
-        <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
+        <form className="mb-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex items-center gap-6 flex-wrap">
-            {searchFields.map(field => (
-              <div key={field.key} className="flex items-center gap-3">
-                <label className="text-form-label whitespace-nowrap">
+            {searchFields.map((field) => (
+              <div className="flex items-center gap-3" key={field.key}>
+                <span className="text-form-label whitespace-nowrap">
                   {field.label}
                   {field.required && <span className="text-form-required">*</span>}
-                </label>
-                {field.type === 'select'
-                  ? (
-                      <select
-                        className={`select select-bordered w-40 ${field.className || ''}`}
-                        required={field.required}
-                        {...register(field.key)}
-                      >
-                        {field.placeholder && <option value="">{field.placeholder}</option>}
-                        {field.options?.map(option => (
-                          <option key={option.value} value={option.value ?? ''}>
-                            {option.label}
-                          </option>
-                        ))}
-                      </select>
-                    )
-                  : field.type === 'dateRange'
-                    ? (
-                        <Controller
-                          name={field.key}
-                          control={control}
-                          render={({ field: controllerField }) => (
-                            <DateRangePicker
-                              value={controllerField.value as { startDatetime?: string, endDatetime?: string }}
-                              onChange={controllerField.onChange}
-                              placeholder={field.placeholder}
-                              className={field.className}
-                            />
-                          )}
-                        />
-                      )
-                    : (
-                        <input
-                          type={field.type || 'text'}
-                          className={`input input-bordered w-40 ${field.className || ''}`}
-                          placeholder={field.placeholder || ''}
-                          required={field.required}
-                          {...register(field.key)}
-                        />
-                      )}
+                </span>
+                {field.type === 'select' ? (
+                  <select
+                    className={`select select-bordered w-40 ${field.className || ''}`}
+                    required={field.required}
+                    {...register(field.key)}
+                  >
+                    {field.placeholder && <option value="">{field.placeholder}</option>}
+                    {field.options?.map((option) => (
+                      <option key={option.value} value={option.value ?? ''}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : field.type === 'dateRange' ? (
+                  <Controller
+                    control={control}
+                    name={field.key}
+                    render={({ field: controllerField }) => (
+                      <DateRangePicker
+                        className={field.className}
+                        onChange={controllerField.onChange}
+                        placeholder={field.placeholder}
+                        value={controllerField.value as { startDatetime?: string; endDatetime?: string }}
+                      />
+                    )}
+                  />
+                ) : (
+                  <input
+                    className={`input input-bordered w-40 ${field.className || ''}`}
+                    placeholder={field.placeholder || ''}
+                    required={field.required}
+                    type={field.type || 'text'}
+                    {...register(field.key)}
+                  />
+                )}
               </div>
             ))}
 
             <div className="flex items-center gap-3 flex-1 justify-between">
               <div className="flex items-center gap-3">
-                <button
-                  type="submit"
-                  className="btn btn-primary px-6"
-                >
+                <button className="btn btn-primary px-6" type="submit">
                   <Search size={16} />
                   查詢
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-ghost px-6"
-                  onClick={handleReset}
-                >
+                <button className="btn btn-ghost px-6" onClick={handleReset} type="button">
                   <RotateCcw size={16} />
                   重置
                 </button>
               </div>
               <div className="flex items-center gap-2">
                 {AddFormComponent && (
-                  <button
-                    type="button"
-                    className="btn btn-success text-white"
-                    onClick={handleAddClick}
-                  >
+                  <button className="btn btn-success text-white" onClick={handleAddClick} type="button">
                     <Plus size={16} />
                     新增
                   </button>
                 )}
                 {deleteDataFn && (
                   <button
-                    type="button"
                     className="btn btn-error text-white"
-                    onClick={() => handleBatchDeleteClick(selectedItems)}
                     disabled={selectedItems.length === 0}
+                    onClick={() => handleBatchDeleteClick(selectedItems)}
+                    type="button"
                   >
                     <Trash2 size={16} />
                     刪除
@@ -531,102 +513,105 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         <table className="table table-zebra w-full">
           <thead>
             <tr className="bg-base-200">
-
               {deleteDataFn && (
                 <th className="text-table-header w-10 py-3">
                   <input
-                    type="checkbox"
-                    className="checkbox checkbox-xs"
                     checked={selectedItems.length > 0 && selectedItems.length === data.length}
+                    className="checkbox checkbox-xs"
                     onChange={handleSelectAll}
+                    type="checkbox"
                   />
                 </th>
               )}
 
-              {columns.map(column => (
+              {columns.map((column) => (
                 <th
-                  key={column.key}
                   className={`text-table-header py-3 ${column.width || ''} ${column.className || ''}`}
+                  key={column.key}
                 >
                   {column.title}
                 </th>
               ))}
 
-              {(EditFormComponent || deleteDataFn) && <th className="text-table-header w-12 py-3 text-center">功能</th> }
-
+              {(EditFormComponent || deleteDataFn) && <th className="text-table-header w-12 py-3 text-center">功能</th>}
             </tr>
           </thead>
           <tbody>
-            {data.length === 0
-              ? (
-                  <tr>
-                    <td colSpan={totalColumns} className="text-center py-8">
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        <span className="text-gray-500">{emptyMessage}</span>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              : (
-                  data.map((item, index) => (
-                    <tr
-                      key={`table-row-${index}`}
-                      onClick={() => handleSelectItem(item.id)}
-                      className={`
+            {data.length === 0 ? (
+              <tr>
+                <td className="text-center py-8" colSpan={totalColumns}>
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <span className="text-gray-500">{emptyMessage}</span>
+                  </div>
+                </td>
+              </tr>
+            ) : (
+              data.map((item, index) => (
+                <tr
+                  className={`
                       cursor-pointer
                       transition-[background-color,transform,box-shadow] duration-150
-                      ${selectedItems.includes(item.id)
-                      ? '!bg-blue-50 shadow-sm hover:!bg-blue-100 hover:shadow-md'
-                      : 'hover:bg-gray-50'
-                    }
+                      ${
+                        selectedItems.includes(item.id)
+                          ? 'bg-blue-50! shadow-sm hover:bg-blue-100! hover:shadow-md'
+                          : 'hover:bg-gray-50'
+                      }
                     `}
-                    >
+                  key={item.id ?? `${currentPage}-${index}`}
+                  onClick={(e) => {
+                    // 如果點擊的是 checkbox 或 button，不觸發行選取
+                    const target = e.target as HTMLElement
+                    if (target.closest('input[type="checkbox"]') || target.closest('button')) {
+                      return
+                    }
+                    handleSelectItem(item.id)
+                  }}
+                >
+                  {deleteDataFn && (
+                    <td className="text-table-cell">
+                      <input
+                        checked={selectedItems.includes(item.id)}
+                        className="checkbox checkbox-xs"
+                        onChange={() => handleSelectItem(item.id)}
+                        type="checkbox"
+                      />
+                    </td>
+                  )}
 
-                      {deleteDataFn
-                        && (
-                          <td className="text-table-cell" onClick={e => e.stopPropagation()}>
-                            <input
-                              type="checkbox"
-                              className="checkbox checkbox-xs"
-                              checked={selectedItems.includes(item.id)}
-                              onChange={() => handleSelectItem(item.id)}
-                            />
-                          </td>
+                  {columns.map((column) => (
+                    <td className={`text-table-cell ${column.className || ''}`} key={column.key}>
+                      {renderCellValue(item[column.key] as string | boolean | null, column)}
+                    </td>
+                  ))}
+                  {(EditFormComponent || deleteDataFn) && (
+                    <td className="text-table-cell">
+                      <div className="flex items-center justify-center gap-2">
+                        {EditFormComponent && (
+                          <button
+                            className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
+                            onClick={() => handleEditClick(item)}
+                            title="編輯"
+                            type="button"
+                          >
+                            <Edit className="stroke-2" size={18} />
+                          </button>
                         )}
-
-                      {columns.map(column => (
-                        <td key={column.key} className={`text-table-cell ${column.className || ''}`}>
-                          {renderCellValue(item[column.key] as string | boolean | null, column)}
-                        </td>
-                      ))}
-                      {(EditFormComponent || deleteDataFn)
-                        && (
-                          <td className="text-table-cell" onClick={e => e.stopPropagation()}>
-                            <div className="flex items-center justify-center gap-2">
-                              {EditFormComponent && (
-                                <button
-                                  className="btn btn-ghost btn-xs text-blue-600 hover:text-blue-800"
-                                  onClick={() => handleEditClick(item)}
-                                  title="編輯"
-                                >
-                                  <Edit className="stroke-[2]" size={18} />
-                                </button>
-                              )}
-                              {deleteDataFn && (
-                                <button
-                                  className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
-                                  onClick={() => handleDeleteClick(item)}
-                                  title="刪除"
-                                >
-                                  <Trash2 className="stroke-[2]" size={18} />
-                                </button>
-                              )}
-                            </div>
-                          </td>
+                        {deleteDataFn && (
+                          <button
+                            className="btn btn-ghost btn-xs text-red-600 hover:text-red-800"
+                            onClick={() => handleDeleteClick(item)}
+                            title="刪除"
+                            type="button"
+                          >
+                            <Trash2 className="stroke-2" size={18} />
+                          </button>
                         )}
-                    </tr>
-                  ))
-                )}
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -636,10 +621,10 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         <div className="flex items-center space-x-3">
           <select
             className="select select-bordered select-md border-gray-200"
+            onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
             value={itemsPerPage}
-            onChange={e => handleItemsPerPageChange(Number(e.target.value))}
           >
-            {itemsPerPageOptions.map(option => (
+            {itemsPerPageOptions.map((option) => (
               <option key={option} value={option}>
                 {`${option} 筆/頁`}
               </option>
@@ -659,17 +644,19 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
         <div className="join">
           <button
             className="join-item btn btn-md"
-            onClick={() => handlePageChange(1)}
             disabled={currentPage === 1 || pagination.totalPages === 0}
+            onClick={() => handlePageChange(1)}
             title="第一頁"
+            type="button"
           >
             «
           </button>
           <button
             className="join-item btn btn-md"
-            onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1 || pagination.totalPages === 0}
+            onClick={() => handlePageChange(Math.max(currentPage - 1, 1))}
             title="上一頁"
+            type="button"
           >
             ‹
           </button>
@@ -690,12 +677,13 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
             for (let i = startPage; i <= endPage; i++) {
               pages.push(
                 <button
+                  className={`join-item btn btn-md ${currentPage === i ? 'btn-active' : ''}`}
                   key={i}
                   onClick={() => handlePageChange(i)}
-                  className={`join-item btn btn-md ${currentPage === i ? 'btn-active' : ''}`}
+                  type="button"
                 >
                   {i}
-                </button>,
+                </button>
               )
             }
 
@@ -704,17 +692,19 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
 
           <button
             className="join-item btn btn-md"
-            onClick={() => handlePageChange(Math.min(currentPage + 1, pagination.totalPages))}
             disabled={currentPage === pagination.totalPages || pagination.totalPages === 0}
+            onClick={() => handlePageChange(Math.min(currentPage + 1, pagination.totalPages))}
             title="下一頁"
+            type="button"
           >
             ›
           </button>
           <button
             className="join-item btn btn-md"
-            onClick={() => handlePageChange(pagination.totalPages)}
             disabled={currentPage === pagination.totalPages || pagination.totalPages === 0}
+            onClick={() => handlePageChange(pagination.totalPages)}
             title="最後一頁"
+            type="button"
           >
             »
           </button>
@@ -726,23 +716,15 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       {/* 編輯 Modal */}
       {EditFormComponent && (
         <Modal
+          className="max-w-none! w-[90vw] h-[90vh]"
           isOpen={isEditModalOpen}
-          modalTitle="編輯項目"
-          className="!max-w-none w-[90vw] h-[90vh]"
-          modalContent={(
-            <EditFormComponent
-              data={editingItem}
-              afterSubmit={handleEditSubmit}
-            />
-          )}
-          modalAction={(
-            <button
-              className="btn btn-ghost"
-              onClick={handleCloseEditModal}
-            >
+          modalAction={
+            <button className="btn btn-ghost" onClick={handleCloseEditModal} type="button">
               關閉
             </button>
-          )}
+          }
+          modalContent={<EditFormComponent afterSubmit={handleEditSubmit} data={editingItem} />}
+          modalTitle="編輯項目"
           onCancel={handleCloseEditModal}
         />
       )}
@@ -751,8 +733,17 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       {deleteDataFn && (
         <Modal
           isOpen={isDeleteModalOpen}
-          modalTitle="確認刪除"
-          modalContent={(
+          modalAction={
+            <>
+              <button className="btn btn-ghost" onClick={handleCancelDelete} type="button">
+                取消
+              </button>
+              <button className="btn btn-error text-white" onClick={handleConfirmDelete} type="button">
+                確認刪除
+              </button>
+            </>
+          }
+          modalContent={
             <>
               確定要刪除項目「
               <span className="font-bold text-red-600">{getDisplayTitle(deletingItem, deleteTitleAttr)}</span>
@@ -760,23 +751,8 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
               <br />
               <span className="text-sm text-gray-500">此操作無法復原。</span>
             </>
-          )}
-          modalAction={(
-            <>
-              <button
-                className="btn btn-ghost"
-                onClick={handleCancelDelete}
-              >
-                取消
-              </button>
-              <button
-                className="btn btn-error text-white"
-                onClick={handleConfirmDelete}
-              >
-                確認刪除
-              </button>
-            </>
-          )}
+          }
+          modalTitle="確認刪除"
           onCancel={handleCancelDelete}
         />
       )}
@@ -784,20 +760,15 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       {/* 新增 Modal */}
       {AddFormComponent && (
         <Modal
+          className="max-w-none! w-[90vw] h-100vh"
           isOpen={isAddModalOpen}
-          modalTitle="新增項目"
-          className="!max-w-none w-[90vw] h-[100vh]"
-          modalContent={(
-            <AddFormComponent afterSubmit={handleAddSubmit} />
-          )}
-          modalAction={(
-            <button
-              className="btn btn-ghost"
-              onClick={handleCloseAddModal}
-            >
+          modalAction={
+            <button className="btn btn-ghost" onClick={handleCloseAddModal} type="button">
               關閉
             </button>
-          )}
+          }
+          modalContent={<AddFormComponent afterSubmit={handleAddSubmit} />}
+          modalTitle="新增項目"
           onCancel={handleCloseAddModal}
         />
       )}
@@ -806,72 +777,50 @@ export default function DataTable<TRawData = unknown, TQuery = Record<string, un
       {deleteDataFn && (
         <Modal
           isOpen={isBatchDeleteModalOpen}
-          modalTitle="確認批次刪除"
-          modalContent={(
+          modalAction={
             <>
-              確定要刪除以下
-              {' '}
-              {selectedItems.length}
-              {' '}
-              個項目嗎？
+              <button className="btn btn-ghost" onClick={handleCancelBatchDelete} type="button">
+                取消
+              </button>
+              <button className="btn btn-error text-white" onClick={handleConfirmBatchDelete} type="button">
+                確認刪除
+              </button>
+            </>
+          }
+          modalContent={
+            <>
+              確定要刪除以下 {selectedItems.length} 個項目嗎？
               <div className="mt-2 max-h-32 overflow-y-auto bg-gray-50 p-2 rounded">
                 {selectedItems.map((id) => {
-                  const item = data.find(d => d.id === id)
-                  return item
-                    ? (
-                        <div key={id} className="text-sm text-red-600 font-bold">
-                          •
-                          {' '}
-                          {getDisplayTitle(item, deleteTitleAttr)}
-                        </div>
-                      )
-                    : null
+                  const item = data.find((d) => d.id === id)
+                  return item ? (
+                    <div className="text-sm text-red-600 font-bold" key={id}>
+                      • {getDisplayTitle(item, deleteTitleAttr)}
+                    </div>
+                  ) : null
                 })}
               </div>
               <span className="text-sm text-gray-500 mt-2 block">此操作無法復原。</span>
             </>
-          )}
-          modalAction={(
-            <>
-              <button
-                className="btn btn-ghost"
-                onClick={handleCancelBatchDelete}
-              >
-                取消
-              </button>
-              <button
-                className="btn btn-error text-white"
-                onClick={handleConfirmBatchDelete}
-              >
-                確認刪除
-              </button>
-            </>
-          )}
+          }
+          modalTitle="確認批次刪除"
           onCancel={handleCancelBatchDelete}
         />
       )}
 
       {/* 詳細資料 Modal (Blob/JSON) */}
       <Modal
+        className="max-w-none! w-[90vw] h-90vh"
         isOpen={isDetailModalOpen}
-        modalTitle={`詳細內容 - ${detailTitle}`}
-        className="!max-w-none w-[90vw] h-[90vh]"
-        modalContent={(
-          <pre className="text-pre whitespace-pre-wrap break-words p-4 rounded">
-            {detailContent}
-          </pre>
-        )}
-        modalAction={(
-          <button
-            className="btn btn-ghost"
-            onClick={handleCloseDetailModal}
-          >
+        modalAction={
+          <button className="btn btn-ghost" onClick={handleCloseDetailModal} type="button">
             關閉
           </button>
-        )}
+        }
+        modalContent={<pre className="text-pre whitespace-pre-wrap wrap-break-words p-4 rounded">{detailContent}</pre>}
+        modalTitle={`詳細內容 - ${detailTitle}`}
         onCancel={handleCloseDetailModal}
       />
-
     </div>
   )
 }

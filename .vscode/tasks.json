@@ -1,0 +1,15 @@
+{
+    "tasks": [
+        {
+            "command": "pnpm run local",
+            "isBackground": true,
+            "label": "local server",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "type": "shell"
+        }
+    ],
+    "version": "2.0.0"
+}

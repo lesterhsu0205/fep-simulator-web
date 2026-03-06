@@ -1,10 +1,10 @@
+import { Eye, EyeOff, RotateCcw, Save } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Save, RotateCcw, Eye, EyeOff } from 'lucide-react'
 import { useToast } from '@/contexts/ToastContext.tsx'
-import { type UserCreateFormData } from '@/models/User'
-import { UserService } from '@/services/UserService'
 import { ApiError } from '@/error/ApiError'
+import type { UserCreateFormData } from '@/models/User'
+import { UserService } from '@/services/UserService'
 
 interface UserCreateProps {
   afterSubmit?: () => void
@@ -15,16 +15,22 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<UserCreateFormData>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    formState: { errors }
+  } = useForm<UserCreateFormData>({
     defaultValues: {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
       accountType: 'user',
-      roleCode: 'GENERAL',
+      confirmPassword: '',
+      email: '',
       isActive: true,
-    },
+      password: '',
+      roleCode: 'GENERAL',
+      username: ''
+    }
   })
 
   const password = watch('password')
@@ -32,11 +38,10 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
   const handleFormSubmit = async (formData: UserCreateFormData) => {
     try {
       // 移除確認密碼欄位，因為它不需要傳送到 API
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...apiData } = formData
       const requestData = {
         action: 'A' as const,
-        ...apiData,
+        ...apiData
       }
 
       await UserService.maintainSystemUser(requestData)
@@ -47,11 +52,8 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
         afterSubmit?.()
         reset()
       }
-    }
-    catch (error) {
-      const errorMessage = error instanceof ApiError
-        ? error.messageDesc
-        : '建立失敗，請稍後再試'
+    } catch (error) {
+      const errorMessage = error instanceof ApiError ? error.messageDesc : '建立失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Create error:', error)
     }
@@ -65,8 +67,7 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
   return (
     <div className="w-full">
       {/* 表單卡片 */}
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6">
-
+      <form className="p-6" onSubmit={handleSubmit(handleFormSubmit)}>
         {/* 基本資料區塊 */}
         <div className="mb-8">
           <h2 className="text-card-title mb-6">基本資料</h2>
@@ -76,52 +77,48 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
             <div className="space-y-6">
               {/* 員工編號 */}
               <div className="flex items-center gap-4">
-                <label className="text-form-label w-30 flex-shrink-0">
+                <span className="text-form-label w-30 shrink-0">
                   員工編號
                   <span className="text-form-required">*</span>
-                </label>
+                </span>
                 <div className="flex-1">
                   <input
-                    type="text"
                     className="input input-bordered h-10 w-full"
                     placeholder="ex.BK00999"
+                    type="text"
                     {...register('username', {
-                      required: '員工編號為必填項目',
+                      maxLength: { message: '員工編號不能超過7個字元', value: 7 },
                       pattern: {
-                        value: /^[A-Za-z]{2}\d{5}$/,
                         message: '須為兩位英文字 + 5位數字 (ex.BK00999)',
+                        value: /^[A-Za-z]{2}\d{5}$/
                       },
-                      maxLength: { value: 7, message: '員工編號不能超過7個字元' },
+                      required: '員工編號為必填項目'
                     })}
                   />
-                  {errors.username && (
-                    <div className="text-form-error">{errors.username.message}</div>
-                  )}
+                  {errors.username && <div className="text-form-error">{errors.username.message}</div>}
                 </div>
               </div>
 
               {/* 電子郵件 */}
               <div className="flex items-center gap-4">
-                <label className="text-form-label w-30 flex-shrink-0">
+                <span className="text-form-label w-30 shrink-0">
                   電子郵件
                   <span className="text-form-required">*</span>
-                </label>
+                </span>
                 <div className="flex-1">
                   <input
-                    type="email"
                     className="input input-bordered h-10 w-full"
                     placeholder="請輸入電子郵件"
+                    type="email"
                     {...register('email', {
-                      required: '電子郵件為必填項目',
                       pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                         message: '請輸入有效的電子郵件地址',
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
                       },
+                      required: '電子郵件為必填項目'
                     })}
                   />
-                  {errors.email && (
-                    <div className="text-form-error">{errors.email.message}</div>
-                  )}
+                  {errors.email && <div className="text-form-error">{errors.email.message}</div>}
                 </div>
               </div>
 
@@ -167,60 +164,56 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
             <div className="space-y-6">
               {/* 密碼 */}
               <div className="flex items-center gap-4">
-                <label className="text-form-label w-30 flex-shrink-0">
+                <span className="text-form-label w-30 shrink-0">
                   密碼
                   <span className="text-form-required">*</span>
-                </label>
+                </span>
                 <div className="flex-1 relative">
                   <input
-                    type={showPassword ? 'text' : 'password'}
                     className="input input-bordered h-10 w-full pr-10"
                     placeholder="請輸入密碼"
+                    type={showPassword ? 'text' : 'password'}
                     {...register('password', {
-                      required: '密碼為必填項目',
-                      minLength: { value: 8, message: '密碼至少需要8個字元' },
-                      maxLength: { value: 30, message: '密碼不能超過30個字元' },
+                      maxLength: { message: '密碼不能超過30個字元', value: 30 },
+                      minLength: { message: '密碼至少需要8個字元', value: 8 },
+                      required: '密碼為必填項目'
                     })}
                   />
                   <button
-                    type="button"
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
+                    type="button"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
-                  {errors.password && (
-                    <div className="text-form-error">{errors.password.message}</div>
-                  )}
+                  {errors.password && <div className="text-form-error">{errors.password.message}</div>}
                 </div>
               </div>
 
               {/* 確認密碼 */}
               <div className="flex items-center gap-4">
-                <label className="text-form-label w-30 flex-shrink-0">
+                <span className="text-form-label w-30 shrink-0">
                   確認密碼
                   <span className="text-form-required">*</span>
-                </label>
+                </span>
                 <div className="flex-1 relative">
                   <input
-                    type={showConfirmPassword ? 'text' : 'password'}
                     className="input input-bordered h-10 w-full pr-10"
                     placeholder="請再次輸入密碼"
+                    type={showConfirmPassword ? 'text' : 'password'}
                     {...register('confirmPassword', {
                       required: '請確認密碼',
-                      validate: value => value === password || '密碼不一致',
+                      validate: (value) => value === password || '密碼不一致'
                     })}
                   />
                   <button
-                    type="button"
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    type="button"
                   >
                     {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
-                  {errors.confirmPassword && (
-                    <div className="text-form-error">{errors.confirmPassword.message}</div>
-                  )}
+                  {errors.confirmPassword && <div className="text-form-error">{errors.confirmPassword.message}</div>}
                 </div>
               </div>
 
@@ -252,18 +245,11 @@ export default function UserCreate({ afterSubmit }: UserCreateProps) {
 
         {/* 操作按鈕 */}
         <div className="flex justify-end gap-3 pt-4">
-          <button
-            type="button"
-            className="btn btn-ghost px-6"
-            onClick={handleReset}
-          >
+          <button className="btn btn-ghost px-6" onClick={handleReset} type="button">
             <RotateCcw size={16} />
             重置
           </button>
-          <button
-            type="submit"
-            className="btn btn-primary px-6"
-          >
+          <button className="btn btn-primary px-6" type="submit">
             <Save size={16} />
             新增
           </button>

@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { useToast } from '@/contexts/ToastContext'
-import { FinanceService } from '@/services/FinanceService'
 import FileUploadForm, { type FileUploadFormData } from '@/components/FileUploadForm'
-import { type ApiResponse } from '@/services/ApiService'
-import { type UploadResult } from '@/models/UploadResult'
+import { useToast } from '@/contexts/ToastContext'
 import { ApiError } from '@/error/ApiError'
+import type { UploadResult } from '@/models/UploadResult'
+import type { ApiResponse } from '@/services/ApiService'
+import { FinanceService } from '@/services/FinanceService'
 
 export default function FinanceFileUpload() {
   const { showToast } = useToast()
@@ -30,43 +30,38 @@ export default function FinanceFileUpload() {
         setUploadResult(result)
         if (result.messageCode === '00000') {
           showToast('檔案上傳成功', 'success')
-        }
-        else {
+        } else {
           showToast(`上傳回應：${result.messageDesc}`, 'warning')
         }
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('Upload error:', error)
 
-      const errorMessage = error instanceof ApiError
-        ? error.messageDesc
-        : '檔案上傳失敗，請稍後再試'
+      const errorMessage = error instanceof ApiError ? error.messageDesc : '檔案上傳失敗，請稍後再試'
       showToast(errorMessage, 'error')
       setUploadError(`上傳失敗：${errorMessage}`)
 
       if (error instanceof ApiError) {
         const uploadResult: ApiResponse<UploadResult> = {
-          messageDesc: error.messageDesc,
           messageCode: error.messageCode,
           messageContent: error.messageContent as UploadResult | null,
+          messageDesc: error.messageDesc
         }
 
         setUploadResult(uploadResult)
       }
-    }
-    finally {
+    } finally {
       setIsUploading(false)
     }
   }
 
   return (
     <FileUploadForm
-      templateFileName="SimDataUpload_FISC.xlsx"
-      onSubmit={handleFileSubmit}
       isUploading={isUploading}
-      uploadResult={uploadResult}
+      onSubmit={handleFileSubmit}
+      templateFileName="SimDataUpload_FISC.xlsx"
       uploadError={uploadError}
+      uploadResult={uploadResult}
     />
   )
 }

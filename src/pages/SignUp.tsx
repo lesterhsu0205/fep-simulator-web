@@ -1,12 +1,12 @@
+import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, User, Lock, Mail } from 'lucide-react'
-import { useToast } from '@/contexts/ToastContext'
-import { useAuth } from '@/contexts/AuthContext'
-import { type SignupRequest } from '@/services/AuthService'
 import { Footer } from '@/components/Footer'
+import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/contexts/ToastContext'
 import { ApiError } from '@/error/ApiError'
+import type { SignupRequest } from '@/services/AuthService'
 import transactionalDataIcon from '/transactional-data.png'
 
 // 註冊表單資料類型
@@ -26,15 +26,20 @@ export default function SignUp() {
   const { showToast } = useToast()
   const { signup, isLoading } = useAuth()
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<SignupFormData>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors }
+  } = useForm<SignupFormData>({
     defaultValues: {
-      username: '',
-      password: '',
+      accountType: 'user',
       confirmPassword: '',
       email: '',
-      accountType: 'user',
+      password: '',
       roleCode: 'GENERAL',
-    },
+      username: ''
+    }
   })
 
   const password = watch('password')
@@ -42,11 +47,11 @@ export default function SignUp() {
   const handleSignUp = async (data: SignupFormData) => {
     try {
       const signupData: SignupRequest = {
-        username: data.username,
-        password: data.password,
-        email: data.email,
         accountType: 'user',
+        email: data.email,
+        password: data.password,
         roleCode: data.roleCode,
+        username: data.username
       }
 
       await signup(signupData)
@@ -55,11 +60,8 @@ export default function SignUp() {
       setTimeout(() => {
         navigate('/login')
       }, 1500)
-    }
-    catch (error) {
-      const errorMessage = error instanceof ApiError
-        ? error.messageDesc
-        : '註冊失敗，請稍後再試'
+    } catch (error) {
+      const errorMessage = error instanceof ApiError ? error.messageDesc : '註冊失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Signup error:', error)
     }
@@ -76,9 +78,9 @@ export default function SignUp() {
           <div className="text-center lg:text-left lg:ml-8 lg:min-w-96 lg:max-w-lg">
             <div className="flex justify-center lg:justify-start mb-6">
               <img
-                src={transactionalDataIcon}
                 alt="Transaction icons created by nangicon - Flaticon"
                 className="w-24 h-24"
+                src={transactionalDataIcon}
               />
             </div>
             <h1 className="text-heading">立即註冊!</h1>
@@ -95,99 +97,91 @@ export default function SignUp() {
                   {/* 員工編號輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <User size={20} className="text-gray-400" />
+                      <User className="text-gray-400" size={20} />
                       <input
-                        type="text"
                         className="grow"
                         placeholder="請輸入員工編號(ex.BK00999)"
+                        type="text"
                         {...register('username', {
-                          required: '員工編號為必填項目',
+                          maxLength: { message: '員工編號不能超過7個字元', value: 7 },
                           pattern: {
-                            value: /^[A-Za-z]{2}\d{5}$/,
                             message: '須為兩位英文字 + 5位數字 (ex.BK00999)',
+                            value: /^[A-Za-z]{2}\d{5}$/
                           },
-                          maxLength: { value: 7, message: '員工編號不能超過7個字元' },
+                          required: '員工編號為必填項目'
                         })}
                       />
                     </label>
-                    {errors.username && (
-                      <p className="text-form-error">{errors.username.message}</p>
-                    )}
+                    {errors.username && <p className="text-form-error">{errors.username.message}</p>}
                   </div>
 
                   {/* 電子郵件輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <Mail size={20} className="text-gray-400" />
+                      <Mail className="text-gray-400" size={20} />
                       <input
-                        type="email"
                         className="grow"
                         placeholder="請輸入電子郵件"
+                        type="email"
                         {...register('email', {
-                          required: '電子郵件為必填項目',
                           pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                             message: '請輸入有效的電子郵件地址',
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
                           },
+                          required: '電子郵件為必填項目'
                         })}
                       />
                     </label>
-                    {errors.email && (
-                      <p className="text-form-error">{errors.email.message}</p>
-                    )}
+                    {errors.email && <p className="text-form-error">{errors.email.message}</p>}
                   </div>
 
                   {/* 密碼輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <Lock size={20} className="text-gray-400" />
+                      <Lock className="text-gray-400" size={20} />
                       <input
-                        type={showPassword ? 'text' : 'password'}
                         className="grow"
                         placeholder="請輸入密碼"
+                        type={showPassword ? 'text' : 'password'}
                         {...register('password', {
-                          required: '密碼為必填項目',
-                          minLength: { value: 8, message: '密碼至少需要8個字元' },
-                          maxLength: { value: 30, message: '密碼不能超過30個字元' },
+                          maxLength: { message: '密碼不能超過30個字元', value: 30 },
+                          minLength: { message: '密碼至少需要8個字元', value: 8 },
+                          required: '密碼為必填項目'
                         })}
                       />
                       <button
-                        type="button"
                         className="btn btn-ghost btn-sm"
                         onClick={() => setShowPassword(!showPassword)}
+                        type="button"
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </label>
-                    {errors.password && (
-                      <p className="text-form-error">{errors.password.message}</p>
-                    )}
+                    {errors.password && <p className="text-form-error">{errors.password.message}</p>}
                   </div>
 
                   {/* 確認密碼輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <Lock size={20} className="text-gray-400" />
+                      <Lock className="text-gray-400" size={20} />
                       <input
-                        type={showConfirmPassword ? 'text' : 'password'}
                         className="grow"
                         placeholder="請再次輸入密碼"
+                        type={showConfirmPassword ? 'text' : 'password'}
                         {...register('confirmPassword', {
                           required: '請確認密碼',
-                          validate: value => value === password || '密碼不一致',
+                          validate: (value) => value === password || '密碼不一致'
                         })}
                       />
                       <button
-                        type="button"
                         className="btn btn-ghost btn-sm"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        type="button"
                       >
                         {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </label>
-                    {errors.confirmPassword && (
-                      <p className="text-form-error">{errors.confirmPassword.message}</p>
-                    )}
+                    {errors.confirmPassword && <p className="text-form-error">{errors.confirmPassword.message}</p>}
                   </div>
 
                   {/* 部門代號輸入框（選填） */}
@@ -211,9 +205,9 @@ export default function SignUp() {
 
                   {/* 註冊 按鈕 */}
                   <button
-                    type="submit"
                     className={`btn btn-primary btn-lg w-full block mt-2 ${isLoading ? 'loading' : ''}`}
                     disabled={isLoading}
+                    type="submit"
                   >
                     {isLoading ? '' : '註冊'}
                   </button>
@@ -225,10 +219,10 @@ export default function SignUp() {
 
               {/* 返回登入按鈕 */}
               <button
-                type="button"
                 className={`btn btn-outline btn-lg w-full block ${isLoading ? 'loading' : ''}`}
-                onClick={handleBackToLogin}
                 disabled={isLoading}
+                onClick={handleBackToLogin}
+                type="button"
               >
                 {isLoading ? '' : '返回登入'}
               </button>
@@ -237,9 +231,8 @@ export default function SignUp() {
               <div className="text-center mt-6">
                 <p className="text-xs text-base-content/70">
                   點擊 註冊 即表示您同意我們的
-                  <a href="#" className="link link-hover text-primary"> 服務條款 </a>
-                  和
-                  <a href="#" className="link link-hover text-primary"> 隱私政策</a>
+                  <span className="link link-hover text-primary"> 服務條款 </span>和
+                  <span className="link link-hover text-primary"> 隱私政策</span>
                 </p>
               </div>
             </div>

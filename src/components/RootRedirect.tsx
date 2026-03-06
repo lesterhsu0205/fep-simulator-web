@@ -1,7 +1,7 @@
-import { Navigate, useNavigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
-import { getFirstAccessiblePath } from '@/utils/navigationHelper'
 import { ROUTE_PATHS } from '@/routes'
+import { getFirstAccessiblePath } from '@/utils/navigationHelper'
 
 /**
  * 根路徑重定向組件
@@ -15,7 +15,7 @@ export function RootRedirect() {
   const firstAccessiblePath = getFirstAccessiblePath(user!.menus)
 
   if (firstAccessiblePath) {
-    return <Navigate to={firstAccessiblePath} replace />
+    return <Navigate replace to={firstAccessiblePath} />
   }
 
   // 如果沒有任何可訪問的頁面，顯示錯誤訊息
@@ -29,6 +29,7 @@ export function RootRedirect() {
             <button
               className="btn btn-outline btn-sm"
               onClick={() => navigate(ROUTE_PATHS.LOGIN, { replace: true, state: { from: location } })}
+              type="button"
             >
               重新登入
             </button>

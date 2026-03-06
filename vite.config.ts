@@ -1,9 +1,9 @@
-import path from 'path'
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import path from 'node:path'
 import tailwindcss from '@tailwindcss/vite'
-import viteCompression from 'vite-plugin-compression'
+import react from '@vitejs/plugin-react-swc'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { defineConfig, loadEnv } from 'vite'
+import viteCompression from 'vite-plugin-compression'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -11,58 +11,27 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const isUAT = ['production', 'uat', 'stg', 'dev'].includes(mode)
 
-  console.info('mode: ' + mode)
-  console.info('isUAT: ' + isUAT)
+  console.info(`mode: ${mode}`)
+  console.info(`isUAT: ${isUAT}`)
 
   const basePath = env.VITE_APP_BASE_PATH || '/'
 
   return {
     base: basePath,
-    plugins: [
-      react(),
-      tailwindcss(),
-      // 1. Gzip
-      viteCompression({
-        verbose: true,
-        disable: false,
-        threshold: 10240,
-        algorithm: 'gzip',
-        ext: '.gz',
-      }),
-      // 2. Brotli
-      // viteCompression({
-      //   verbose: true,
-      //   disable: false,
-      //   threshold: 10240,
-      //   algorithm: 'brotliCompress',
-      //   ext: '.br',
-      // }),
-      // 🔥 優化 1: 加入分析工具 (Build 完會產生 stats.html 讓你知道誰最胖)
-      visualizer({
-        open: false, // 是否自動開啟網頁，CI/CD 環境建議 false
-        gzipSize: true,
-        brotliSize: true,
-        filename: 'stats.html',
-      }),
-    ],
 
     build: {
+      // 預警門檻，超過 1000kb 警告 (預設 500)
+      chunkSizeWarningLimit: 1000,
       // CSS 代碼分割 (預設是 true，確認一下)
       cssCodeSplit: true,
       minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: isUAT, // 只有在 Production 才移除 console
-          drop_debugger: isUAT,
-          passes: 2, // 🔥 新增：多壓一遍，擠出更多水分
-        },
-      },
-
-      // 🔥 正式環境關閉 SourceMap
-      sourcemap: !isUAT,
 
       rollupOptions: {
         output: {
+          assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
+          // 讓輸出的檔案名稱包含 hash，確保緩存更新正確
+          chunkFileNames: 'assets/js/[name]-[hash].js',
+          entryFileNames: 'assets/js/[name]-[hash].js',
           // 🔥 優化 3: 進階分包策略 (切碎一點，提升並行加載)
           manualChunks(id) {
             // 1. 把 React 核心獨立一包 (因為它們幾乎不會變，快取效益最大)
@@ -70,10 +39,10 @@ export default defineConfig(({ mode }) => {
               // 1. 嚴格過濾 React 核心 (只抓這幾個特定的包)
               // 使用完全匹配或特定路徑匹配，避免誤殺 lucide-react
               if (
-                id.includes('/node_modules/react/')
-                || id.includes('/node_modules/react-dom/')
-                || id.includes('/node_modules/react-router/')
-                || id.includes('/node_modules/scheduler/')
+                id.includes('/node_modules/react/') ||
+                id.includes('/node_modules/react-dom/') ||
+                id.includes('/node_modules/react-router/') ||
+                id.includes('/node_modules/scheduler/')
               ) {
                 return 'react-vendor'
               }
@@ -92,32 +61,62 @@ export default defineConfig(({ mode }) => {
               // 4. 剩下的全部歸為 vendor
               return 'vendor'
             }
-          },
-          // 讓輸出的檔案名稱包含 hash，確保緩存更新正確
-          chunkFileNames: 'assets/js/[name]-[hash].js',
-          entryFileNames: 'assets/js/[name]-[hash].js',
-          assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
-        },
+          }
+        }
       },
 
-      // 預警門檻，超過 1000kb 警告 (預設 500)
-      chunkSizeWarningLimit: 1000,
+      // 🔥 正式環境關閉 SourceMap
+      sourcemap: !isUAT,
+      terserOptions: {
+        compress: {
+          drop_console: isUAT, // 只有在 Production 才移除 console
+          drop_debugger: isUAT,
+          passes: 2 // 🔥 新增：多壓一遍，擠出更多水分
+        }
+      }
     },
+    plugins: [
+      react(),
+      tailwindcss(),
+      // 1. Gzip
+      viteCompression({
+        algorithm: 'gzip',
+        disable: false,
+        ext: '.gz',
+        threshold: 10240,
+        verbose: true
+      }),
+      // 2. Brotli
+      // viteCompression({
+      //   verbose: true,
+      //   disable: false,
+      //   threshold: 10240,
+      //   algorithm: 'brotliCompress',
+      //   ext: '.br',
+      // }),
+      // 🔥 優化 1: 加入分析工具 (Build 完會產生 stats.html 讓你知道誰最胖)
+      visualizer({
+        brotliSize: true,
+        filename: 'stats.html',
+        gzipSize: true,
+        open: false // 是否自動開啟網頁，CI/CD 環境建議 false
+      })
+    ],
 
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, './src'),
-      },
+        '@': path.resolve(__dirname, './src')
+      }
     },
     server: {
       host: '0.0.0.0',
       // only for local
       proxy: {
         [env.VITE_API_BASE_URL_FES]: {
-          target: env.VITE_API_BASE_DOMAIN,
           changeOrigin: true,
           secure: false,
-        },
+          target: env.VITE_API_BASE_DOMAIN
+        }
       },
       warmup: {
         clientFiles: [
@@ -153,9 +152,9 @@ export default defineConfig(({ mode }) => {
           './src/pages/FinanceCreate.tsx',
 
           // 樣式檔案
-          './src/app.css',
-        ],
-      },
-    },
+          './src/app.css'
+        ]
+      }
+    }
   }
 })

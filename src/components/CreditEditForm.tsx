@@ -1,13 +1,18 @@
-import { useForm } from 'react-hook-form'
-import { useEffect } from 'react'
 import { Save } from 'lucide-react'
-import { type EditFormProps } from '@/components/DataTable'
-import { type JcicEditFormData } from '@/models/JcicSituation'
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import type { EditFormProps } from '@/components/DataTable'
+import type { JcicEditFormData } from '@/models/JcicSituation'
 import { CreditService } from '@/services/CreditService'
 import { ensureBase64Decoded } from '@/utils/base64'
 
 export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<JcicEditFormData>()
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors }
+  } = useForm<JcicEditFormData>()
 
   // 當資料變化時，重置表單
   useEffect(() => {
@@ -34,16 +39,16 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
       }
 
       reset({
+        forceToJcic: data.forceToJcic as string,
         id: data.id as number,
-        txid: data.txid as string,
         inqueryKey1: data.inqueryKey1 as string,
         inqueryKey2: data.inqueryKey2 as string | null,
-        returnCode: data.returnCode as string,
-        forceToJcic: data.forceToJcic as string,
-        jcicDataDate: formatDateForInput(data.jcicDataDate as string | null),
         jcicData: data.jcicData ? ensureBase64Decoded(data.jcicData as string) : null,
-        situationDesc: data.situationDesc as string,
+        jcicDataDate: formatDateForInput(data.jcicDataDate as string | null),
         memo: data.memo as string | null,
+        returnCode: data.returnCode as string,
+        situationDesc: data.situationDesc as string,
+        txid: data.txid as string
       })
     }
   }, [data, reset])
@@ -65,7 +70,7 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
     const requestData = {
       action: 'U' as const,
       ...formData,
-      jcicDataDate: formatDateForSubmit(formData.jcicDataDate),
+      jcicDataDate: formatDateForSubmit(formData.jcicDataDate)
     }
 
     await CreditService.maintainJcicSituation(requestData)
@@ -78,11 +83,9 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
     <div className="w-full">
       {/* 表單卡片 */}
 
-      <form onSubmit={handleSubmit(handleFormSubmit)} className="p-6">
-
+      <form className="p-6" onSubmit={handleSubmit(handleFormSubmit)}>
         {/* 基本資料區塊 */}
         <div className="mb-8">
-
           {/* 查詢項目資訊 */}
           {data && (
             <div className="mb-6 p-4 bg-gray-50 rounded-lg">
@@ -94,28 +97,24 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
           {/* 第一行：查詢條件1、查詢條件2 */}
           <div className="grid grid-cols-2 gap-8 mb-6">
             <div className="flex items-center gap-4">
-              <label className="text-form-label w-20 flex-shrink-0">
-                查詢條件1
-              </label>
+              <span className="text-form-label w-20 shrink-0">查詢條件1</span>
               <div className="flex-1">
                 <input
-                  type="text"
                   className="input input-bordered h-10 w-full bg-gray-100"
                   readOnly
+                  type="text"
                   {...register('inqueryKey1')}
                 />
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-form-label w-20 flex-shrink-0">
-                查詢條件2
-              </label>
+              <span className="text-form-label w-20 shrink-0">查詢條件2</span>
               <div className="flex-1">
                 <input
-                  type="text"
                   className="input input-bordered h-10 w-full bg-gray-100"
                   readOnly
+                  type="text"
                   {...register('inqueryKey2')}
                 />
               </div>
@@ -125,28 +124,24 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
           {/* 第二行：回應代碼、強制發查 */}
           <div className="grid grid-cols-2 gap-8 mb-6">
             <div className="flex items-center gap-4">
-              <label className="text-form-label w-20 flex-shrink-0">
-                回應代碼
-              </label>
+              <span className="text-form-label w-20 shrink-0">回應代碼</span>
               <div className="flex-1">
                 <input
-                  type="text"
                   className="input input-bordered h-10 w-full bg-gray-100"
                   readOnly
+                  type="text"
                   {...register('returnCode')}
                 />
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-form-label w-20 flex-shrink-0">
-                強制發查
-              </label>
+              <span className="text-form-label w-20 shrink-0">強制發查</span>
               <div className="flex-1">
                 <input
-                  type="text"
                   className="input input-bordered h-10 w-full bg-gray-100"
                   readOnly
+                  type="text"
                   {...register('forceToJcic')}
                 />
               </div>
@@ -156,32 +151,24 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
           {/* 第三行：情境說明、發查資料日期 */}
           <div className="grid grid-cols-2 gap-8 mb-6">
             <div className="flex items-center gap-4">
-              <label className="text-form-label w-20 flex-shrink-0">
+              <span className="text-form-label w-20 shrink-0">
                 情境說明
                 <span className="text-form-required">*</span>
-              </label>
+              </span>
               <div className="flex-1">
                 <input
-                  type="text"
                   className="input input-bordered h-10 w-full"
+                  type="text"
                   {...register('situationDesc', { required: '情境說明為必填項目' })}
                 />
-                {errors.situationDesc && (
-                  <div className="text-form-error">{errors.situationDesc.message}</div>
-                )}
+                {errors.situationDesc && <div className="text-form-error">{errors.situationDesc.message}</div>}
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-form-label w-20 flex-shrink-0">
-                發查資料日期
-              </label>
+              <span className="text-form-label w-20 shrink-0">發查資料日期</span>
               <div className="flex-1">
-                <input
-                  type="date"
-                  className="input input-bordered h-10 w-full"
-                  {...register('jcicDataDate')}
-                />
+                <input className="input input-bordered h-10 w-full" type="date" {...register('jcicDataDate')} />
               </div>
             </div>
           </div>
@@ -189,28 +176,16 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
           {/* 第四行：備註、回傳資料 */}
           <div className="grid grid-cols-2 gap-8">
             <div className="flex items-center gap-4">
-              <label className="text-form-label w-20 flex-shrink-0">
-                備註
-              </label>
+              <span className="text-form-label w-20 shrink-0">備註</span>
               <div className="flex-1">
-                <input
-                  type="text"
-                  className="input input-bordered h-10 w-full"
-                  {...register('memo')}
-                />
+                <input className="input input-bordered h-10 w-full" type="text" {...register('memo')} />
               </div>
             </div>
 
             <div className="flex items-center gap-4">
-              <label className="text-form-label w-20 flex-shrink-0">
-                回傳資料
-              </label>
+              <span className="text-form-label w-20 shrink-0">回傳資料</span>
               <div className="flex-1">
-                <textarea
-                  className="textarea textarea-bordered w-full"
-                  rows={2}
-                  {...register('jcicData')}
-                />
+                <textarea className="textarea textarea-bordered w-full" rows={2} {...register('jcicData')} />
               </div>
             </div>
           </div>
@@ -218,16 +193,12 @@ export default function CreditEditForm({ data, afterSubmit }: EditFormProps) {
 
         {/* 操作按鈕 */}
         <div className="flex justify-end gap-3 pt-4">
-          <button
-            type="submit"
-            className="btn btn-primary px-6"
-          >
+          <button className="btn btn-primary px-6" type="submit">
             <Save size={16} />
             儲存
           </button>
         </div>
       </form>
-
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { type PaginationInfo } from '@/models/PaginationInfo'
+import type { PaginationInfo } from '@/models/PaginationInfo'
 
 // 財金情境相關接口
 export interface FiscSituation {

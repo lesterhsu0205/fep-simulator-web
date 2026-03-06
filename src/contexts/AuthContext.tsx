@@ -1,6 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
-import { loginApi, signupApi, type LoginResponse, type MenuItem, type SignupRequest } from '@/services/AuthService'
+import { createContext, useContext, useEffect, useState } from 'react'
+import { type LoginResponse, loginApi, type MenuItem, type SignupRequest, signupApi } from '@/services/AuthService'
 
 interface User {
   account: string
@@ -67,10 +67,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const user: User = {
         account,
-        username: loginData.username,
+        menus: loginData.menus,
         role: loginData.role,
         token: loginData.token,
-        menus: loginData.menus,
+        username: loginData.username
       }
 
       setUser(user)
@@ -78,8 +78,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem('token', loginData.token)
 
       console.log('🔑 已將 token 存入 localStorage')
-    }
-    finally {
+    } finally {
       setIsLoading(false)
     }
   }
@@ -88,8 +87,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setIsLoading(true)
     try {
       await signupApi(signupData)
-    }
-    finally {
+    } finally {
       setIsLoading(false)
     }
   }
@@ -99,17 +97,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const value = {
-    user,
     isAuthenticated: !!user,
-    login,
-    signup,
-    logout,
     isLoading,
+    login,
+    logout,
+    signup,
+    user
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

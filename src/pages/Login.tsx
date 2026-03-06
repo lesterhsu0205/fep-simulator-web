@@ -1,12 +1,12 @@
+import { Eye, EyeOff, Lock, User } from 'lucide-react'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate, useLocation } from 'react-router-dom'
-import { Eye, EyeOff, User, Lock } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Footer } from '@/components/Footer'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/contexts/ToastContext'
-import { Footer } from '@/components/Footer'
-import { getFirstAccessiblePath, isPathAccessible } from '@/utils/navigationHelper'
 import { ApiError } from '@/error/ApiError'
+import { getFirstAccessiblePath, isPathAccessible } from '@/utils/navigationHelper'
 import transactionalDataIcon from '/transactional-data.png'
 
 // 登入表單資料類型
@@ -22,11 +22,15 @@ export default function Login() {
   const { login, isLoading } = useAuth()
   const { showToast } = useToast()
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LoginFormData>({
     defaultValues: {
       account: '',
-      password: '',
-    },
+      password: ''
+    }
   })
 
   const handleSignIn = async (data: LoginFormData) => {
@@ -53,19 +57,15 @@ export default function Login() {
             const firstAccessiblePath = getFirstAccessiblePath(user.menus)
             if (firstAccessiblePath) {
               navigate(firstAccessiblePath, { replace: true })
-            }
-            else {
+            } else {
               // 如果沒有任何可訪問的頁面，顯示錯誤
               showToast('您沒有任何頁面的訪問權限，請聯繫管理員', 'error')
             }
           }
         }
       }, 100)
-    }
-    catch (error) {
-      const errorMessage = error instanceof ApiError
-        ? error.messageDesc
-        : '登入失敗，請稍後再試'
+    } catch (error) {
+      const errorMessage = error instanceof ApiError ? error.messageDesc : '登入失敗，請稍後再試'
       showToast(errorMessage, 'error')
       console.error('Login error:', error)
     }
@@ -82,9 +82,9 @@ export default function Login() {
           <div className="text-center lg:text-left lg:ml-8 lg:min-w-96 lg:max-w-lg">
             <div className="flex justify-center lg:justify-start mb-6">
               <img
-                src={transactionalDataIcon}
                 alt="Transaction icons created by nangicon - Flaticon"
                 className="w-24 h-24"
+                src={transactionalDataIcon}
               />
             </div>
             <h1 className="text-heading">歡迎回來!</h1>
@@ -101,51 +101,47 @@ export default function Login() {
                   {/* 員工編號輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <User size={20} className="text-gray-400" />
+                      <User className="text-gray-400" size={20} />
                       <input
-                        type="text"
                         className="grow"
                         placeholder="請輸入員工編號"
+                        type="text"
                         {...register('account', {
-                          required: '員工編號為必填項目',
+                          maxLength: { message: '員工編號不能超過7個字元', value: 7 },
                           pattern: {
-                            value: /^[A-Za-z]{2}\d{5}$/,
                             message: '須為兩位英文字 + 5位數字 (ex.BK00999)',
+                            value: /^[A-Za-z]{2}\d{5}$/
                           },
-                          maxLength: { value: 7, message: '員工編號不能超過7個字元' },
+                          required: '員工編號為必填項目'
                         })}
                       />
                     </label>
-                    {errors.account && (
-                      <p className="text-form-error">{errors.account.message}</p>
-                    )}
+                    {errors.account && <p className="text-form-error">{errors.account.message}</p>}
                   </div>
 
                   {/* 密碼輸入框 */}
                   <div className="mb-4">
                     <label className="input input-bordered input-lg w-full">
-                      <Lock size={20} className="text-gray-400" />
+                      <Lock className="text-gray-400" size={20} />
                       <input
-                        type={showPassword ? 'text' : 'password'}
                         className="grow"
                         placeholder="請輸入密碼"
+                        type={showPassword ? 'text' : 'password'}
                         {...register('password', {
-                          required: '密碼為必填項目',
-                          minLength: { value: 8, message: '密碼至少需要8個字元' },
-                          maxLength: { value: 30, message: '密碼不能超過30個字元' },
+                          maxLength: { message: '密碼不能超過30個字元', value: 30 },
+                          minLength: { message: '密碼至少需要8個字元', value: 8 },
+                          required: '密碼為必填項目'
                         })}
                       />
                       <button
-                        type="button"
                         className="btn btn-ghost btn-sm"
                         onClick={() => setShowPassword(!showPassword)}
+                        type="button"
                       >
                         {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                       </button>
                     </label>
-                    {errors.password && (
-                      <p className="text-form-error">{errors.password.message}</p>
-                    )}
+                    {errors.password && <p className="text-form-error">{errors.password.message}</p>}
                   </div>
 
                   {/* 忘記密碼連結 */}
@@ -157,9 +153,9 @@ export default function Login() {
 
                   {/* 登入 按鈕 */}
                   <button
-                    type="submit"
                     className={`btn btn-primary btn-lg w-full block mt-2 ${isLoading ? 'loading' : ''}`}
                     disabled={isLoading}
+                    type="submit"
                   >
                     {isLoading ? '' : '登入'}
                   </button>
@@ -171,10 +167,10 @@ export default function Login() {
 
               {/* 註冊 按鈕 */}
               <button
-                type="button"
                 className={`btn btn-outline btn-lg w-full block ${isLoading ? 'loading' : ''}`}
-                onClick={handleSignUp}
                 disabled={isLoading}
+                onClick={handleSignUp}
+                type="button"
               >
                 {isLoading ? '' : '註冊'}
               </button>
@@ -183,9 +179,8 @@ export default function Login() {
               <div className="text-center mt-6">
                 <p className="text-xs text-base-content/70">
                   點擊 註冊 即表示您同意我們的
-                  <a href="#" className="link link-hover text-primary"> 服務條款 </a>
-                  和
-                  <a href="#" className="link link-hover text-primary"> 隱私政策</a>
+                  <span className="link link-hover text-primary"> 服務條款 </span>和
+                  <span className="link link-hover text-primary"> 隱私政策</span>
                 </p>
               </div>
             </div>

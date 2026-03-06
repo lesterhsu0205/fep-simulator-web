@@ -1,8 +1,8 @@
+import { LogOut, Menu, User } from 'lucide-react'
+import { useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Menu, LogOut, User } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import type { MenuItem } from '@/services/AuthService'
-import { useMemo } from 'react'
 
 export function Header() {
   const { user, logout } = useAuth()
@@ -42,7 +42,7 @@ export function Header() {
     <header className="navbar border-b border-base-300">
       {/* 左側 - 漢堡選單 */}
       <div className="navbar-start px-6">
-        <label htmlFor="sidebar-drawer" className="btn btn-ghost btn-circle drawer-button">
+        <label className="btn btn-ghost btn-circle drawer-button" htmlFor="sidebar-drawer">
           <Menu size={20} />
         </label>
         <div className="text-card-title ml-2 lg:ml-0">{currentPageTitle}</div>
@@ -51,14 +51,14 @@ export function Header() {
       {/* 右側 - 用戶資訊 dropdown */}
       <div className="navbar-end px-6">
         <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="btn btn-circle avatar">
+          <button className="btn btn-circle avatar" type="button">
             <div className="avatar avatar-placeholder">
               <div className="w-8 rounded-full">
                 <User size={16} />
               </div>
             </div>
-          </div>
-          <ul tabIndex={0} className="menu menu-sm dropdown-content bg-white rounded-box z-[1] mt-3 w-64 p-2 shadow-lg border border-base-300">
+          </button>
+          <ul className="menu menu-sm dropdown-content bg-white rounded-box z-1 mt-3 w-64 p-2 shadow-lg border border-base-300">
             {/* 用戶資訊標題 */}
             <li className="menu-title px-3 py-2">
               <div className="sidebar-item flex items-center gap-3">
@@ -66,12 +66,8 @@ export function Header() {
                   <User size={24} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-base-content truncate">
-                    {user?.username || '訪客'}
-                  </div>
-                  <div className="text-xs text-base-content/70 truncate">
-                    {user?.role || '未授權'}
-                  </div>
+                  <div className="font-bold text-base-content truncate">{user?.username || '訪客'}</div>
+                  <div className="text-xs text-base-content/70 truncate">{user?.role || '未授權'}</div>
                 </div>
               </div>
             </li>
@@ -81,15 +77,16 @@ export function Header() {
 
             {/* 操作選項 */}
             <li>
-              <a className="sidebar-item flex items-center gap-2 px-3 py-2">
+              <button className="sidebar-item flex items-center gap-2 px-3 py-2" type="button">
                 <User size={14} />
                 個人設定
-              </a>
+              </button>
             </li>
             <li>
               <button
-                onClick={handleLogout}
                 className="sidebar-item flex items-center gap-2 px-3 py-2 text-error hover:bg-error/10"
+                onClick={handleLogout}
+                type="button"
               >
                 <LogOut size={14} />
                 登出
